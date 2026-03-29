@@ -125,32 +125,8 @@ check "README.md embeds demo GIF" grep -q "demo.gif" "README.md"
 # Router includes init
 check "design.md routes to design-init" grep -q "design-init" "commands/design.md"
 
-# Phase 3: Second skill + release
-
-# code-review command
-check "commands/code-review.md exists" test -f "commands/code-review.md"
-check "commands/code-review.md has frontmatter" bash -c "head -1 'commands/code-review.md' | grep -q '^---'"
-check "commands/code-review.md has description field" grep -q '^description:' "commands/code-review.md"
-check "commands/code-review.md references shared/output.md" grep -q "shared/output.md" "commands/code-review.md"
-
-# code-review skill
-check "skills/code-review/SKILL.md exists" test -f "skills/code-review/SKILL.md"
-check "skills/code-review/SKILL.md has frontmatter" bash -c "head -1 'skills/code-review/SKILL.md' | grep -q '^---'"
-check "skills/code-review/references/review-guidelines.md exists" test -f "skills/code-review/references/review-guidelines.md"
-
-# plugin.json includes code-review
-check "plugin.json commands includes code-review" jq -e '.commands | index("code-review")' .claude-plugin/plugin.json
-
-# code-review eval artifacts
-check "evals/assertions-code-review.json is valid JSON" jq empty "evals/assertions-code-review.json"
-check "evals/fixtures/sample-pr.diff exists" test -f "evals/fixtures/sample-pr.diff"
-
-# install.sh (created by Plan 03)
-if [ -f install.sh ]; then
-  check "install.sh is executable" test -x install.sh
-else
-  echo "[SKIP] install.sh (created by plan 03-03)"
-fi
+# Release artifacts
+check "install.sh is executable" test -x install.sh
 
 # CHANGELOG.md contains 1.0.0
 check "CHANGELOG.md contains 1.0.0" grep -q "1.0.0" "CHANGELOG.md"
