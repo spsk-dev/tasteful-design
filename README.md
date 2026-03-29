@@ -4,8 +4,9 @@ AI-powered design review plugin for Claude Code. 8 specialist agents evaluate yo
 
 Built because AI models are terrible self-critics of visual output. They "reliably skew positive" and praise mediocre work. This plugin fixes that with independent specialist critique.
 
-<!-- Demo GIF will be added in Phase 2 -->
-*30-second demo coming soon.*
+<p align="center">
+  <img src="assets/demo.gif" alt="SpSk design-review demo -- 8 specialists scoring a landing page" width="720">
+</p>
 
 ## Install
 
