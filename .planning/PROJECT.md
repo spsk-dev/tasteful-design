@@ -12,14 +12,13 @@ The published skills must be immediately useful to other developers AND demonstr
 
 ### Validated
 
-(None yet — ship to validate)
+- ✓ Repo scaffold with proper structure for multi-skill Claude Code plugin — Phase 1
+- ✓ Design-review plugin ported from ~/.claude/plugins/design-review/ (22 files, v1.0.0) — Phase 1
+- ✓ Reproducible evaluation harness (run-evals.sh) with benchmark results — Phase 1
+- ✓ ARCHITECTURE.md documenting multi-agent design, specialist roles, boss synthesizer pattern — Phase 1
 
 ### Active
 
-- [ ] Repo scaffold with proper structure for multi-skill Claude Code plugin
-- [ ] Design-review plugin ported from ~/.claude/plugins/design-review/ (22 files, v1.0.0)
-- [ ] Reproducible evaluation harness (run-evals.sh) with benchmark results
-- [ ] ARCHITECTURE.md documenting multi-agent design, specialist roles, boss synthesizer pattern
 - [ ] Init wizard: 5 interactive questions, under 2 minutes to first value
 - [ ] Palette engine: suggest color palettes based on user preferences/vibe
 - [ ] Branded output: clean signature line, unicode boxes, progress bars, symbol vocabulary
@@ -79,4 +78,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-03-28 after initialization*
+*Last updated: 2026-03-29 after Phase 1 completion*
