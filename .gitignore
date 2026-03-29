@@ -15,3 +15,6 @@ node_modules/
 .idea/
 *.swp
 *.swo
+.claude/worktrees/
+.memsearch/
+.context/
