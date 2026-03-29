@@ -1,182 +1,101 @@
-# Requirements: SpSk (Simple Skill)
+# Requirements: SpSk v1.1.0 — Flow Audit + Polish
 
-**Defined:** 2026-03-28
+**Defined:** 2026-03-29
 **Core Value:** Published skills must be immediately useful AND demonstrate architectural sophistication
 
-## v1 Requirements
+## v1.1.0 Requirements
 
-Requirements for initial release. Each maps to roadmap phases.
+### Flow Navigation
 
-### Scaffold
+- [ ] **FLOW-01**: `/design-audit <url> --flow "description"` command navigates a SPA guided by user's intent description
+- [ ] **FLOW-02**: Agent uses Playwright MCP snapshots to identify and click CTAs matching the flow intent
+- [ ] **FLOW-03**: Screenshot captured at each detected screen state change
+- [ ] **FLOW-04**: Screen detection — agent knows when a new "screen" has loaded (DOM stability, not networkidle)
+- [ ] **FLOW-05**: Max screen limit (default 10) prevents runaway navigation
+- [ ] **FLOW-06**: URL sequence fallback via `--steps url1,url2,url3` for deterministic paths
+- [ ] **FLOW-07**: Authenticated flow support — can login first, then audit the protected flow
+- [ ] **FLOW-08**: Flow stops gracefully at completion/success state or dead end
 
-- [x] **SCAF-01**: Plugin manifest (`.claude-plugin/plugin.json`) with correct metadata, version, description
-- [x] **SCAF-02**: README.md with install command, demo GIF placeholder, architecture overview, usage guide
-- [x] **SCAF-03**: CLAUDE.md with command documentation and usage instructions
-- [x] **SCAF-04**: LICENSE (MIT)
-- [x] **SCAF-05**: CHANGELOG.md with transparent failure history (v1 single-agent 40%, v4 multi-agent 100%)
-- [x] **SCAF-06**: ARCHITECTURE.md documenting multi-agent design, specialist roles, boss synthesizer, scoring, degradation tiers
+### Per-Screen Review
 
-### Design-Review Port
+- [ ] **REVW-01**: Each captured screen is reviewed by the existing 8-specialist system
+- [ ] **REVW-02**: Smart weighting — full 8-specialist review on first and last screens, quick mode (4 specialists) on middle screens
+- [ ] **REVW-03**: Cross-screen consistency analysis — flag when button styles, colors, spacing, or typography drift between screens
+- [ ] **REVW-04**: Per-screen scores aggregated into overall flow score
 
-- [x] **PORT-01**: `/design-review` command ported — 8 specialists, weighted scoring, SHIP/BLOCK verdict
-- [x] **PORT-02**: `/design` orchestrator ported — routes to review/improve/validate/ship
-- [x] **PORT-03**: `/design-improve` iterative loop ported — build/review/fix cycle with score progression
-- [x] **PORT-04**: `/design-validate` functional tests ported — Playwright MCP integration
-- [x] **PORT-05**: Configuration files ported — scoring.json, anti-slop.json, style-presets.json
-- [x] **PORT-06**: Skill file (SKILL.md) and reference files ported with `${CLAUDE_PLUGIN_ROOT}` paths
-- [x] **PORT-07**: Hooks ported — suggest-review.sh + hooks.json
-- [x] **PORT-08**: All hardcoded paths replaced with `${CLAUDE_PLUGIN_ROOT}` variable
-- [x] **PORT-09**: Degradation tiers working — Tier 1 (full), Tier 2 (no Gemini), Tier 3 (code-only)
-- [x] **PORT-10**: Quick mode (`--quick`) working — 4 specialists instead of 8
+### HTML Report
 
-### Evaluation Harness
+- [ ] **REPT-01**: Self-contained HTML file with base64-embedded JPEG screenshots (no external dependencies)
+- [ ] **REPT-02**: Flow map showing screen progression (screen 1 → 2 → 3 → ...)
+- [ ] **REPT-03**: Per-screen section with screenshot, 8-specialist scores, specific issues, and fix recommendations
+- [ ] **REPT-04**: Overall flow score and summary with top 5 priority fixes
+- [ ] **REPT-05**: Expandable specialist details (collapsed by default, expand on click)
+- [ ] **REPT-06**: Print-to-PDF support via `@media print` styles
+- [ ] **REPT-07**: Report file size under 5MB (JPEG compression, max 1200px width screenshots)
 
-- [x] **EVAL-01**: run-evals.sh script that executes all eval assertions reproducibly
-- [x] **EVAL-02**: Eval fixtures — test HTML pages or references bundled in repo
-- [x] **EVAL-03**: Range-based assertions (not exact scores) for AI eval non-determinism
-- [x] **EVAL-04**: Eval results documented with benchmark numbers in README
-- [x] **EVAL-05**: Clean-machine install test passes (fresh Claude Code session)
+### Animation Detection
 
-### Init Wizard
+- [ ] **ANIM-01**: CSS transition/animation property detection between screen states
+- [ ] **ANIM-02**: `prefers-reduced-motion` compliance check
+- [ ] **ANIM-03**: Animation findings included in per-screen specialist output
 
-- [x] **INIT-01**: `/design init` command — 5 interactive questions with opinionated defaults
-- [x] **INIT-02**: Question 1: Page type (landing, dashboard, admin, etc.)
-- [x] **INIT-03**: Question 2: Vibe preset selection from built-in options
-- [x] **INIT-04**: Question 3: Light/dark/both preference
-- [x] **INIT-05**: Question 4: Brand colors (or skip for palette suggestions)
-- [x] **INIT-06**: Question 5: Font preference (or skip for vibe-based suggestion)
-- [x] **INIT-07**: Creates `.design/` directory with configured tokens
-- [x] **INIT-08**: Under 2 minutes from command to first value
+### Polish
 
-### Palette Engine
-
-- [x] **PALT-01**: Suggest 3 color palettes when user skips brand colors
-- [x] **PALT-02**: Palettes have Design Identity names ("Midnight Corporate", "Warm Craft", etc.)
-- [x] **PALT-03**: Palettes are contextual — different suggestions for dashboard vs landing page
-
-### Branded Output
-
-- [x] **BRND-01**: Signature line format: ` SpSk  design-review  v1.2.0  ---  8 specialists  ·  tier 1`
-- [x] **BRND-02**: Unicode boxes for checkpoints and results
-- [x] **BRND-03**: Symbol vocabulary: checkmark, cross, diamond, circle, lightning, warning
-- [x] **BRND-04**: Progress bars for scores (block characters)
-- [x] **BRND-05**: Footer with repo link on every review output
-- [x] **BRND-06**: Consistent formatting across all SpSk commands
-
-### Demo
-
-- [x] **DEMO-01**: 30-second demo GIF showing design-review in action
-- [x] **DEMO-02**: GIF embedded in README.md replacing placeholder
-
-### Second Skill
-
-- [x] **CREV-01**: multi-model-code-review skill — PR review via Claude + Codex + Gemini in parallel with confidence-scored findings
-- [x] **CREV-02**: Shared branded output patterns between design-review and code-review
-- [x] **CREV-03**: Independent eval harness for multi-model-code-review
-
-### Release
-
-- [x] **REL-01**: Case studies with measurable before/after impact
-- [x] **REL-02**: v1.0.0 tag with proper semver
-- [x] **REL-03**: Install via `claude /install-plugin spsk@felipemachado/spsk`
-- [x] **REL-04**: install.sh for manual installation
-
-## v2 Requirements
-
-Deferred to future release. Tracked but not in current roadmap.
-
-### Platform
-
-- **PLAT-01**: Shared utility extraction — patterns that emerged from 2+ skills formalized
-- **PLAT-02**: Contribution guide for third-party skill authors
-- **PLAT-03**: Plugin marketplace directory submission
-
-### Consensus Validation (deferred from v1)
-
-- **CONS-01**: consensus-validation skill — multi-model validation via Claude + Codex + Gemini
-- **CONS-02**: Shared branded output patterns with existing skills
-- **CONS-03**: Independent eval harness for consensus-validation
-
-### Advanced Features
-
-- **ADV-01**: Figma integration for reference-aware reviews
-- **ADV-02**: CI/CD integration — run design-review in GitHub Actions
-- **ADV-03**: Custom specialist authoring — users define their own review dimensions
+- [ ] **PLSH-01**: Demo GIF recorded via VHS tape file (deferred from v1.0.0)
+- [ ] **PLSH-02**: README updated with /design-audit documentation, flow examples, report screenshots
+- [ ] **PLSH-03**: ARCHITECTURE.md updated with flow audit component diagram
+- [ ] **PLSH-04**: CHANGELOG.md updated with v1.1.0 release notes
+- [ ] **PLSH-05**: All repo references use spsk-dev org consistently
+- [ ] **PLSH-06**: VERSION bumped to 1.1.0, git tag v1.1.0
 
 ## Out of Scope
 
-Explicitly excluded. Documented to prevent scope creep.
-
 | Feature | Reason |
 |---------|--------|
-| Framework/SDK for third-party skills | Premature abstraction — emerges from 2nd/3rd skills naturally |
-| npm package distribution | No JS to package, plugin registry is the right channel |
-| Web UI or dashboard | Terminal is the interface, not a browser |
-| AI-generated design | SpSk evaluates design, it does not generate it |
-| Per-project settings database | Over-scopes v1, reviews are point-in-time |
-| Auto-fix without review | Users need to see changes before applying |
-| Paid features or licensing | Portfolio piece, friction kills adoption |
-| Big ASCII art branding | Clean and compact, not attention-seeking |
+| Video recording of flows | Massive complexity, screenshots + CSS analysis cover 90% of value |
+| Runtime animation frame analysis | Web Animations API source analysis is sufficient for v1.1 |
+| Multi-browser testing | Chromium-only via Playwright is sufficient |
+| Automatic fix application | Report recommends fixes, user/agent applies them separately |
+| Real-time collaboration on reports | Static HTML file is the output format |
 
 ## Traceability
 
-Which phases cover which requirements. Updated during roadmap creation.
-
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| SCAF-01 | Phase 1 | Complete |
-| SCAF-02 | Phase 1 | Complete |
-| SCAF-03 | Phase 1 | Complete |
-| SCAF-04 | Phase 1 | Complete |
-| SCAF-05 | Phase 1 | Complete |
-| SCAF-06 | Phase 1 | Complete |
-| PORT-01 | Phase 1 | Complete |
-| PORT-02 | Phase 1 | Complete |
-| PORT-03 | Phase 1 | Complete |
-| PORT-04 | Phase 1 | Complete |
-| PORT-05 | Phase 1 | Complete |
-| PORT-06 | Phase 1 | Complete |
-| PORT-07 | Phase 1 | Complete |
-| PORT-08 | Phase 1 | Complete |
-| PORT-09 | Phase 1 | Complete |
-| PORT-10 | Phase 1 | Complete |
-| EVAL-01 | Phase 1 | Complete |
-| EVAL-02 | Phase 1 | Complete |
-| EVAL-03 | Phase 1 | Complete |
-| EVAL-04 | Phase 1 | Complete |
-| EVAL-05 | Phase 1 | Complete |
-| INIT-01 | Phase 2 | Complete |
-| INIT-02 | Phase 2 | Complete |
-| INIT-03 | Phase 2 | Complete |
-| INIT-04 | Phase 2 | Complete |
-| INIT-05 | Phase 2 | Complete |
-| INIT-06 | Phase 2 | Complete |
-| INIT-07 | Phase 2 | Complete |
-| INIT-08 | Phase 2 | Complete |
-| PALT-01 | Phase 2 | Complete |
-| PALT-02 | Phase 2 | Complete |
-| PALT-03 | Phase 2 | Complete |
-| BRND-01 | Phase 2 | Complete |
-| BRND-02 | Phase 2 | Complete |
-| BRND-03 | Phase 2 | Complete |
-| BRND-04 | Phase 2 | Complete |
-| BRND-05 | Phase 2 | Complete |
-| BRND-06 | Phase 2 | Complete |
-| DEMO-01 | Phase 2 | Complete |
-| DEMO-02 | Phase 2 | Complete |
-| CREV-01 | Phase 3 | Complete |
-| CREV-02 | Phase 3 | Complete |
-| CREV-03 | Phase 3 | Complete |
-| REL-01 | Phase 3 | Complete |
-| REL-02 | Phase 3 | Complete |
-| REL-03 | Phase 3 | Complete |
-| REL-04 | Phase 3 | Complete |
+| FLOW-01 | TBD | Pending |
+| FLOW-02 | TBD | Pending |
+| FLOW-03 | TBD | Pending |
+| FLOW-04 | TBD | Pending |
+| FLOW-05 | TBD | Pending |
+| FLOW-06 | TBD | Pending |
+| FLOW-07 | TBD | Pending |
+| FLOW-08 | TBD | Pending |
+| REVW-01 | TBD | Pending |
+| REVW-02 | TBD | Pending |
+| REVW-03 | TBD | Pending |
+| REVW-04 | TBD | Pending |
+| REPT-01 | TBD | Pending |
+| REPT-02 | TBD | Pending |
+| REPT-03 | TBD | Pending |
+| REPT-04 | TBD | Pending |
+| REPT-05 | TBD | Pending |
+| REPT-06 | TBD | Pending |
+| REPT-07 | TBD | Pending |
+| ANIM-01 | TBD | Pending |
+| ANIM-02 | TBD | Pending |
+| ANIM-03 | TBD | Pending |
+| PLSH-01 | TBD | Pending |
+| PLSH-02 | TBD | Pending |
+| PLSH-03 | TBD | Pending |
+| PLSH-04 | TBD | Pending |
+| PLSH-05 | TBD | Pending |
+| PLSH-06 | TBD | Pending |
 
 **Coverage:**
-- v1 requirements: 46 total
-- Mapped to phases: 46
-- Unmapped: 0 ✓
+- v1.1.0 requirements: 28 total
+- Mapped to phases: 0
+- Unmapped: 28
 
 ---
-*Requirements defined: 2026-03-28*
-*Last updated: 2026-03-29 after swapping consensus-validation for multi-model-code-review*
+*Requirements defined: 2026-03-29*
+*Last updated: 2026-03-29 after initial definition*
