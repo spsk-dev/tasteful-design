@@ -12,20 +12,34 @@ The published skills must be immediately useful to other developers AND demonstr
 
 ### Validated
 
-- ✓ Repo scaffold with proper structure for multi-skill Claude Code plugin — Phase 1
-- ✓ Design-review plugin ported from ~/.claude/plugins/design-review/ (22 files, v1.0.0) — Phase 1
-- ✓ Reproducible evaluation harness (run-evals.sh) with benchmark results — Phase 1
-- ✓ ARCHITECTURE.md documenting multi-agent design, specialist roles, boss synthesizer pattern — Phase 1
+- ✓ Repo scaffold with proper plugin structure — v1.0.0 Phase 1
+- ✓ Design-review plugin ported (22 files) — v1.0.0 Phase 1
+- ✓ Reproducible evaluation harness (run-evals.sh) — v1.0.0 Phase 1
+- ✓ ARCHITECTURE.md documenting multi-agent design — v1.0.0 Phase 1
+- ✓ Init wizard with 5 questions + palette engine — v1.0.0 Phase 2
+- ✓ Branded output system (shared/output.md) — v1.0.0 Phase 2
+- ✓ Multi-model code-review skill (extracted to spsk-dev/code-review) — v1.0.0 Phase 3
+- ✓ Case studies with measurable impact — v1.0.0 Phase 3
+- ✓ v1.0.0 release + install.sh — v1.0.0 Phase 3
 
 ### Active
 
-- [ ] Init wizard: 5 interactive questions, under 2 minutes to first value
-- [ ] Palette engine: suggest color palettes based on user preferences/vibe
-- [ ] Branded output: clean signature line, unicode boxes, progress bars, symbol vocabulary
-- [ ] Demo GIF (30-second) showing design-review in action for README
-- [ ] Second skill (multi-model-code-review) to prove platform capability
-- [ ] Case studies with measurable before/after impact
-- [ ] v1.0.0 release with install instructions for Claude Code plugin registry
+- [ ] `/design-audit` — SPA flow navigation with per-screen 8-specialist review
+- [ ] Flow intent guidance — user describes goal, agent navigates
+- [ ] HTML diagnostic report — screenshots, per-screen scores, fix recommendations
+- [ ] Animation/transition detection between screen states
+- [ ] Demo GIF recording (deferred from v1.0.0)
+- [ ] Repo reference cleanup for spsk-dev org
+
+## Current Milestone: v1.1.0 Flow Audit + Polish
+
+**Goal:** Add flow-level design audit that navigates SPAs screen-by-screen with 8 specialists, producing an HTML diagnostic report.
+
+**Target features:**
+- `/design-audit <url> --flow "description"` — full SPA flow review
+- HTML report with embedded screenshots and per-screen specialist assessments
+- Animation/transition CSS analysis between screen states
+- v1.0.0 polish items (demo GIF, repo references)
 
 ### Out of Scope
 
@@ -79,4 +93,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-03-29 after swapping 2nd skill to multi-model-code-review*
+*Last updated: 2026-03-29 after starting milestone v1.1.0*
