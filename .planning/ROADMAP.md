@@ -31,7 +31,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 **Plans:** 3 plans
 
 Plans:
-- [ ] 01-01-PLAN.md -- Scaffold repo structure, port all 22 plugin files, audit hardcoded paths, create README + CLAUDE.md
+- [x] 01-01-PLAN.md -- Scaffold repo structure, port all 22 plugin files, audit hardcoded paths, create README + CLAUDE.md
 - [ ] 01-02-PLAN.md -- Portfolio-grade ARCHITECTURE.md and transparent CHANGELOG.md
 - [ ] 01-03-PLAN.md -- Two-layer eval harness with bundled fixtures and range-based assertions
 

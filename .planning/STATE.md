@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0.0
 milestone_name: milestone
 status: executing
-stopped_at: Completed 01-01-PLAN.md
-last_updated: "2026-03-29T02:24:37.294Z"
-last_activity: 2026-03-29 -- Plan 01-01 executed (scaffold + port)
+stopped_at: Completed 01-03-PLAN.md
+last_updated: "2026-03-29T02:40:41.129Z"
+last_activity: 2026-03-29
 progress:
   total_phases: 3
-  completed_phases: 0
+  completed_phases: 1
   total_plans: 3
-  completed_plans: 1
+  completed_plans: 3
   percent: 33
 ---
 
@@ -25,10 +25,10 @@ See: .planning/PROJECT.md (updated 2026-03-28)
 
 ## Current Position
 
-Phase: 1 of 3 (Scaffold + Port + Evals)
-Plan: 2 of 3 in current phase
+Phase: 2 of 3 (init wizard + branding + demo)
+Plan: Not started
 Status: Executing
-Last activity: 2026-03-29 -- Plan 01-01 executed (scaffold + port)
+Last activity: 2026-03-29
 
 Progress: [███░░░░░░░] 33%
 
@@ -53,6 +53,8 @@ Progress: [███░░░░░░░] 33%
 
 *Updated after each plan completion*
 | Phase 01 P01 | 5min | 3 tasks | 24 files |
+| Phase 01 P02 | 3min | 2 tasks | 2 files |
+| Phase 01 P03 | 5min | 2 tasks | 9 files |
 
 ## Accumulated Context
 
@@ -65,6 +67,10 @@ Recent decisions affecting current work:
 - [Roadmap]: Phase 1 keeps scaffold, port, and evals together because evals verify the port and the port requires the scaffold -- splitting would create unverifiable phases
 - [Phase 01]: Plugin named 'spsk' in manifest for multi-skill expansion
 - [Phase 01]: References moved to skills/design-review/references/ for skill-scoped organization
+- [Phase 01]: ARCHITECTURE.md structured as 10-section portfolio document with ASCII diagram, specialist table, scoring formula, degradation tiers
+- [Phase 01]: CHANGELOG.md uses Keep a Changelog format with separate Journey section for v1-v4 design iteration history
+- [Phase 01]: Layer 2 quality evals intentionally stubbed -- programmatic plugin invocation not possible from bash
+- [Phase 01]: ARCHITECTURE.md/CHANGELOG.md checks are SKIP in validator since created by parallel plan 01-02
 
 ### Pending Todos
 
@@ -79,6 +85,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-29T02:24:37.292Z
-Stopped at: Completed 01-01-PLAN.md
-Resume file: .planning/phases/01-scaffold-port-evals/01-02-PLAN.md
+Last session: 2026-03-29T02:33:55.816Z
+Stopped at: Completed 01-03-PLAN.md
+Resume file: None
