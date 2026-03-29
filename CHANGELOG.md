@@ -4,9 +4,30 @@ All notable changes to the SpSk design-review plugin.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
-## [1.0.0] - 2026-03-28
+## [1.0.0] - 2026-03-29
 
-### What Works
+### Added
+
+- Multi-model code review skill (`/code-review` command) with Claude, Codex, and Gemini consensus
+- Confidence-scored findings with cross-model agreement detection
+- 3-tier model degradation (3 models -> 2 models -> single model)
+- Case studies: [design-review impact](docs/case-studies/design-review-impact.md), [code-review bugs caught](docs/case-studies/code-review-bugs-caught.md)
+- `install.sh` manual installer (clone + symlink)
+- Branded output with signature line, unicode boxes, and progress bars across both skills
+- Init wizard (`/design-init`) with 5 interactive questions for first-time setup
+- Palette engine with 15 design identity palettes (3 per page type)
+
+### Changed
+
+- Plugin manifest now lists all commands: design, design-review, design-improve, design-validate, design-init, code-review
+- README expanded with code-review documentation, case study links, and dual install methods
+- Plugin name `spsk` supports multi-skill expansion beyond design-review
+
+---
+
+## [0.9.0] - 2026-03-28
+
+### What Works (Design Review)
 
 - 8-specialist multi-agent review achieving 8.6/10 consensus score across 3-model validation
 - Weighted scoring with 10 dimensions and SHIP/CONDITIONAL/BLOCK verdict
