@@ -12,7 +12,7 @@ SpSk goes from a proven local plugin to a published GitHub portfolio piece in th
 
 Decimal phases appear between their surrounding integers in numeric order.
 
-- [ ] **Phase 1: Scaffold + Port + Evals** - Working plugin installable from GitHub with reproducible benchmark proof
+- [x] **Phase 1: Scaffold + Port + Evals** - Working plugin installable from GitHub with reproducible benchmark proof (completed 2026-03-29)
 - [ ] **Phase 2: Init Wizard + Branding + Demo** - First-run experience, visual identity, and README that sells the tool
 - [ ] **Phase 3: Second Skill + Release** - Platform proof with multi-model-code-review, case studies, and v1.0.0
 
