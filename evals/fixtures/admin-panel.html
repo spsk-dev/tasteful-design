@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Panel - User Management</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; color: #1a1a2e; background: #f4f5f7; display: flex; min-height: 100vh; }
+    .sidebar { width: 220px; background: #1a1a2e; color: #a0a3b1; padding: 24px 0; flex-shrink: 0; }
+    .sidebar h2 { color: #fff; font-size: 16px; padding: 0 20px 24px; border-bottom: 1px solid #2a2a4a; }
+    .sidebar nav { padding: 12px 0; }
+    .sidebar a { display: block; padding: 10px 20px; color: #a0a3b1; text-decoration: none; font-size: 14px; }
+    .sidebar a:hover, .sidebar a.active { color: #fff; background: rgba(255,255,255,0.08); }
+    .main { flex: 1; padding: 32px; }
+    .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+    .header h1 { font-size: 22px; font-weight: 600; }
+    .btn { padding: 8px 16px; background: #4f46e5; color: #fff; border: none; border-radius: 6px; font-size: 14px; cursor: pointer; }
+    .btn:hover { background: #4338ca; }
+    .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 24px; }
+    .stat-card { background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+    .stat-card .label { font-size: 13px; color: #6b7280; margin-bottom: 4px; }
+    .stat-card .value { font-size: 28px; font-weight: 700; }
+    table { width: 100%; background: #fff; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); border-collapse: collapse; }
+    th, td { text-align: left; padding: 12px 16px; font-size: 14px; }
+    th { background: #f9fafb; color: #6b7280; font-weight: 600; border-bottom: 1px solid #e5e7eb; }
+    td { border-bottom: 1px solid #f3f4f6; }
+    .badge { padding: 2px 8px; border-radius: 10px; font-size: 12px; font-weight: 500; }
+    .badge-active { background: #d1fae5; color: #065f46; }
+    .badge-inactive { background: #fee2e2; color: #991b1b; }
+  </style>
+</head>
+<body>
+  <aside class="sidebar">
+    <h2>AdminApp</h2>
+    <nav>
+      <a href="#" class="active">Users</a>
+      <a href="#">Settings</a>
+      <a href="#">Reports</a>
+      <a href="#">Billing</a>
+    </nav>
+  </aside>
+  <div class="main">
+    <div class="header">
+      <h1>User Management</h1>
+      <button class="btn">Add User</button>
+    </div>
+    <div class="stats">
+      <div class="stat-card">
+        <div class="label">Total Users</div>
+        <div class="value">1,284</div>
+      </div>
+      <div class="stat-card">
+        <div class="label">Active Today</div>
+        <div class="value">342</div>
+      </div>
+      <div class="stat-card">
+        <div class="label">New This Week</div>
+        <div class="value">57</div>
+      </div>
+    </div>
+    <table>
+      <thead>
+        <tr><th>Name</th><th>Email</th><th>Role</th><th>Status</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Alice Chen</td><td>alice@example.com</td><td>Admin</td><td><span class="badge badge-active">Active</span></td></tr>
+        <tr><td>Bob Martinez</td><td>bob@example.com</td><td>Editor</td><td><span class="badge badge-active">Active</span></td></tr>
+        <tr><td>Carol Nguyen</td><td>carol@example.com</td><td>Viewer</td><td><span class="badge badge-inactive">Inactive</span></td></tr>
+        <tr><td>David Park</td><td>david@example.com</td><td>Editor</td><td><span class="badge badge-active">Active</span></td></tr>
+        <tr><td>Eva Singh</td><td>eva@example.com</td><td>Admin</td><td><span class="badge badge-active">Active</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+</body>
+</html>

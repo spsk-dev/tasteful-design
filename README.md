@@ -120,6 +120,36 @@ Evals run on a clean clone. No external dependencies beyond Claude Code.
 - **Playwright** -- for screenshots (`npx playwright install chromium`)
 - **Gemini CLI** (optional) -- for Tier 1 cross-model review. Falls back gracefully if unavailable.
 
+## Benchmarks
+
+The eval harness validates plugin quality with two layers:
+
+**Layer 1 -- Structural Validation** runs anywhere (no Claude Code required). Checks plugin manifest, command frontmatter, config validity, hook setup, reference files, hardcoded paths, and required root files.
+
+**Layer 2 -- Quality Assertions** runs within Claude Code. Range-based checks against bundled HTML test fixtures that account for AI non-determinism. Three fixture scenarios cover admin panels, marketing landing pages, and intentionally problematic designs.
+
+```bash
+# Run the full eval suite
+./evals/run-evals.sh
+```
+
+Example structural validation output:
+
+```
+[PASS] plugin.json is valid JSON
+[PASS] commands/design-review.md has frontmatter
+[PASS] config/scoring.json is valid JSON
+[PASS] No hardcoded user paths
+...
+32/32 checks passed
+```
+
+Quality assertion definitions: [`evals/assertions.json`](evals/assertions.json)
+
+Benchmark results: [`evals/results/`](evals/results/) (populated after quality eval runs)
+
+Structural evals run on any machine with `bash` and `jq`. Quality evals require an active Claude Code session with the plugin installed.
+
 ## License
 
 MIT -- see [LICENSE](LICENSE).

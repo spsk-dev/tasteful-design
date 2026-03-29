@@ -1,0 +1,104 @@
+{
+  "version": "1.0.0",
+  "description": "Range-based assertions for design-review quality evals. Scores are non-deterministic; ranges account for AI variance.",
+  "scale": {
+    "min": 1.0,
+    "max": 4.0
+  },
+  "assertions": [
+    {
+      "fixture": "fixtures/admin-panel.html",
+      "name": "Admin panel gets mid-range overall score",
+      "dimension": "overall",
+      "min": 2.0,
+      "max": 3.2,
+      "notes": "Functional but unpolished admin UI should score in the middle range"
+    },
+    {
+      "fixture": "fixtures/admin-panel.html",
+      "name": "Admin panel layout is decent",
+      "dimension": "layout",
+      "min": 2.5,
+      "max": 3.5,
+      "notes": "Grid layout with sidebar is competent but basic"
+    },
+    {
+      "fixture": "fixtures/admin-panel.html",
+      "name": "Admin panel typography is passable",
+      "dimension": "typography",
+      "min": 2.0,
+      "max": 3.2,
+      "notes": "System fonts with basic hierarchy -- functional, not refined"
+    },
+    {
+      "fixture": "fixtures/landing-page.html",
+      "name": "Landing page scores above admin overall",
+      "dimension": "overall",
+      "min": 2.5,
+      "max": 3.5,
+      "notes": "More polished visual design should produce higher scores than admin"
+    },
+    {
+      "fixture": "fixtures/landing-page.html",
+      "name": "Landing page color is cohesive",
+      "dimension": "color",
+      "min": 2.5,
+      "max": 3.8,
+      "notes": "Gradient hero with consistent neutral palette should score well"
+    },
+    {
+      "fixture": "fixtures/landing-page.html",
+      "name": "Landing page intent match is strong",
+      "dimension": "intent_match",
+      "min": 2.5,
+      "max": 3.8,
+      "notes": "Clear SaaS landing page with CTA, features, testimonials matches pattern well"
+    },
+    {
+      "fixture": "fixtures/emotional-page.html",
+      "name": "Intentionally bad page scores low overall",
+      "dimension": "overall",
+      "min": 1.0,
+      "max": 2.0,
+      "notes": "Clashing fonts, colors, and no hierarchy should produce low scores"
+    },
+    {
+      "fixture": "fixtures/emotional-page.html",
+      "name": "Bad page typography scores very low",
+      "dimension": "typography",
+      "min": 1.0,
+      "max": 1.5,
+      "notes": "Comic Sans + Papyrus + Impact is a typography disaster"
+    },
+    {
+      "fixture": "fixtures/emotional-page.html",
+      "name": "Bad page color scores very low",
+      "dimension": "color",
+      "min": 1.0,
+      "max": 1.5,
+      "notes": "Neon clashing colors with no cohesion"
+    },
+    {
+      "fixture": "fixtures/emotional-page.html",
+      "name": "Bad page accessibility is poor",
+      "dimension": "code_a11y",
+      "min": 1.0,
+      "max": 2.0,
+      "notes": "Missing alt text, poor contrast, tiny disclaimer text"
+    },
+    {
+      "fixture": "fixtures/admin-panel.html",
+      "name": "Admin panel verdict is not SHIP",
+      "dimension": "verdict",
+      "expected": "BLOCK",
+      "notes": "Unpolished admin UI should not get SHIP verdict"
+    },
+    {
+      "fixture": "fixtures/emotional-page.html",
+      "name": "Bad page always gets BLOCK",
+      "dimension": "verdict",
+      "expected": "BLOCK",
+      "notes": "Intentionally bad design must always be blocked"
+    }
+  ]
+}
