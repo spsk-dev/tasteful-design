@@ -1,8 +1,9 @@
 {
   "name": "spsk",
   "version": "1.0.0",
-  "description": "AI-powered design review with 8 specialist agents, weighted scoring, and multi-tier degradation",
+  "description": "AI-powered design review and multi-model code review -- 8 specialist agents for design, 3-model consensus for code",
   "author": "Felipe Machado",
   "homepage": "https://github.com/felipemachado/spsk",
-  "license": "MIT"
+  "license": "MIT",
+  "commands": ["design", "design-review", "design-improve", "design-validate", "design-init", "code-review"]
 }
