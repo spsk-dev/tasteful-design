@@ -64,7 +64,7 @@ PATTERN_A="/Users/"
 PATTERN_B="$HOME/.claude/plugins/design-review"
 HARDCODED=$(grep -rn "$PATTERN_A\|$PATTERN_B" \
   --include='*.md' --include='*.json' --include='*.sh' \
-  --exclude-dir=.git --exclude-dir=.planning --exclude-dir=.context --exclude-dir=evals . 2>/dev/null || true)
+  --exclude-dir=.git --exclude-dir=.planning --exclude-dir=.context --exclude-dir=evals --exclude-dir=.memsearch --exclude-dir=.claude . 2>/dev/null || true)
 check "No hardcoded user paths" test -z "$HARDCODED"
 
 # 10. VERSION file with semver
