@@ -39,47 +39,47 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Init Wizard
 
-- [ ] **INIT-01**: `/design init` command — 5 interactive questions with opinionated defaults
-- [ ] **INIT-02**: Question 1: Page type (landing, dashboard, admin, etc.)
-- [ ] **INIT-03**: Question 2: Vibe preset selection from built-in options
-- [ ] **INIT-04**: Question 3: Light/dark/both preference
-- [ ] **INIT-05**: Question 4: Brand colors (or skip for palette suggestions)
-- [ ] **INIT-06**: Question 5: Font preference (or skip for vibe-based suggestion)
-- [ ] **INIT-07**: Creates `.design/` directory with configured tokens
-- [ ] **INIT-08**: Under 2 minutes from command to first value
+- [x] **INIT-01**: `/design init` command — 5 interactive questions with opinionated defaults
+- [x] **INIT-02**: Question 1: Page type (landing, dashboard, admin, etc.)
+- [x] **INIT-03**: Question 2: Vibe preset selection from built-in options
+- [x] **INIT-04**: Question 3: Light/dark/both preference
+- [x] **INIT-05**: Question 4: Brand colors (or skip for palette suggestions)
+- [x] **INIT-06**: Question 5: Font preference (or skip for vibe-based suggestion)
+- [x] **INIT-07**: Creates `.design/` directory with configured tokens
+- [x] **INIT-08**: Under 2 minutes from command to first value
 
 ### Palette Engine
 
-- [ ] **PALT-01**: Suggest 3 color palettes when user skips brand colors
-- [ ] **PALT-02**: Palettes have Design Identity names ("Midnight Corporate", "Warm Craft", etc.)
-- [ ] **PALT-03**: Palettes are contextual — different suggestions for dashboard vs landing page
+- [x] **PALT-01**: Suggest 3 color palettes when user skips brand colors
+- [x] **PALT-02**: Palettes have Design Identity names ("Midnight Corporate", "Warm Craft", etc.)
+- [x] **PALT-03**: Palettes are contextual — different suggestions for dashboard vs landing page
 
 ### Branded Output
 
-- [ ] **BRND-01**: Signature line format: ` SpSk  design-review  v1.2.0  ---  8 specialists  ·  tier 1`
-- [ ] **BRND-02**: Unicode boxes for checkpoints and results
-- [ ] **BRND-03**: Symbol vocabulary: checkmark, cross, diamond, circle, lightning, warning
-- [ ] **BRND-04**: Progress bars for scores (block characters)
-- [ ] **BRND-05**: Footer with repo link on every review output
-- [ ] **BRND-06**: Consistent formatting across all SpSk commands
+- [x] **BRND-01**: Signature line format: ` SpSk  design-review  v1.2.0  ---  8 specialists  ·  tier 1`
+- [x] **BRND-02**: Unicode boxes for checkpoints and results
+- [x] **BRND-03**: Symbol vocabulary: checkmark, cross, diamond, circle, lightning, warning
+- [x] **BRND-04**: Progress bars for scores (block characters)
+- [x] **BRND-05**: Footer with repo link on every review output
+- [x] **BRND-06**: Consistent formatting across all SpSk commands
 
 ### Demo
 
-- [ ] **DEMO-01**: 30-second demo GIF showing design-review in action
-- [ ] **DEMO-02**: GIF embedded in README.md replacing placeholder
+- [x] **DEMO-01**: 30-second demo GIF showing design-review in action
+- [x] **DEMO-02**: GIF embedded in README.md replacing placeholder
 
 ### Second Skill
 
-- [ ] **CREV-01**: multi-model-code-review skill — PR review via Claude + Codex + Gemini in parallel with confidence-scored findings
-- [ ] **CREV-02**: Shared branded output patterns between design-review and code-review
-- [ ] **CREV-03**: Independent eval harness for multi-model-code-review
+- [x] **CREV-01**: multi-model-code-review skill — PR review via Claude + Codex + Gemini in parallel with confidence-scored findings
+- [x] **CREV-02**: Shared branded output patterns between design-review and code-review
+- [x] **CREV-03**: Independent eval harness for multi-model-code-review
 
 ### Release
 
-- [ ] **REL-01**: Case studies with measurable before/after impact
-- [ ] **REL-02**: v1.0.0 tag with proper semver
-- [ ] **REL-03**: Install via `claude /install-plugin design-review@felipemachado/spsk`
-- [ ] **REL-04**: install.sh for manual installation
+- [x] **REL-01**: Case studies with measurable before/after impact
+- [x] **REL-02**: v1.0.0 tag with proper semver
+- [x] **REL-03**: Install via `claude /install-plugin spsk@felipemachado/spsk`
+- [x] **REL-04**: install.sh for manual installation
 
 ## v2 Requirements
 
@@ -145,32 +145,32 @@ Which phases cover which requirements. Updated during roadmap creation.
 | EVAL-03 | Phase 1 | Complete |
 | EVAL-04 | Phase 1 | Complete |
 | EVAL-05 | Phase 1 | Complete |
-| INIT-01 | Phase 2 | Pending |
-| INIT-02 | Phase 2 | Pending |
-| INIT-03 | Phase 2 | Pending |
-| INIT-04 | Phase 2 | Pending |
-| INIT-05 | Phase 2 | Pending |
-| INIT-06 | Phase 2 | Pending |
-| INIT-07 | Phase 2 | Pending |
-| INIT-08 | Phase 2 | Pending |
-| PALT-01 | Phase 2 | Pending |
-| PALT-02 | Phase 2 | Pending |
-| PALT-03 | Phase 2 | Pending |
-| BRND-01 | Phase 2 | Pending |
-| BRND-02 | Phase 2 | Pending |
-| BRND-03 | Phase 2 | Pending |
-| BRND-04 | Phase 2 | Pending |
-| BRND-05 | Phase 2 | Pending |
-| BRND-06 | Phase 2 | Pending |
-| DEMO-01 | Phase 2 | Pending |
-| DEMO-02 | Phase 2 | Pending |
-| CREV-01 | Phase 3 | Pending |
-| CREV-02 | Phase 3 | Pending |
-| CREV-03 | Phase 3 | Pending |
-| REL-01 | Phase 3 | Pending |
-| REL-02 | Phase 3 | Pending |
-| REL-03 | Phase 3 | Pending |
-| REL-04 | Phase 3 | Pending |
+| INIT-01 | Phase 2 | Complete |
+| INIT-02 | Phase 2 | Complete |
+| INIT-03 | Phase 2 | Complete |
+| INIT-04 | Phase 2 | Complete |
+| INIT-05 | Phase 2 | Complete |
+| INIT-06 | Phase 2 | Complete |
+| INIT-07 | Phase 2 | Complete |
+| INIT-08 | Phase 2 | Complete |
+| PALT-01 | Phase 2 | Complete |
+| PALT-02 | Phase 2 | Complete |
+| PALT-03 | Phase 2 | Complete |
+| BRND-01 | Phase 2 | Complete |
+| BRND-02 | Phase 2 | Complete |
+| BRND-03 | Phase 2 | Complete |
+| BRND-04 | Phase 2 | Complete |
+| BRND-05 | Phase 2 | Complete |
+| BRND-06 | Phase 2 | Complete |
+| DEMO-01 | Phase 2 | Complete |
+| DEMO-02 | Phase 2 | Complete |
+| CREV-01 | Phase 3 | Complete |
+| CREV-02 | Phase 3 | Complete |
+| CREV-03 | Phase 3 | Complete |
+| REL-01 | Phase 3 | Complete |
+| REL-02 | Phase 3 | Complete |
+| REL-03 | Phase 3 | Complete |
+| REL-04 | Phase 3 | Complete |
 
 **Coverage:**
 - v1 requirements: 46 total
