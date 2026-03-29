@@ -14,7 +14,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 
 - [ ] **Phase 1: Scaffold + Port + Evals** - Working plugin installable from GitHub with reproducible benchmark proof
 - [ ] **Phase 2: Init Wizard + Branding + Demo** - First-run experience, visual identity, and README that sells the tool
-- [ ] **Phase 3: Second Skill + Release** - Platform proof with consensus-validation, case studies, and v1.0.0
+- [ ] **Phase 3: Second Skill + Release** - Platform proof with multi-model-code-review, case studies, and v1.0.0
 
 ## Phase Details
 
@@ -55,12 +55,12 @@ Plans:
 ### Phase 3: Second Skill + Release
 **Goal**: SpSk ships as a two-skill platform with measurable impact evidence, installable from the plugin registry and ready for public use
 **Depends on**: Phase 2
-**Requirements**: CONS-01, CONS-02, CONS-03, REL-01, REL-02, REL-03, REL-04
+**Requirements**: CREV-01, CREV-02, CREV-03, REL-01, REL-02, REL-03, REL-04
 **Success Criteria** (what must be TRUE):
-  1. A user can run the consensus-validation skill to validate decisions across Claude + Codex + Gemini, and it shares branded output patterns with design-review
-  2. Case studies show measurable before/after impact (e.g., review score improvements, time savings) from real project usage
+  1. A user can run `/code-review` to review a PR with Claude + Codex + Gemini in parallel, producing confidence-scored findings with shared branded output
+  2. Case studies show measurable before/after impact (e.g., review score improvements, bugs caught, time savings) from real project usage
   3. The repo has a v1.0.0 tag, and the plugin installs via both `claude /install-plugin` and the manual `install.sh` script
-  4. The consensus-validation skill has its own independent eval harness with passing results
+  4. The multi-model-code-review skill has its own independent eval harness with passing results
 **Plans**: TBD
 
 Plans:

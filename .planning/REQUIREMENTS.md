@@ -13,8 +13,8 @@ Requirements for initial release. Each maps to roadmap phases.
 - [x] **SCAF-02**: README.md with install command, demo GIF placeholder, architecture overview, usage guide
 - [x] **SCAF-03**: CLAUDE.md with command documentation and usage instructions
 - [x] **SCAF-04**: LICENSE (MIT)
-- [ ] **SCAF-05**: CHANGELOG.md with transparent failure history (v1 single-agent 40%, v4 multi-agent 100%)
-- [ ] **SCAF-06**: ARCHITECTURE.md documenting multi-agent design, specialist roles, boss synthesizer, scoring, degradation tiers
+- [x] **SCAF-05**: CHANGELOG.md with transparent failure history (v1 single-agent 40%, v4 multi-agent 100%)
+- [x] **SCAF-06**: ARCHITECTURE.md documenting multi-agent design, specialist roles, boss synthesizer, scoring, degradation tiers
 
 ### Design-Review Port
 
@@ -31,11 +31,11 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Evaluation Harness
 
-- [ ] **EVAL-01**: run-evals.sh script that executes all eval assertions reproducibly
-- [ ] **EVAL-02**: Eval fixtures — test HTML pages or references bundled in repo
-- [ ] **EVAL-03**: Range-based assertions (not exact scores) for AI eval non-determinism
-- [ ] **EVAL-04**: Eval results documented with benchmark numbers in README
-- [ ] **EVAL-05**: Clean-machine install test passes (fresh Claude Code session)
+- [x] **EVAL-01**: run-evals.sh script that executes all eval assertions reproducibly
+- [x] **EVAL-02**: Eval fixtures — test HTML pages or references bundled in repo
+- [x] **EVAL-03**: Range-based assertions (not exact scores) for AI eval non-determinism
+- [x] **EVAL-04**: Eval results documented with benchmark numbers in README
+- [x] **EVAL-05**: Clean-machine install test passes (fresh Claude Code session)
 
 ### Init Wizard
 
@@ -70,9 +70,9 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Second Skill
 
-- [ ] **CONS-01**: consensus-validation skill — multi-model validation via Claude + Codex + Gemini
-- [ ] **CONS-02**: Shared branded output patterns between design-review and consensus-validation
-- [ ] **CONS-03**: Independent eval harness for consensus-validation
+- [ ] **CREV-01**: multi-model-code-review skill — PR review via Claude + Codex + Gemini in parallel with confidence-scored findings
+- [ ] **CREV-02**: Shared branded output patterns between design-review and code-review
+- [ ] **CREV-03**: Independent eval harness for multi-model-code-review
 
 ### Release
 
@@ -90,6 +90,12 @@ Deferred to future release. Tracked but not in current roadmap.
 - **PLAT-01**: Shared utility extraction — patterns that emerged from 2+ skills formalized
 - **PLAT-02**: Contribution guide for third-party skill authors
 - **PLAT-03**: Plugin marketplace directory submission
+
+### Consensus Validation (deferred from v1)
+
+- **CONS-01**: consensus-validation skill — multi-model validation via Claude + Codex + Gemini
+- **CONS-02**: Shared branded output patterns with existing skills
+- **CONS-03**: Independent eval harness for consensus-validation
 
 ### Advanced Features
 
@@ -122,8 +128,8 @@ Which phases cover which requirements. Updated during roadmap creation.
 | SCAF-02 | Phase 1 | Complete |
 | SCAF-03 | Phase 1 | Complete |
 | SCAF-04 | Phase 1 | Complete |
-| SCAF-05 | Phase 1 | Pending |
-| SCAF-06 | Phase 1 | Pending |
+| SCAF-05 | Phase 1 | Complete |
+| SCAF-06 | Phase 1 | Complete |
 | PORT-01 | Phase 1 | Complete |
 | PORT-02 | Phase 1 | Complete |
 | PORT-03 | Phase 1 | Complete |
@@ -134,11 +140,11 @@ Which phases cover which requirements. Updated during roadmap creation.
 | PORT-08 | Phase 1 | Complete |
 | PORT-09 | Phase 1 | Complete |
 | PORT-10 | Phase 1 | Complete |
-| EVAL-01 | Phase 1 | Pending |
-| EVAL-02 | Phase 1 | Pending |
-| EVAL-03 | Phase 1 | Pending |
-| EVAL-04 | Phase 1 | Pending |
-| EVAL-05 | Phase 1 | Pending |
+| EVAL-01 | Phase 1 | Complete |
+| EVAL-02 | Phase 1 | Complete |
+| EVAL-03 | Phase 1 | Complete |
+| EVAL-04 | Phase 1 | Complete |
+| EVAL-05 | Phase 1 | Complete |
 | INIT-01 | Phase 2 | Pending |
 | INIT-02 | Phase 2 | Pending |
 | INIT-03 | Phase 2 | Pending |
@@ -158,9 +164,9 @@ Which phases cover which requirements. Updated during roadmap creation.
 | BRND-06 | Phase 2 | Pending |
 | DEMO-01 | Phase 2 | Pending |
 | DEMO-02 | Phase 2 | Pending |
-| CONS-01 | Phase 3 | Pending |
-| CONS-02 | Phase 3 | Pending |
-| CONS-03 | Phase 3 | Pending |
+| CREV-01 | Phase 3 | Pending |
+| CREV-02 | Phase 3 | Pending |
+| CREV-03 | Phase 3 | Pending |
 | REL-01 | Phase 3 | Pending |
 | REL-02 | Phase 3 | Pending |
 | REL-03 | Phase 3 | Pending |
@@ -173,4 +179,4 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 ---
 *Requirements defined: 2026-03-28*
-*Last updated: 2026-03-28 after initial definition*
+*Last updated: 2026-03-29 after swapping consensus-validation for multi-model-code-review*

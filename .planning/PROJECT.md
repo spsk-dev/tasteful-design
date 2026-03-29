@@ -23,7 +23,7 @@ The published skills must be immediately useful to other developers AND demonstr
 - [ ] Palette engine: suggest color palettes based on user preferences/vibe
 - [ ] Branded output: clean signature line, unicode boxes, progress bars, symbol vocabulary
 - [ ] Demo GIF (30-second) showing design-review in action for README
-- [ ] Second skill (consensus-validation) to prove platform capability
+- [ ] Second skill (multi-model-code-review) to prove platform capability
 - [ ] Case studies with measurable before/after impact
 - [ ] v1.0.0 release with install instructions for Claude Code plugin registry
 
@@ -55,10 +55,11 @@ The published skills must be immediately useful to other developers AND demonstr
 | Decision | Rationale | Outcome |
 |----------|-----------|---------|
 | GSD to build, standalone after shipping | Structured approach for 3 phases, then maintain independently | -- Pending |
-| Design-review as flagship, consensus-validation as 2nd | One plugin = one-off, two = platform. Design-review is proven (8.6/10) | -- Pending |
+| Design-review as flagship, multi-model-code-review as 2nd | One plugin = one-off, two = platform. Code review has 100x audience reach vs consensus-validation | -- Pending |
 | Evals as first-class citizen | "Evals are the crown jewel" — reproducible benchmarks prove quality claims | -- Pending |
 | Show failures transparently | v1 single-agent scored 40%, multi-agent scored 8.6/10 — the delta IS the story | -- Pending |
 | 3-phase build plan | Phase 1: scaffold+port, Phase 2: wizard+branding, Phase 3: 2nd skill+release | -- Pending |
+| Swap consensus-validation for multi-model-code-review | Code review has wider audience, easier to demo, complementary domain (code quality vs visual quality). consensus-validation deferred to v1.1 | -- Pending |
 
 ## Evolution
 
@@ -78,4 +79,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-03-29 after Phase 1 completion*
+*Last updated: 2026-03-29 after swapping 2nd skill to multi-model-code-review*
