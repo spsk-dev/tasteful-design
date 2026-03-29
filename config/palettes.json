@@ -1,0 +1,148 @@
+{
+  "_description": "Palette engine lookup table -- 3 named palettes per page type. Used by init wizard when user skips brand colors (Q4). Each palette has a Design Identity name and 6 hex colors.",
+  "landing": [
+    {
+      "name": "Neon Launchpad",
+      "primary": "#6C3CE9",
+      "secondary": "#1A1A2E",
+      "accent": "#00D4AA",
+      "background": "#0D0D1A",
+      "foreground": "#F0F0F5",
+      "muted": "#4A4A6A"
+    },
+    {
+      "name": "Warm Catalyst",
+      "primary": "#E85D3A",
+      "secondary": "#2D1B14",
+      "accent": "#F5A623",
+      "background": "#FDF8F5",
+      "foreground": "#1A0F0A",
+      "muted": "#8C7B73"
+    },
+    {
+      "name": "Arctic Edge",
+      "primary": "#0066FF",
+      "secondary": "#E8F0FE",
+      "accent": "#00C2FF",
+      "background": "#FAFBFF",
+      "foreground": "#0A1628",
+      "muted": "#6B7C93"
+    }
+  ],
+  "dashboard": [
+    {
+      "name": "Midnight Operations",
+      "primary": "#3B82F6",
+      "secondary": "#1E293B",
+      "accent": "#10B981",
+      "background": "#0F172A",
+      "foreground": "#E2E8F0",
+      "muted": "#475569"
+    },
+    {
+      "name": "Slate Control",
+      "primary": "#6366F1",
+      "secondary": "#F1F5F9",
+      "accent": "#F59E0B",
+      "background": "#FFFFFF",
+      "foreground": "#0F172A",
+      "muted": "#94A3B8"
+    },
+    {
+      "name": "Carbon Grid",
+      "primary": "#22D3EE",
+      "secondary": "#18181B",
+      "accent": "#A78BFA",
+      "background": "#09090B",
+      "foreground": "#FAFAFA",
+      "muted": "#52525B"
+    }
+  ],
+  "admin": [
+    {
+      "name": "Clean Utility",
+      "primary": "#2563EB",
+      "secondary": "#F8FAFC",
+      "accent": "#DC2626",
+      "background": "#FFFFFF",
+      "foreground": "#111827",
+      "muted": "#9CA3AF"
+    },
+    {
+      "name": "Granite System",
+      "primary": "#4F46E5",
+      "secondary": "#1F2937",
+      "accent": "#F97316",
+      "background": "#111827",
+      "foreground": "#F3F4F6",
+      "muted": "#6B7280"
+    },
+    {
+      "name": "Paper Stack",
+      "primary": "#0891B2",
+      "secondary": "#ECFDF5",
+      "accent": "#059669",
+      "background": "#F9FAFB",
+      "foreground": "#1F2937",
+      "muted": "#9CA3AF"
+    }
+  ],
+  "docs": [
+    {
+      "name": "Ink & Parchment",
+      "primary": "#1D4ED8",
+      "secondary": "#FFFBEB",
+      "accent": "#B45309",
+      "background": "#FFFDF7",
+      "foreground": "#1C1917",
+      "muted": "#78716C"
+    },
+    {
+      "name": "Quiet Mono",
+      "primary": "#18181B",
+      "secondary": "#FAFAFA",
+      "accent": "#3B82F6",
+      "background": "#FFFFFF",
+      "foreground": "#18181B",
+      "muted": "#A1A1AA"
+    },
+    {
+      "name": "Deep Library",
+      "primary": "#A78BFA",
+      "secondary": "#1E1B2E",
+      "accent": "#34D399",
+      "background": "#13111C",
+      "foreground": "#E8E5F0",
+      "muted": "#6B6880"
+    }
+  ],
+  "portfolio": [
+    {
+      "name": "Gallery Noir",
+      "primary": "#FAFAFA",
+      "secondary": "#171717",
+      "accent": "#EAB308",
+      "background": "#0A0A0A",
+      "foreground": "#FAFAFA",
+      "muted": "#525252"
+    },
+    {
+      "name": "Terracotta Studio",
+      "primary": "#C2410C",
+      "secondary": "#FEF2E8",
+      "accent": "#1D4ED8",
+      "background": "#FAF5F0",
+      "foreground": "#1C1917",
+      "muted": "#A8A29E"
+    },
+    {
+      "name": "Pacific Minimal",
+      "primary": "#0D9488",
+      "secondary": "#F0FDFA",
+      "accent": "#E11D48",
+      "background": "#FFFFFF",
+      "foreground": "#0F172A",
+      "muted": "#94A3B8"
+    }
+  ]
+}
