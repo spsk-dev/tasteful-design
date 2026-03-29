@@ -61,11 +61,12 @@ Plans:
   2. Case studies show measurable before/after impact (e.g., review score improvements, bugs caught, time savings) from real project usage
   3. The repo has a v1.0.0 tag, and the plugin installs via both `claude /install-plugin` and the manual `install.sh` script
   4. The multi-model-code-review skill has its own independent eval harness with passing results
-**Plans**: TBD
+**Plans:** 3 plans
 
 Plans:
-- [ ] 03-01: TBD
-- [ ] 03-02: TBD
+- [ ] 03-01-PLAN.md -- Port multi-model-code-review skill, create command and skill files, update plugin manifest
+- [ ] 03-02-PLAN.md -- Independent eval harness for code-review with structural checks, assertions, and sample diff fixture
+- [ ] 03-03-PLAN.md -- Case studies with measurable impact, install.sh, README/CHANGELOG/VERSION for v1.0.0 release
 
 ## Progress
 
@@ -76,4 +77,4 @@ Phases execute in numeric order: 1 -> 2 -> 3
 |-------|----------------|--------|-----------|
 | 1. Scaffold + Port + Evals | 3/3 | Complete | 2026-03-29 |
 | 2. Init Wizard + Branding + Demo | 0/3 | Not started | - |
-| 3. Second Skill + Release | 0/2 | Not started | - |
+| 3. Second Skill + Release | 0/3 | Not started | - |
