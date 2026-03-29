@@ -12,12 +12,15 @@ allowed-tools: Bash(gemini *), Bash(which *), Bash(npx *), Bash(python3 *), Bash
 
 Single entry point for the design plugin. Routes to sub-commands or runs full pipelines.
 
+@${CLAUDE_PLUGIN_ROOT}/shared/output.md
+
 ## Routing
 
 Parse `$ARGUMENTS` and route:
 
 | Command | Routes To | What It Does |
 |---------|-----------|-------------|
+| `/design init` | `/design-init` | Interactive setup wizard |
 | `/design review` | `/design-review` | Visual review (8 specialists) |
 | `/design review --quick` | `/design-review --quick` | Quick visual review (4 specialists) |
 | `/design validate` | `/design-validate` | Functional validation (click, test, verify) |
