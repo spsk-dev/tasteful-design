@@ -91,6 +91,40 @@ fi
 # 12. Hook script executable
 check "scripts/suggest-review.sh is executable" test -x scripts/suggest-review.sh
 
+# Phase 2: Init wizard + branding + demo
+
+# design-init.md
+check "commands/design-init.md exists" test -f "commands/design-init.md"
+check "commands/design-init.md has frontmatter" bash -c "head -1 'commands/design-init.md' | grep -q '^---'"
+check "commands/design-init.md has description field" grep -q '^description:' "commands/design-init.md"
+
+# shared/output.md
+check "shared/output.md exists" test -f "shared/output.md"
+check "shared/output.md contains signature line" grep -q "SpSk" "shared/output.md"
+check "shared/output.md contains footer" grep -q "github.com/felipemachado/spsk" "shared/output.md"
+
+# config/palettes.json
+check "config/palettes.json is valid JSON" jq empty "config/palettes.json"
+check "config/palettes.json has all 5 page types" jq -e '.landing and .dashboard and .admin and .docs and .portfolio' "config/palettes.json"
+check "Each page type has 3 palettes" jq -e '[.landing, .dashboard, .admin, .docs, .portfolio | length == 3] | all' "config/palettes.json"
+
+# Branding reference in all commands
+check "design-review.md references shared/output.md" grep -q "shared/output.md" "commands/design-review.md"
+check "design-improve.md references shared/output.md" grep -q "shared/output.md" "commands/design-improve.md"
+check "design-validate.md references shared/output.md" grep -q "shared/output.md" "commands/design-validate.md"
+check "design.md references shared/output.md" grep -q "shared/output.md" "commands/design.md"
+
+# Demo GIF
+if [ -f assets/demo.gif ]; then
+  check "assets/demo.gif under 5MB" bash -c '[ $(stat -f%z assets/demo.gif) -lt 5242880 ]'
+else
+  echo "[SKIP] assets/demo.gif (created by demo recording)"
+fi
+check "README.md embeds demo GIF" grep -q "demo.gif" "README.md"
+
+# Router includes init
+check "design.md routes to design-init" grep -q "design-init" "commands/design.md"
+
 echo ""
 TOTAL=$((PASS + FAIL))
 echo "$PASS/$TOTAL checks passed"
