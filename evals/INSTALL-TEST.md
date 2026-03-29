@@ -16,7 +16,7 @@ Manual test protocol to verify SpSk installs and works from a fresh environment.
 Open a fresh Claude Code session and run:
 
 ```bash
-claude /install-plugin spsk@felipemachado/spsk
+claude /install-plugin tasteful-design@spsk-dev/tasteful-design
 ```
 
 **Expected:** Plugin installs without errors. Claude Code confirms successful installation.
@@ -71,7 +71,7 @@ Edit any `.html`, `.css`, `.tsx`, or `.jsx` file in your project. After the edit
 
 | Symptom | Likely Cause | Fix |
 |---------|-------------|-----|
-| "Plugin not found" on install | Repo not published / wrong path | Verify `felipemachado/spsk` exists on GitHub |
+| "Plugin not found" on install | Repo not published / wrong path | Verify `spsk-dev/tasteful-design` exists on GitHub |
 | `/design-review` not recognized | Plugin didn't register commands | Re-install, check `.claude-plugin/plugin.json` |
 | "jq: command not found" | Missing dependency | `brew install jq` (macOS) or `apt install jq` (Linux) |
 | Playwright errors | Chromium not installed | `npx playwright install chromium` |

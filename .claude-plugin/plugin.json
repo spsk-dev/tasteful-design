@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "AI-powered design review and multi-model code review -- 8 specialist agents for design, 3-model consensus for code",
   "author": "Felipe Machado",
-  "homepage": "https://github.com/felipemachado/spsk",
+  "homepage": "https://github.com/spsk-dev/tasteful-design",
   "license": "MIT",
   "commands": ["design", "design-review", "design-improve", "design-validate", "design-init", "code-review"]
 }

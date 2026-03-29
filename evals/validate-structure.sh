@@ -101,7 +101,7 @@ check "commands/design-init.md has description field" grep -q '^description:' "c
 # shared/output.md
 check "shared/output.md exists" test -f "shared/output.md"
 check "shared/output.md contains signature line" grep -q "SpSk" "shared/output.md"
-check "shared/output.md contains footer" grep -q "github.com/felipemachado/spsk" "shared/output.md"
+check "shared/output.md contains footer" grep -q "github.com/spsk-dev/tasteful-design" "shared/output.md"
 
 # config/palettes.json
 check "config/palettes.json is valid JSON" jq empty "config/palettes.json"

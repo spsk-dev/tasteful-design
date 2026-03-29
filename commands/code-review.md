@@ -26,7 +26,7 @@ Use the branded output format from shared/output.md for all review output. Start
 **Comment footer** (replaces plain "Generated with" line):
 ```
  SpSk  code-review  v{version}  ·  tier {tier}
-github.com/felipemachado/spsk
+github.com/spsk-dev/tasteful-design
 ```
 
 ---
@@ -156,7 +156,7 @@ Found {N} issues:
 {link to file and line with full sha1 + line range}
 
 ---
-github.com/felipemachado/spsk
+github.com/spsk-dev/tasteful-design
 
 <sub>- If this code review was useful, please react with a thumbs up. Otherwise, react with a thumbs down.</sub>
 ```
@@ -171,7 +171,7 @@ github.com/felipemachado/spsk
 No issues found. Checked for bugs and CLAUDE.md compliance.
 
 ---
-github.com/felipemachado/spsk
+github.com/spsk-dev/tasteful-design
 ```
 
 When linking to code, follow this format precisely, otherwise the Markdown preview won't render correctly: `https://github.com/owner/repo/blob/<full-sha>/path/file.ext#L10-L15`

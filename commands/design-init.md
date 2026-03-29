@@ -238,5 +238,5 @@ Show:
 
   Next: Run /design review to get your first design review.
 
-                                        github.com/felipemachado/spsk
+                                        github.com/spsk-dev/tasteful-design
 ```

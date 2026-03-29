@@ -16,13 +16,13 @@ Built because AI models are terrible self-critics. They "reliably skew positive"
 **Plugin registry (recommended):**
 
 ```bash
-claude /install-plugin spsk@felipemachado/spsk
+claude /install-plugin tasteful-design@spsk-dev/tasteful-design
 ```
 
 **Manual (clone + symlink):**
 
 ```bash
-git clone https://github.com/felipemachado/spsk.git
+git clone https://github.com/spsk-dev/tasteful-design.git
 cd spsk && bash install.sh
 ```
 

@@ -3,7 +3,7 @@ set -euo pipefail
 
 # SpSk installer -- clones the repo and symlinks into Claude Code plugins directory
 
-REPO_URL="https://github.com/felipemachado/spsk.git"
+REPO_URL="https://github.com/spsk-dev/tasteful-design.git"
 PLUGIN_DIR="${HOME}/.claude/plugins"
 PLUGIN_NAME="spsk"
 

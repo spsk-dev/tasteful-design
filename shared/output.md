@@ -128,7 +128,7 @@ Verdict values: `SHIP`, `CONDITIONAL`, `BLOCK`
 Every SpSk command output ends with this footer line. Always the last line, separated by a blank line from content above:
 
 ```
-github.com/felipemachado/spsk
+github.com/spsk-dev/tasteful-design
 ```
 
 ---
@@ -156,5 +156,5 @@ Minimal example:
 │  ████████░░ 8.0/10  ·  SHIP                                 │
 └──────────────────────────────────────────────────────────────┘
 
-github.com/felipemachado/spsk
+github.com/spsk-dev/tasteful-design
 ```
