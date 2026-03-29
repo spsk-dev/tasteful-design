@@ -1,251 +1,405 @@
-# Architecture Patterns
+# Architecture Patterns: Flow Audit Integration
 
-**Domain:** Multi-agent Claude Code plugin for design quality review
+**Domain:** SPA flow-level design audit integrated into existing 8-specialist review system
 **Researched:** 2026-03-28
+**Updated:** 2026-03-28 (v1.1.0 milestone research)
 
 ## Recommended Architecture
 
-SpSk uses a **multi-agent specialist pattern with boss synthesizer** -- the same pattern used by Anthropic's own code-review plugin but applied to visual design assessment.
+The flow audit (`/design-audit`) extends the existing `/design-review` architecture by adding a **flow navigator** layer upstream of the specialist dispatch. Instead of reviewing a single page's screenshots, the flow navigator walks through an SPA screen-by-screen, captures per-screen state, and feeds each screen through the existing 8-specialist pipeline. A **report generator** downstream collects all per-screen results into a single HTML diagnostic report.
+
+The key architectural principle: **reuse the specialist system entirely, add orchestration around it.** The specialists do not change. What changes is how screens are discovered, captured, and how results are aggregated.
 
 ### High-Level Flow
 
 ```
-User invokes /design-review
+User invokes /design-audit <url> --flow "sign up for a trial"
        |
        v
-  Phase 0: Screenshots (mandatory)
+  Phase 0: Flow Planning
+       |    Agent analyzes URL + flow description
+       |    Produces ordered list of screens to visit
        |
        v
-  Phase 1: Haiku classifies page type -> sets creativity bar
+  Phase 1: Flow Navigation (NEW)
+       |    playwright-cli navigates screen-by-screen
+       |    Captures screenshots + snapshots at each screen
+       |    Detects transitions/animations between screens
        |
        v
-  Phase 2: 8 specialists run IN PARALLEL
-       |    (each reads screenshots + relevant source + domain references)
+  Phase 2: Per-Screen Review (REUSED)
+       |    For each screen:
+       |      Phase 1 (Page Brief) -> Phase 2 (8 specialists) -> Phase 3 (Boss)
+       |    Uses existing /design-review pipeline per screen
+       |    Adds cross-screen consistency checks
        |
        v
-  Phase 3: Boss synthesizes with weighted scoring
-       |    (resolves disagreements, applies thresholds, renders verdict)
+  Phase 3: Flow Synthesis (NEW)
+       |    Aggregates per-screen scores
+       |    Identifies cross-screen issues (inconsistent nav, broken flow)
+       |    Computes flow-level score
        |
        v
-  SHIP / CONDITIONAL SHIP / BLOCK
+  Phase 4: HTML Report Generation (NEW)
+       |    Embeds screenshots per screen
+       |    Per-screen specialist breakdowns
+       |    Flow-level summary with score progression
+       |    Fix recommendations prioritized by impact
        |
        v
-  Phase 4 (if BLOCK): Targeted re-review of failing dimensions only
+  HTML file written to disk + terminal summary
 ```
 
 ### Component Boundaries
 
-| Component | Responsibility | Communicates With |
-|-----------|---------------|-------------------|
-| `/design` command | Orchestrator/router. Parses args, dispatches to sub-commands. | All sub-commands |
-| `/design-review` command | Core review. Manages phases 0-4. Spawns specialists. | Specialists (parallel), scoring.json, anti-slop.json |
-| `/design-improve` command | Iterative loop. Build -> review -> fix -> re-review. | /design-review (for scoring each iteration) |
-| `/design-validate` command | Functional testing. Clicks, forms, links. | Playwright MCP |
-| `skills/design-review/SKILL.md` | Background knowledge. Loaded contextually when design review is relevant. | References/* (loaded on demand) |
-| `config/scoring.json` | Dimension weights and per-type thresholds. | Boss synthesizer reads this |
-| `config/anti-slop.json` | Banned AI patterns (fonts, colors, layouts). | All visual specialists check against this |
-| `config/style-presets.json` | 5 built-in style presets. | /design init, /design-review |
-| `hooks/hooks.json` | PostToolUse trigger after frontend edits. | suggest-review.sh |
-| `evals/` | Reproducible benchmark runner. | /design-review (runs actual reviews) |
+| Component | Responsibility | Communicates With | New/Existing |
+|-----------|---------------|-------------------|--------------|
+| `/design-audit` command | Flow audit orchestrator. Parses URL + flow description, manages phases 0-4. | Flow navigator, per-screen review, report generator | **NEW** |
+| `/design` router | Routes `/design audit` to `/design-audit` | `/design-audit` | **MODIFIED** (add route) |
+| Flow planner | Analyzes URL + intent, produces ordered screen list | playwright-cli (initial page load) | **NEW** (within command) |
+| Flow navigator | Drives playwright-cli through each screen, captures state | playwright-cli, screenshot storage | **NEW** (within command) |
+| Per-screen review | Runs existing Phase 1 + Phase 2 + Phase 3 pipeline per screen | Existing specialists, scoring.json | **REUSED** (extracted as callable pattern) |
+| Transition detector | Analyzes CSS/JS for animations between screen states | Source code, playwright-cli snapshots | **NEW** (within command) |
+| Flow synthesizer | Cross-screen consistency, flow-level scoring, aggregation | Per-screen results | **NEW** (within command) |
+| HTML report generator | Produces self-contained HTML with embedded screenshots | All phase outputs | **NEW** (template + generation logic) |
+| `config/flow-scoring.json` | Flow-level weights, cross-screen consistency rules | Flow synthesizer | **NEW** config file |
+| `skills/design-review/references/flow.md` | Flow-specific reference knowledge (navigation patterns, transitions, consistency) | Flow planner, transition detector | **NEW** reference file |
 
-### Specialist Roster (8 Agents)
-
-| # | Specialist | Model | Reads | Weight |
-|---|-----------|-------|-------|--------|
-| 1 | Font | Claude Sonnet | screenshots + source + references/typography.md | 2 |
-| 2 | Color | Gemini CLI | screenshots + .color-reference.md | 2 |
-| 3 | Layout | Gemini CLI | screenshots + .layout-reference.md | 1 |
-| 4 | Icon | Claude Sonnet | screenshots + source + references/icons.md | 1 |
-| 5 | Motion | Claude Sonnet | source only + references/motion.md | 1 |
-| 6 | Intent | Claude Sonnet | screenshots + source + references/intent.md | 3 |
-| 7 | Copy | Claude Haiku | source only | 1 |
-| 8 | Code/A11y | Claude Sonnet | source only | 1 |
-
-**Why multi-model:** Color and Layout use Gemini because it has demonstrated stronger visual perception for spatial relationships and color harmony. Other specialists use Claude Sonnet for code analysis depth. Copy uses Haiku for speed (low complexity task).
-
-### Scoring Formula
+### New Files Required
 
 ```
-Score = (Intent*3 + Originality*3 + UX_Flow*2 + Typography*2 + Color*2 + Layout + Icons + Motion + Copy + Code) / 17
+spsk/
++-- commands/
+|   +-- design-audit.md          # NEW: /design-audit command (flow orchestrator)
+|   +-- design.md                # MODIFIED: add /design audit route
++-- config/
+|   +-- flow-scoring.json        # NEW: flow-level scoring weights and thresholds
++-- skills/
+|   +-- design-review/
+|       +-- references/
+|           +-- flow.md          # NEW: flow/navigation/transition reference knowledge
++-- templates/
+|   +-- report.html              # NEW: HTML report template (self-contained)
++-- shared/
+|   +-- flow-navigator.md        # NEW: reusable flow navigation instructions
+|   +-- output.md                # EXISTING: branded output (used by report too)
 ```
 
-Quick mode (4 specialists):
-```
-Score = (Intent*3 + Originality*3 + UX_Flow*2 + Typography*2 + Color*2 + Layout) / 13
-```
+## Data Flow: URL to Final HTML Report
 
-### Data Flow
+### Stage 1: Flow Planning (agent reasoning, no tools)
 
 ```
-1. User runs /design-review [url]
-2. Command takes screenshots via Playwright or static HTML serving
-3. Haiku classifies page type (admin/landing/emotional/etc.)
-4. Page type selects threshold from scoring.json
-5. 8 specialists spawn in parallel, each:
-   a. Reads screenshots
-   b. Reads relevant source files
-   c. Reads domain reference file
-   d. Checks against anti-slop.json
-   e. Returns: dimension score (1-4) + issues list + rationale
-6. Boss synthesizer:
-   a. Collects all specialist outputs
-   b. Applies weighted formula
-   c. Compares against page-type threshold
-   d. Resolves specialist disagreements (documented)
-   e. Renders verdict: SHIP / CONDITIONAL SHIP / BLOCK
-7. If BLOCK: Phase 4 re-runs only failing specialists after fixes
+Input:  URL + --flow "description of user goal"
+Agent:  Analyzes the URL, loads the page, reads navigation structure
+Output: FLOW_PLAN = [
+  { screen: "landing", url: "/", action: "click 'Start Free Trial'" },
+  { screen: "signup-form", url: "/signup", action: "fill form, click submit" },
+  { screen: "onboarding", url: "/onboarding", action: "complete wizard" },
+  { screen: "dashboard", url: "/dashboard", action: null }
+]
 ```
+
+The flow plan is an ordered list of screens with the action that transitions to the next screen. The agent generates this by:
+1. Loading the initial URL with `playwright-cli open <url>`
+2. Taking a snapshot to understand the page structure
+3. Reading the flow description to determine which screens need visiting
+4. Planning the navigation sequence
+
+If the agent cannot determine the full flow from the initial page, it navigates incrementally -- visit each screen, snapshot, decide next step. This handles SPAs where routes are not visible upfront.
+
+### Stage 2: Flow Navigation (playwright-cli)
+
+For each screen in FLOW_PLAN:
+
+```bash
+# Navigate to screen (or perform action from previous screen)
+playwright-cli goto "$SCREEN_URL"    # OR
+playwright-cli click e42             # action from previous screen
+
+# Wait for navigation/transition to settle
+playwright-cli snapshot --filename "$AUDIT_DIR/snapshots/screen-$N.yaml"
+
+# Capture screenshots (3 viewports, matching /design-review pattern)
+playwright-cli screenshot --filename "$AUDIT_DIR/screenshots/screen-$N-desktop.png"
+# Resize viewport for mobile
+playwright-cli screenshot --filename "$AUDIT_DIR/screenshots/screen-$N-mobile.png"
+```
+
+**Transition detection** happens between screens:
+- Before performing the action that transitions to the next screen, snapshot the current state
+- Perform the action
+- Monitor for CSS transitions/animations (check computed styles for `transition`, `animation` properties)
+- Capture the intermediate state if animation is detected
+- This feeds into the Motion specialist for cross-screen transition evaluation
+
+**Storage structure:**
+```
+/tmp/design-audit-YYYYMMDD-HHMMSS/
++-- flow-plan.json               # The planned flow
++-- screenshots/
+|   +-- screen-1-desktop.png
+|   +-- screen-1-mobile.png
+|   +-- screen-1-fold.png
+|   +-- screen-2-desktop.png
+|   +-- ...
++-- snapshots/
+|   +-- screen-1.yaml            # playwright-cli DOM snapshot
+|   +-- screen-2.yaml
+|   +-- ...
++-- transitions/
+|   +-- screen-1-to-2.json       # Transition metadata (CSS props, duration)
+|   +-- screen-2-to-3.json
++-- results/
+|   +-- screen-1-review.json     # Per-screen specialist results
+|   +-- screen-2-review.json
+|   +-- flow-synthesis.json      # Cross-screen aggregation
++-- report.html                  # Final HTML report
+```
+
+### Stage 3: Per-Screen Review (reuses existing pipeline)
+
+For each captured screen, run the existing `/design-review` pipeline. This is the critical reuse point. The per-screen review is **not** a new specialist system -- it is the same 8-specialist dispatch, boss synthesis, and weighted scoring.
+
+**How to extract the review pipeline as callable:**
+
+The existing `/design-review` command does Phase 0 (screenshots) + Phase 1 (page brief) + Phase 2 (dispatch) + Phase 3 (synthesis). For flow audit, Phase 0 is already done (flow navigator captured screenshots). The command needs to accept pre-captured screenshots instead of capturing its own.
+
+Two approaches:
+
+**Option A: Pass screenshots directory to /design-review** (recommended)
+Add a `--screenshots <dir>` flag to `/design-review` that skips Phase 0 and reads from the given directory. This keeps the specialist pipeline in one place. `/design-audit` calls `/design-review --screenshots $AUDIT_DIR/screenshots/screen-$N/ --quick` for each screen (quick mode for speed, full mode for key screens).
+
+**Option B: Inline the specialist dispatch in /design-audit**
+Copy the specialist dispatch logic into the audit command. This duplicates code but avoids modifying the existing command.
+
+**Recommendation: Option A.** Adding `--screenshots` is a small, backwards-compatible change to `/design-review` that enables composition. It follows the existing pattern where flags modify behavior (`--quick`, `--ref`, `--figma`). The flow audit command becomes a thin orchestrator that calls the review command per screen.
+
+**Per-screen context enrichment:**
+Each screen's review gets additional context beyond the standard page brief:
+
+```
+FLOW CONTEXT: This is screen {N} of {total} in a {flow_description} flow.
+Previous screen: {screen N-1 summary}
+Next expected screen: {screen N+1 description}
+User's goal at this point: {action description}
+
+Evaluate this screen both on its own merit AND as part of this flow:
+- Does it make sense as step {N} of {total}?
+- Is the path to the next step obvious?
+- Is there visual continuity with the previous screen?
+```
+
+### Stage 4: Flow Synthesis
+
+After all per-screen reviews complete, the flow synthesizer performs four operations:
+
+1. **Cross-screen consistency check**: Compare design tokens across screens.
+   - Same nav bar on all screens? Same color palette? Same typography?
+   - Flag inconsistencies as FLOW-level issues (not per-screen)
+
+2. **Flow coherence**: Does the sequence of screens tell a coherent story?
+   - Does the visual weight shift appropriately (landing = emotional, form = functional, dashboard = informational)?
+   - Are transitions smooth or jarring?
+
+3. **Aggregate scoring**: Flow score = weighted combination of per-screen scores + flow-specific dimensions.
+   ```
+   Flow Score = (avg_screen_scores * 0.7) + (flow_consistency * 0.15) + (transition_quality * 0.15)
+   ```
+
+4. **Priority ranking of fixes**: Issues that affect multiple screens rank higher. A broken nav bar across 4 screens is more critical than a font issue on one screen.
+
+### Stage 5: HTML Report Generation
+
+The report is a self-contained HTML file with embedded screenshots (base64) and inline CSS. No external dependencies -- it opens in any browser.
+
+**Report structure:**
+```html
+<!-- Flow overview: score progression chart across screens -->
+<!-- For each screen: -->
+<!--   Screenshot (desktop) -->
+<!--   Per-specialist score bars (same branded format) -->
+<!--   Top 3 issues for this screen -->
+<!--   Transition to next screen (if applicable) -->
+<!-- Flow-level findings (cross-screen consistency) -->
+<!-- Priority fix list (sorted by impact across all screens) -->
+<!-- Metadata: URL, flow description, timestamp, tier, specialist count -->
+```
+
+**Why HTML and not markdown?**
+- Screenshots need to be embedded (base64 in `<img>` tags)
+- Score bars render better with inline CSS than markdown
+- The report is shareable -- send to a designer, open in browser, no tooling needed
+- Markdown with embedded images is unwieldy and not universally rendered
+
+**Template approach:** Store a `templates/report.html` file with mustache-style placeholders. The command reads the template, injects data, writes the final file. This keeps the report format tuneable without editing the command.
+
+## Integration with Existing Specialist System
+
+### What Does NOT Change
+
+- **8 specialist agents**: Same prompts, same references, same dispatch
+- **Boss synthesizer**: Same weighted scoring, same deduplication, same verdicts
+- **Scoring config**: Same `scoring.json` weights and thresholds per page type
+- **Anti-slop system**: Same banned patterns, same detection
+- **Style presets**: Same preset system, applied per screen
+- **Degradation tiers**: Same Tier 1/2/3 degradation
+- **Reference files**: Same domain knowledge files
+
+### What Changes Minimally
+
+- **`/design-review`**: Add `--screenshots <dir>` flag to skip Phase 0 and read pre-captured screenshots. Add `--flow-context <json>` flag to inject flow context into specialist prompts. Both are additive, non-breaking.
+- **`/design` router**: Add `/design audit` route pointing to `/design-audit`
+
+### What Is New
+
+- **`/design-audit` command**: The flow orchestrator. About 60% of its content is orchestration logic (planning, navigation, synthesis, reporting). The remaining 40% delegates to `/design-review`.
+- **`config/flow-scoring.json`**: Flow-level scoring weights (consistency, transitions)
+- **`skills/design-review/references/flow.md`**: Reference knowledge about navigation patterns, flow UX, transition design
+- **`templates/report.html`**: HTML report template
+- **`shared/flow-navigator.md`**: Reusable playwright-cli navigation instructions (could be shared with `/design-validate`)
 
 ## Patterns to Follow
 
-### Pattern 1: Plugin Discovery via Convention
+### Pattern 1: Composition Over Duplication
 
-**What:** Claude Code discovers plugin components by scanning standard directories at startup.
-**When:** Always. This is how the plugin loads.
+**What:** `/design-audit` calls `/design-review` per screen rather than reimplementing the specialist dispatch.
+**When:** Any time a new command needs specialist reviews.
+**Why:** One source of truth for specialist logic. When specialists improve (e.g., better prompts, new references), flow audit gets the improvements for free.
 
-The discovery order is:
-1. `.claude-plugin/plugin.json` -- must exist or plugin is invisible
-2. Default directories scanned: `commands/`, `agents/`, `skills/`, `hooks/hooks.json`, `.mcp.json`
-3. Custom paths from manifest scanned (supplements, does not replace defaults)
-4. All discovered components register (name conflicts cause errors)
-
-**Implication for SpSk:** Use default directory names. Do not put commands in `src/commands/` or `cli/commands/`. Use `commands/` directly. Custom paths add configuration burden for zero benefit.
-
-### Pattern 2: Command as Prompt, Not Code
-
-**What:** Commands are markdown files with instructions for Claude, not executable programs.
-**When:** All slash commands.
-
-```markdown
----
-description: Review UI design quality with 8 specialists
-argument-hint: [page-url] [--quick] [--ref url]
-allowed-tools: Bash(gemini *), Bash(npx *), Bash(curl *)
----
-
-# Design Review
-
-[Instructions that Claude follows when user invokes /design-review]
+```
+/design-audit
+  |-- for each screen:
+  |     /design-review --screenshots $DIR --flow-context $CTX [--quick]
+  |-- flow synthesis
+  |-- report generation
 ```
 
-The command `.md` file IS the prompt. Claude reads it and executes the workflow described. There is no JavaScript handler, no express route, no function to call. The "implementation" is prompt engineering.
+### Pattern 2: Progressive Detail
 
-**Implication for SpSk:** Quality of the command markdown directly determines quality of the tool. Invest in clear, unambiguous instructions. Test with different inputs. The .md files are the codebase.
+**What:** Use `--quick` mode for most screens, `--full` for key screens (first, last, and any screen the flow synthesizer flags).
+**When:** Flows with 3+ screens where running full 8-specialist reviews on every screen would be expensive.
+**Why:** A 5-screen flow with full reviews dispatches 40 specialist agents. Quick mode (4 specialists per screen) dispatches 20. Running full mode on first/last screens and quick on middle screens dispatches 24 -- a good balance of depth and cost.
 
-### Pattern 3: Skill as Contextual Knowledge
-
-**What:** SKILL.md files are loaded when Claude detects a matching task context.
-**When:** Claude decides based on the skill's `description` field in frontmatter.
-
-```yaml
----
-name: design-review
-description: Use when reviewing UI designs, checking visual quality,
-  evaluating typography, color, layout, or accessibility. Provides
-  domain knowledge about design principles and anti-patterns.
-tools: Read, Glob, Grep, Bash
----
+**Decision logic:**
+```
+if total_screens <= 2:
+  run full mode on all screens
+elif total_screens <= 4:
+  run full mode on first and last, quick on middle
+else:
+  run full mode on first, last, and any flagged screen
+  run quick on everything else
 ```
 
-The skill is NOT invoked by the user. Claude auto-loads it when the task matches. This means the `description` field is critical -- it is the trigger mechanism.
+### Pattern 3: Incremental Navigation
 
-**Implication for SpSk:** Write skill descriptions that match natural language users would use: "check the design", "review this page", "is this ready to ship", "look at the UI".
+**What:** Navigate the flow incrementally, deciding the next step after each screen, rather than planning the entire flow upfront.
+**When:** SPAs where the route structure is not visible from the initial page (client-side routing, dynamic content).
+**Why:** A rigid upfront plan breaks on SPAs with conditional screens (e.g., "if user selects 'business', show extra form"). Incremental navigation adapts to what the app actually shows.
 
-### Pattern 4: Config as Data, Not Code
+**Fallback:** If the agent cannot determine next steps after 3 attempts at a screen, ask the user for guidance. Do not loop.
 
-**What:** Scoring weights, thresholds, banned patterns, and presets live in JSON config files.
-**When:** Any behavior that should be tunable without editing command prompts.
+### Pattern 4: Screenshot Reuse
 
-```json
-// config/scoring.json
-{
-  "weights": { "intent_match": 3, "typography": 2, "color": 2 },
-  "thresholds": { "admin": 2.5, "landing": 3.0, "portfolio": 3.5 }
-}
-```
-
-**Implication for SpSk:** Users can fork the repo and tune scoring without understanding the review prompts. Separation of data and logic.
-
-### Pattern 5: Hooks as Lightweight Triggers
-
-**What:** hooks.json registers shell scripts that fire on Claude Code lifecycle events.
-**When:** Non-blocking suggestions, context injection, or validation.
-
-```json
-{
-  "hooks": {
-    "PostToolUse": [{
-      "matcher": "Write|Edit",
-      "hooks": [{
-        "type": "command",
-        "command": "${CLAUDE_PLUGIN_ROOT}/scripts/suggest-review.sh"
-      }]
-    }]
-  }
-}
-```
-
-The suggest-review.sh hook counts frontend file edits and suggests `/design-review` after 3+. Non-blocking -- just a system message.
-
-**Implication for SpSk:** Keep hooks minimal. One hook for v1 (suggest-review). Do not build elaborate hook chains.
-
-### Pattern 6: ${CLAUDE_PLUGIN_ROOT} for Portability
-
-**What:** All path references in hooks, scripts, and commands use `${CLAUDE_PLUGIN_ROOT}`.
-**When:** Any reference to a file within the plugin.
-
-Users install to `~/.claude/plugins/cache/<marketplace>/<name>/<version>/`. The path is unpredictable. `${CLAUDE_PLUGIN_ROOT}` resolves to wherever the plugin was installed.
+**What:** Capture screenshots once during navigation, pass them to all downstream consumers (specialists, report, flow synthesis).
+**When:** Always. Screenshots are expensive (Playwright launch, render, capture).
+**Why:** The existing `/design-review` captures screenshots per invocation. If we call it 5 times for 5 screens without pre-captured screenshots, we launch Playwright 5 times. With `--screenshots`, we navigate once, capture everything, and pass directories.
 
 ## Anti-Patterns to Avoid
 
-### Anti-Pattern 1: Hardcoded Paths
-**What:** Using `/Users/felipemachado/.claude/plugins/design-review/` in commands or hooks.
-**Why bad:** Breaks on every other machine.
-**Instead:** Use `${CLAUDE_PLUGIN_ROOT}/path/to/file`.
+### Anti-Pattern 1: Monolithic Audit Command
 
-### Anti-Pattern 2: JavaScript Runtime for Non-JS Work
-**What:** Writing a Node.js CLI wrapper to orchestrate markdown-based commands.
-**Why bad:** Adds node_modules, package.json, build step. Claude Code already orchestrates everything.
-**Instead:** Let command markdown files drive the workflow.
+**What:** Putting all specialist dispatch logic, scoring, and synthesis inside `/design-audit`.
+**Why bad:** Duplicates the entire specialist system. When specialist prompts improve, audit command is stale. Two codebases to maintain for the same functionality.
+**Instead:** Delegate per-screen reviews to `/design-review` via the `--screenshots` flag.
 
-### Anti-Pattern 3: Over-Nested Directory Structure
-**What:** `src/plugins/design-review/commands/core/review/index.md`
-**Why bad:** Claude Code scans `commands/` by default. Nesting requires custom paths in plugin.json and slows discovery.
-**Instead:** Flat `commands/` directory with descriptive file names.
+### Anti-Pattern 2: Full Review on Every Screen
 
-### Anti-Pattern 4: State Management for Stateless Operations
-**What:** Building STATE.md, session persistence, pause/resume for design reviews.
-**Why bad:** Reviews are point-in-time assessments. They complete in one session.
-**Instead:** Write results to `.design-reviews/` if persistence is needed. No cross-session state.
+**What:** Running all 8 specialists on every screen in a flow.
+**Why bad:** A 5-screen flow dispatches 40 specialist agents (8 x 5). Token costs are very high, and diminishing returns on middle screens where the navigation pattern is already established.
+**Instead:** Use progressive detail (Pattern 2). Quick mode for middle screens, full mode for key screens.
 
-### Anti-Pattern 5: Monolithic SKILL.md
-**What:** Putting all domain knowledge (typography, color, layout, icons, motion, intent, copy) in one SKILL.md.
-**Why bad:** SKILL.md is loaded contextually. A 5000-line skill wastes tokens when only color knowledge is needed.
-**Instead:** Keep SKILL.md as an overview. Put detailed knowledge in `references/` subdirectory. Specialists load only the references they need.
+### Anti-Pattern 3: Rigid Flow Plans
 
-### Anti-Pattern 6: Mixing Plugin Concerns
-**What:** Putting eval harness scripts in `hooks/`, or config files in `commands/`.
-**Why bad:** Claude Code scans specific directories for specific component types. Wrong placement causes confusing behavior.
-**Instead:** Keep clean boundaries: commands/ for commands, config/ for data, evals/ for testing, hooks/ for lifecycle.
+**What:** Requiring the user to specify every screen and action upfront.
+**Why bad:** Users describe flows in intent terms ("sign up for a trial"), not in click-by-click terms. The agent should figure out the clicks.
+**Instead:** Accept flow descriptions as intent ("sign up for a trial") and let the agent navigate incrementally.
+
+### Anti-Pattern 4: Streaming Screenshots to LLM
+
+**What:** Capturing screenshots inline during specialist dispatch and passing them as base64 in prompts.
+**Why bad:** Token explosion. A single full-page screenshot can be 2-4MB base64. With 5 screens x 3 viewports = 15 screenshots, that is 30-60MB of base64 in context.
+**Instead:** Save screenshots to disk. Specialists `Read` the PNG files (Claude handles images natively). Gemini agents read from the workspace directory.
+
+## playwright-cli as Flow Navigator
+
+The existing `/design-review` uses `npx playwright screenshot` for simple captures. The flow audit needs interactive navigation -- clicking buttons, filling forms, waiting for transitions. `playwright-cli` (Microsoft's AI-agent-optimized CLI) is the right tool.
+
+**Why playwright-cli over raw Playwright scripts:**
+- Designed for AI agent interaction (snapshot-based element references)
+- Token-efficient (saves to disk, returns paths)
+- Stateful session (browser stays open across commands)
+- Element references (`e15`, `e42`) are stable within a snapshot
+- Video recording for demo/debug
+
+**Session lifecycle for flow audit:**
+```bash
+# 1. Open browser
+playwright-cli open "$URL" --viewport 1440x900
+
+# 2. For each screen:
+playwright-cli snapshot                                    # get element refs
+playwright-cli screenshot --filename "$DIR/screen-$N.png"  # capture desktop
+# ... resize for mobile, capture again ...
+
+# 3. Navigate to next screen:
+playwright-cli click e42    # or fill, select, etc.
+# ... wait for navigation ...
+
+# 4. After all screens:
+playwright-cli close
+```
+
+**Fallback:** If `playwright-cli` is not installed, fall back to `npx playwright` for basic screenshot-only audit (no interactive navigation). Warn the user that flow navigation requires `playwright-cli`. This follows the existing degradation tier pattern.
 
 ## Scalability Considerations
 
-| Concern | 1 Skill (Phase 1) | 2 Skills (Phase 3) | 3+ Skills (Future) |
-|---------|-------------------|--------------------|--------------------|
-| Command namespace | `/design-*` | `/design-*` + `/consensus-*` | Consider `/spsk:` namespace prefix |
-| Config location | `config/` flat | `config/design/` + `config/consensus/` | Per-skill config directories |
-| References | `skills/design-review/references/` | Separate reference dirs per skill | Shared references if overlap |
-| Hooks | 1 hook (suggest-review) | Separate hooks per skill | Combined hooks.json with multiple matchers |
-| Branding | Inline in commands | Extract to `lib/branding.md` reference | Shared branding reference file |
+| Concern | 2 screens | 5 screens | 10+ screens |
+|---------|-----------|-----------|-------------|
+| Specialist agents | 16 (full) or 8 (quick) | 24 (progressive) | 28-36 (progressive) |
+| Token cost | ~120K tokens | ~300K tokens | ~500K+ tokens |
+| Wall time | ~3 min | ~8 min | ~15 min |
+| Report size | ~500KB HTML | ~2MB HTML | ~5MB+ HTML |
+| Strategy | Full mode all | Progressive detail | Progressive + parallel batching |
 
-**Key insight:** The transition from 1 to 2 skills is where shared patterns emerge naturally. Do NOT pre-build a framework. Build design-review, build consensus-validation, then extract what is common.
+For 10+ screen flows, consider batching screens into groups of 3 and running reviews in parallel batches to reduce wall time.
+
+## Suggested Build Order
+
+Based on dependencies and risk:
+
+1. **Add `--screenshots` flag to `/design-review`** -- Smallest change, highest reuse value. Enables flow audit to delegate per-screen reviews. Also useful independently (pre-captured screenshots from CI, etc.).
+
+2. **Create `config/flow-scoring.json`** -- Define flow-level scoring dimensions before building the command. Clear contract.
+
+3. **Create `skills/design-review/references/flow.md`** -- Flow-specific reference knowledge. Informs the flow planner and transition detector prompts.
+
+4. **Create `/design-audit` command** -- Core orchestrator. Start with flow planning + navigation + per-screen review delegation. No report generation yet -- just terminal output.
+
+5. **Add transition detection** -- CSS animation/transition analysis between screens. Feeds into Motion specialist and flow synthesis.
+
+6. **Create `templates/report.html` + report generator** -- HTML report with embedded screenshots. This is the final output format.
+
+7. **Update `/design` router** -- Add `/design audit` route. Trivial change, do last.
+
+8. **Create evals for flow audit** -- Test fixtures with multi-screen HTML pages. Assert on flow-level scoring, cross-screen consistency detection, report generation.
 
 ## Sources
 
-- Direct inspection of ~/.claude/plugins/design-review/ (22 files, architecture)
-- .context/design-review-status.md (specialist roster, scoring formula, test results)
-- plugin-dev/skills/plugin-structure/ (component-patterns.md, standard-plugin.md, manifest-reference.md)
-- plugin-dev/skills/command-development/ (frontmatter-reference.md)
-- plugin-dev/skills/hook-development/ (hook patterns, lifecycle events)
-- .context/gsd-research.md (specialist agent pattern, model profiles)
-- Official marketplace README.md (plugin structure reference)
+- [Microsoft playwright-cli](https://github.com/microsoft/playwright-cli) -- AI agent CLI for browser automation
+- [playwright-cli SKILL.md](https://github.com/microsoft/playwright-cli/blob/main/skills/playwright-cli/SKILL.md) -- Command reference with snapshot/navigation API
+- [Playwright CLI deep dive (TestDino)](https://testdino.com/blog/playwright-cli/) -- Token efficiency comparison (4x reduction vs MCP)
+- [Playwright screenshots docs](https://playwright.dev/docs/screenshots) -- Standard Playwright screenshot API
+- Existing SpSk ARCHITECTURE.md -- v1.0.0 specialist system documentation
+- Existing design-review.md command -- Specialist dispatch, Phase 0-3 pipeline

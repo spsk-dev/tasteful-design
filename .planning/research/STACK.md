@@ -1,249 +1,235 @@
-# Technology Stack
+# Stack Research: v1.1.0 Flow Audit Additions
 
-**Project:** SpSk (Simple Skill) -- Claude Code Plugin Showcase
+**Domain:** SPA flow navigation, screenshot capture, HTML report generation, animation detection
 **Researched:** 2026-03-28
-**Overall Confidence:** HIGH (based on direct inspection of 20+ installed plugins and official plugin-dev reference)
+**Confidence:** HIGH
 
-## Recommended Stack
+## Context
 
-### Core: Claude Code Plugin Architecture
+This is an **additive research** for the v1.1.0 milestone. The existing plugin stack (markdown commands, JSON configs, bash scripts, Playwright CLI for screenshots) is validated and unchanged. This document covers ONLY the new capabilities needed for `/design-audit`.
 
-SpSk is not a web app or CLI tool. It is a **Claude Code plugin** -- a structured directory of markdown files, shell scripts, and JSON configs that Claude Code discovers and activates at session start. There is no build step, no runtime, no package manager dependency. The "stack" is the plugin file format itself.
+## Recommended Stack Additions
 
-| Component | Format | Purpose | Why |
-|-----------|--------|---------|-----|
-| `.claude-plugin/plugin.json` | JSON | Plugin manifest (identity, metadata, paths) | Required by Claude Code for plugin recognition. Validated on load. |
-| `commands/*.md` | Markdown + YAML frontmatter | Slash commands (`/design`, `/design-review`, etc.) | Standard plugin entry point. Users invoke via `/command`. |
-| `skills/*/SKILL.md` | Markdown + YAML frontmatter | Background knowledge loaded contextually | Auto-activated when task context matches skill description. |
-| `agents/*.md` | Markdown + YAML frontmatter | Specialist agent definitions | For multi-agent orchestration (design-review's 8 specialists). |
-| `hooks/hooks.json` | JSON | Lifecycle event handlers | PostToolUse suggest-review hook, potential SessionStart hooks. |
-| `scripts/*.sh` | Bash | Hook implementations, utility scripts | Shell scripts invoked by hooks or commands via `${CLAUDE_PLUGIN_ROOT}`. |
-| `config/*.json` | JSON | Scoring weights, anti-slop patterns, style presets | Data-driven configuration separate from logic. |
-| `references/*.md` | Markdown | Domain knowledge (typography, color, layout rules) | Loaded by specialists during review. Keeps SKILL.md focused. |
-| `CLAUDE.md` | Markdown | Plugin-level context for Claude Code | Auto-read by Claude Code when plugin is active. Documents commands and usage. |
-| `VERSION` | Plain text | Semver version string | Simple, no build tooling needed. Read by hooks for staleness detection. |
-| `CHANGELOG.md` | Markdown | Version history with what changed (and what failed) | Portfolio differentiator: shows v1 scored 40%, multi-agent scored 8.6/10. |
+### Core: Playwright MCP Server (SPA Flow Navigation)
 
-### File Structure (Recommended)
+| Technology | Version | Purpose | Why Recommended |
+|------------|---------|---------|-----------------|
+| `@playwright/mcp` | latest | SPA flow navigation via MCP tools | Official Microsoft MCP server. Gives Claude persistent browser state, click/navigate/snapshot tools without writing throwaway scripts. Already used conceptually in `/design-validate`. |
 
-```
-spsk/
-+-- .claude-plugin/
-|   +-- plugin.json              # Plugin manifest (required)
-+-- CLAUDE.md                    # Plugin context for Claude Code
-+-- README.md                    # GitHub showcase (humans read this)
-+-- LICENSE                      # MIT
-+-- VERSION                      # "1.0.0"
-+-- CHANGELOG.md                 # What worked, what didn't
-+-- ARCHITECTURE.md              # Multi-agent design docs (portfolio piece)
-|
-+-- commands/                    # Slash commands
-|   +-- design.md                # /design -- orchestrator/router
-|   +-- design-review.md         # /design-review -- 8-specialist review
-|   +-- design-improve.md        # /design-improve -- iterative loop
-|   +-- design-validate.md       # /design-validate -- functional testing
-|
-+-- skills/
-|   +-- design-review/           # Skill: design review knowledge
-|       +-- SKILL.md             # When/how to use design review
-|       +-- references/          # Domain knowledge
-|           +-- typography.md
-|           +-- color.md
-|           +-- layout.md
-|           +-- icons.md
-|           +-- motion.md
-|           +-- intent.md
-|           +-- visual-design-rules.md
-|
-+-- config/                      # Data-driven configuration
-|   +-- scoring.json             # Dimension weights, thresholds
-|   +-- anti-slop.json           # Banned AI patterns
-|   +-- style-presets.json       # 5 built-in presets
-|   +-- design-system.example.json  # Template for user customization
-|
-+-- hooks/
-|   +-- hooks.json               # Hook definitions
-|   +-- scripts/
-|       +-- suggest-review.sh    # PostToolUse: suggest after 3+ frontend edits
-|
-+-- scripts/                     # Shared utilities (if needed)
-|   +-- (minimal)
-|
-+-- evals/                       # Evaluation harness (crown jewel)
-    +-- run-evals.sh             # Reproducible benchmark runner
-    +-- evals.json               # Assertion definitions (19+ assertions)
-    +-- calibration-template.md  # Human calibration guide
-    +-- results/                 # Benchmark results (committed)
-        +-- v1.0.0-results.json
+**Install:**
+```bash
+claude mcp add playwright -- npx @playwright/mcp@latest
 ```
 
-### Plugin Manifest (`plugin.json`)
+**Why Playwright MCP over Playwright CLI (`npx playwright screenshot`):**
 
-```json
-{
-  "name": "spsk",
-  "version": "1.0.0",
-  "description": "Polished AI agent skills for Claude Code. Design-review: 8 specialists, weighted scoring, anti-slop detection.",
-  "author": {
-    "name": "Felipe Machado",
-    "url": "https://github.com/felipemachado"
-  },
-  "homepage": "https://github.com/felipemachado/spsk",
-  "repository": "https://github.com/felipemachado/spsk",
-  "license": "MIT",
-  "keywords": [
-    "design-review",
-    "multi-agent",
-    "ui-quality",
-    "frontend",
-    "code-review",
-    "design-system",
-    "accessibility"
-  ]
+The existing `/design-review` uses `npx playwright screenshot <url>` for static captures. For flow audit, we need **stateful multi-step navigation** -- click a button, wait for route change, screenshot the new state, click again, etc. The CLI approach would require writing a temporary `.mjs` script for every flow, which is fragile, hard to debug, and wastes tokens generating boilerplate.
+
+Playwright MCP exposes individual tools (`browser_navigate`, `browser_click`, `browser_snapshot`, `browser_take_screenshot`, `browser_wait_for`, `browser_evaluate`) that Claude calls sequentially. The browser stays open between calls. This is the correct architecture for SPA flow navigation.
+
+**Key tools for flow audit:**
+
+| MCP Tool | Use in Flow Audit |
+|----------|-------------------|
+| `browser_navigate` | Initial page load |
+| `browser_snapshot` | Accessibility tree for element discovery (find buttons, links, nav items) |
+| `browser_click` | Navigate SPA by clicking route triggers |
+| `browser_wait_for` | Wait for route transitions to complete |
+| `browser_take_screenshot` | Capture each screen state as PNG |
+| `browser_evaluate` | Run JS for animation detection, CSS analysis |
+| `browser_console_messages` | Catch JS errors during navigation |
+| `browser_tabs` | Manage browser session |
+| `browser_close` | Cleanup |
+
+**What we do NOT need from Playwright MCP:**
+- Network mocking tools (browser_route, browser_unroute) -- not auditing network behavior
+- Storage tools (cookies, localStorage) -- not testing auth flows in v1.1
+- DevTools tracing/video -- not recording traces
+- Coordinate-based mouse tools -- use accessibility-based clicks instead
+- Testing/assertion tools -- we do our own scoring
+
+### Screenshot Strategy: Base64 Inline in HTML Report
+
+| Approach | Decision | Why |
+|----------|----------|-----|
+| **Base64 data URIs** | YES -- use this | Single self-contained HTML file. No external dependencies, no broken image links, works when opened from any location. Users can email, upload, or archive the report as one file. |
+| File path references | NO | Breaks when moved, requires serving from correct directory, unusable as email attachment |
+| Hosted images | NO | Requires upload service, adds network dependency, privacy concerns for unreleased designs |
+
+**Implementation:** Screenshot PNGs from Playwright MCP -> read as binary -> base64 encode -> embed as `<img src="data:image/png;base64,{encoded}">` in report HTML.
+
+**Size tradeoff:** Base64 adds ~33% overhead. A typical flow audit with 5 screens x 3 viewports = 15 screenshots. At ~200KB each compressed, that is ~4MB raw, ~5.3MB base64. Acceptable for a diagnostic report. If reports grow beyond 10MB, add a `--external-images` flag later -- but do not pre-optimize.
+
+```bash
+# In a shell script, encoding is trivial:
+base64 < screenshot.png  # macOS
+base64 -w 0 screenshot.png  # Linux (no line breaks)
+```
+
+### HTML Report: Template String in Shell Script
+
+| Approach | Decision | Why |
+|----------|----------|-----|
+| **Bash heredoc template** | YES -- use this | Zero dependencies. A `generate-report.sh` script that takes a JSON manifest and screenshots directory, outputs a self-contained `.html` file. Matches the plugin's "no runtime" philosophy. |
+| Node.js template engine (Handlebars, EJS) | NO | Adds `node_modules`, requires npm install. Violates the plugin's zero-dependency principle. |
+| Python Jinja2 | NO | Same dependency problem. Python may not be available everywhere. |
+| Markdown-to-HTML | NO | Markdown cannot express the visual richness needed (score bars, screenshot grids, expandable sections). |
+
+**Report structure:**
+
+```
+generate-report.sh
+  Input:  .design-audit/flow-manifest.json  (screens, scores, findings)
+          .design-audit/screenshots/*.png
+  Output: .design-audit/report.html         (self-contained)
+```
+
+The script reads the manifest JSON, loops through screens, base64-encodes each screenshot, and injects them into an HTML template with inline CSS. The HTML uses:
+- CSS Grid for screenshot comparison layouts
+- `<details>` elements for expandable specialist findings
+- Inline SVG for score visualizations (progress bars)
+- `@media print` styles for PDF export via browser print
+- Dark/light mode via `prefers-color-scheme`
+
+**Why not Claude-generated HTML:** The report must be deterministic and consistently formatted. Claude generating HTML on every run means inconsistent layouts, forgotten styles, and wasted tokens. A template script is cheaper, faster, and reproducible.
+
+### Animation/Transition Detection: page.evaluate with Web Animations API
+
+| Technology | Purpose | Why |
+|------------|---------|-----|
+| `Element.getAnimations()` | Detect active CSS animations and transitions on any element | Web standard (Web Animations API). Works in all Chromium browsers. Returns animation objects with timing, duration, playState. |
+| `getComputedStyle()` | Read CSS transition/animation properties from stylesheets | Standard DOM API. Detects declared (not necessarily running) animation properties. |
+| CSS `transition` / `animation` property parsing | Catalog what elements HAVE animation declarations | Static analysis of computed styles reveals design intent even when animations are not currently playing. |
+
+**Detection approach (run via `browser_evaluate`):**
+
+```javascript
+// 1. Find all elements with animation/transition declarations
+const allElements = document.querySelectorAll('*');
+const animated = [];
+for (const el of allElements) {
+  const style = getComputedStyle(el);
+  const transition = style.transition;
+  const animation = style.animationName;
+  const hasTransition = transition && transition !== 'all 0s ease 0s' && transition !== 'none';
+  const hasAnimation = animation && animation !== 'none';
+  if (hasTransition || hasAnimation) {
+    animated.push({
+      selector: el.tagName + (el.id ? '#' + el.id : '') + (el.className ? '.' + el.className.split(' ')[0] : ''),
+      transition: hasTransition ? transition : null,
+      animation: hasAnimation ? animation : null,
+      duration: style.animationDuration || style.transitionDuration
+    });
+  }
 }
+
+// 2. Check for actively running animations
+const running = document.getAnimations().map(a => ({
+  name: a.animationName || 'transition',
+  duration: a.effect?.getTiming()?.duration,
+  playState: a.playState,
+  target: a.effect?.target?.tagName
+}));
+
+return { declared: animated, running };
 ```
 
-**Why this manifest shape:** Matches the "Recommended Plugin" pattern from Anthropic's official plugin-dev reference. Includes all fields the marketplace displays. `name` is kebab-case (required by validation regex `/^[a-z][a-z0-9]*(-[a-z0-9]+)*$/`). `keywords` aid discoverability in `/plugin > Discover`.
+**Between-screen detection:** After each navigation step, run this detection. Compare the animation inventory between screens to identify:
+- Shared transitions (page-level route animations)
+- Screen-specific animations (loading spinners, entrance effects)
+- Missing animations (screens that feel "dead" compared to others)
 
-### Command Frontmatter Reference
+**No external library needed.** The Web Animations API and `getComputedStyle` are built into Chromium. Playwright's `browser_evaluate` runs arbitrary JS in the page context.
 
-Every command `.md` file supports YAML frontmatter with these fields:
+## Supporting Scripts
 
-| Field | Type | Purpose | SpSk Usage |
-|-------|------|---------|------------|
-| `description` | String (<60 chars) | Shows in `/help` output | All 4 commands |
-| `allowed-tools` | String/Array | Restrict tool access | `Bash(gemini *)`, `Bash(npx *)` etc. for /design |
-| `model` | `sonnet`/`opus`/`haiku` | Model selection per command | Default (inherit) for most; potentially `opus` for boss synthesizer |
-| `argument-hint` | String | Document expected args | `[page-url] [--quick] [--ref url]` |
-| `disable-model-invocation` | Boolean | Prevent programmatic invocation | Not needed (commands should be invocable by other commands) |
-| `hide-from-slash-command-tool` | String | Hide from autocomplete | Potentially for internal sub-commands |
+### New Files for v1.1.0
 
-### Distribution
+| File | Type | Purpose |
+|------|------|---------|
+| `commands/design-audit.md` | Command | `/design-audit` slash command -- flow navigation orchestrator |
+| `scripts/generate-report.sh` | Bash | HTML report generator (template + base64 embedding) |
+| `scripts/detect-animations.js` | JS snippet | Animation detection code (injected via browser_evaluate) |
+| `config/report-template.html` | HTML | Report template with CSS (referenced by generate-report.sh) |
+| `skills/design-review/references/flow-audit.md` | Reference | Flow audit domain knowledge for specialists |
 
-| Method | Command | When |
-|--------|---------|------|
-| **Plugin registry** (primary) | `claude /install-plugin spsk@felipemachado/spsk` | Standard Claude Code install. Requires marketplace listing via [clau.de/plugin-directory-submission](https://clau.de/plugin-directory-submission). |
-| **Direct GitHub** | `claude /install-plugin spsk@github:felipemachado/spsk` | Works without marketplace listing. Users need to trust the source. |
-| **Manual clone** | `git clone` + symlink to `~/.claude/plugins/spsk` | Fallback for users who want to inspect before installing. |
+### Existing Files Modified
 
-**Why plugin registry over npm:** Claude Code plugins are markdown + JSON + shell. There is no JavaScript to bundle, no dependencies to resolve, no build step. npm adds complexity without value. The plugin registry is purpose-built for this format.
+| File | Change |
+|------|--------|
+| `commands/design.md` | Add `/design audit` route |
+| `config/scoring.json` | Add flow-level scoring (cross-screen consistency weight) |
 
-### Evaluation Harness
+## What NOT to Add
 
-| Component | Format | Purpose |
-|-----------|--------|---------|
-| `run-evals.sh` | Bash | Orchestrates eval runs: starts dev server, runs review, checks assertions |
-| `evals.json` | JSON | 19+ assertions across 3+ test cases (admin panel, landing page, emotional page) |
-| `calibration-template.md` | Markdown | Guide for humans to validate scoring weights against their own judgment |
-| `results/` | JSON | Committed benchmark results for each version |
-
-**Why evals are first-class:** From the 3-model consensus: "Evals are the crown jewel." The delta between v1 single-agent (40% pass rate) and v4 multi-agent (100% pass rate) IS the portfolio story. Reproducible benchmarks prove quality claims.
-
-### Branded Output System
-
-No external library needed. Branded output is implemented entirely in the command markdown files using Unicode characters. This is a design pattern, not a technology dependency.
-
-| Element | Pattern | Example |
-|---------|---------|---------|
-| Stage banner | Full-width line + prefix | ` SpSk > REVIEWING` between rule lines |
-| Result box | Double-line Unicode borders | Score display with dimension breakdown |
-| Progress bars | Block characters | `|||||||| ` 8.0/10 |
-| Status symbols | Unicode vocabulary | Pass, fail, in-progress, pending, auto, warning |
-| Signature line | Compact metadata | ` SpSk  design-review  v1.0.0  ---  8 specialists  ·  tier 1` |
-
-**Why no templating engine:** The output is rendered by Claude itself interpreting the command markdown. There is no terminal renderer to template. Consistency comes from documenting the format clearly in the command files.
-
-### Testing Approach
-
-| Level | What | How |
-|-------|------|-----|
-| **Structure validation** | YAML frontmatter, file locations, plugin.json | `scripts/validate-plugin.sh` (bash, <50 lines) |
-| **Eval assertions** | Review scores match expected ranges | `evals/run-evals.sh` -- runs actual reviews, checks 19+ assertions |
-| **Manual smoke test** | Commands appear in `/help`, execute without errors | Documented test matrix in evals/calibration-template.md |
-| **CI validation** | Frontmatter syntax, no TODOs, structure intact | GitHub Actions workflow (`.github/workflows/validate.yml`) |
-
-**Why no Jest/Vitest:** There is no JavaScript to unit test. The "application" is markdown files that Claude interprets. Testing means running actual Claude Code reviews and checking outputs. The eval harness (`run-evals.sh`) is the test framework for this domain.
+| Avoid | Why | What to Do Instead |
+|-------|-----|-------------------|
+| Puppeteer | Playwright is already the standard here and in the plugin. Adding a second browser automation tool is confusion, not value. | Playwright MCP |
+| Cypress | E2E testing framework, not a browser automation tool for agent use. No MCP integration. | Playwright MCP |
+| `playwright-report` (built-in HTML reporter) | Designed for test results, not design audits. Wrong data model (pass/fail assertions vs. specialist scores). | Custom `generate-report.sh` |
+| React/Vue for the report | The report is a static artifact, not an app. Adding a JS framework to render a report is absurd over-engineering. | Plain HTML + inline CSS |
+| `juice` or CSS inliner libraries | Only needed for email HTML. Browser-opened HTML files read `<style>` tags fine. | Inline `<style>` block in the template |
+| `sharp` or image processing | Screenshots are already PNGs from Playwright. No resizing/cropping needed. Base64 encoding is built into `base64` CLI. | `base64` command |
+| npm dependencies of any kind | The plugin has zero npm dependencies today. Adding any for report generation breaks the "no runtime" principle that makes it installable by file copy. | Shell scripts + built-in browser APIs |
+| `chart.js` or charting libraries | Score visualizations are simple progress bars. CSS can do this. Adding a JS charting library to a static report is overkill. | CSS `width` percentage bars or inline SVG `<rect>` |
+| Playwright test runner (`@playwright/test`) | We are not running tests. We are using Playwright as a browser automation layer. The test runner adds assertions, fixtures, and reporting we do not need. | `@playwright/mcp` for MCP tools, `npx playwright screenshot` for CLI fallback |
 
 ## Alternatives Considered
 
-| Category | Recommended | Alternative | Why Not |
-|----------|-------------|-------------|---------|
-| Distribution | Plugin registry | npm package | No JS to bundle. npm adds package.json, node_modules, build step for zero benefit. |
-| Config format | JSON | YAML | Claude Code plugin system uses JSON natively (plugin.json, hooks.json, .mcp.json). Consistency. |
-| Branding | Inline Unicode in command .md | Template engine | No runtime to execute templates. Claude reads markdown and follows instructions. |
-| Testing | Bash eval harness | Jest/Vitest | No JS code. Eval harness tests actual product output, not internal functions. |
-| CLI tooling | None (v1) | `spsk-tools.cjs` | Over-engineering. Design-review has no state management needs. Revisit for skill #2. |
-| Build system | None | Rollup/esbuild | Nothing to compile. Plugin is consumed as source files. |
-| Type checking | None | TypeScript | No JavaScript in the plugin. |
+| Category | Recommended | Alternative | When to Use Alternative |
+|----------|-------------|-------------|-------------------------|
+| Browser automation | Playwright MCP | Temp `.mjs` scripts via Bash | If MCP server is unavailable (user has not run `claude mcp add`). The command should detect MCP availability and fall back to script generation. |
+| Screenshot format | PNG (Playwright default) | JPEG | If report size becomes a problem. JPEG is ~60% smaller but lossy. Add `--jpeg` flag if needed later. |
+| Report format | Self-contained HTML | Markdown | If user prefers text-only output. Add `--markdown` flag that outputs to terminal like existing `/design-review`. HTML is the default because screenshots cannot be shown in markdown terminal output. |
+| Animation detection | Web Animations API via evaluate | Source code static analysis | Always do both. Static analysis catches CSS declarations in source files. Runtime detection catches dynamically applied animations. The command should run browser_evaluate AND read source files. |
 
-## What NOT to Build
+## Version Compatibility
 
-| Anti-Pattern | Why Avoid | What to Do Instead |
-|-------------|-----------|-------------------|
-| npm package with package.json | Signals "this is a JS project" when it is not. | plugin.json as the only manifest. |
-| JavaScript CLI wrapper | Adds runtime dependency for no reason. | commands/*.md as the interface. |
-| Database for review history | Over-scopes v1. Reviews are point-in-time. | Markdown result files in .design-reviews/. |
-| Web dashboard | Not a web app. Terminal output IS the interface. | Branded Unicode output. |
-| Monorepo tooling | Single plugin, nothing to coordinate. | Flat directory structure. |
-| Docker/container setup | No runtime to containerize. | Plugin installs by copying files. |
-| CI/CD deploy pipeline | Plugin consumed from GitHub directly. | GitHub Actions for validation only. |
-| Framework for third-party skills | Premature. Emerges from building 2nd/3rd skills. | Build two skills first, extract later. |
+| Component | Requires | Notes |
+|-----------|----------|-------|
+| `@playwright/mcp` | Node.js 18+ | Uses `npx`, no global install needed |
+| Playwright browsers | Chromium (auto-installed by MCP) | `npx playwright install chromium` as fallback |
+| `Element.getAnimations()` | Chromium 84+ | Standard API, no polyfill needed |
+| `document.getAnimations()` | Chromium 84+ | Returns all page animations |
+| Base64 CLI | macOS `base64` or Linux `base64` | Different flags: macOS has no `-w`, Linux needs `-w 0` |
+| HTML `<details>` element | All modern browsers | Used for expandable specialist sections in report |
 
-## GitHub Actions (Validation Only)
+## Playwright MCP vs CLI Decision Matrix
 
-```yaml
-# .github/workflows/validate.yml
-name: Validate Plugin
-on: [push, pull_request]
-jobs:
-  validate:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Validate plugin.json
-        run: |
-          jq empty .claude-plugin/plugin.json
-          jq -e '.name' .claude-plugin/plugin.json
-      - name: Validate command frontmatter
-        run: |
-          for cmd in commands/*.md; do
-            MARKERS=$(head -n 50 "$cmd" | grep -c "^---")
-            if [ "$MARKERS" -ne 0 ] && [ "$MARKERS" -ne 2 ]; then
-              echo "ERROR: Invalid frontmatter in $cmd"
-              exit 1
-            fi
-          done
-      - name: Validate hooks.json
-        run: jq empty hooks/hooks.json
-      - name: Validate config JSON
-        run: |
-          for f in config/*.json; do
-            jq empty "$f"
-          done
-      - name: Check VERSION
-        run: |
-          VERSION=$(cat VERSION)
-          echo "$VERSION" | grep -qE '^[0-9]+\.[0-9]+\.[0-9]+'
-```
+| Scenario | Use MCP | Use CLI |
+|----------|---------|---------|
+| Multi-step SPA flow navigation | YES | No (stateless) |
+| Single static page screenshot | Either | YES (simpler) |
+| Clicking buttons, filling forms | YES | No (requires script) |
+| Waiting for route transitions | YES | No (requires script) |
+| Animation detection via evaluate | YES | Possible but clunky |
+| Existing `/design-review` screenshots | Keep CLI | Not needed |
 
-## Variable References
+**Recommendation:** `/design-audit` uses Playwright MCP as primary, with CLI script fallback. Existing `/design-review` keeps using CLI (`npx playwright screenshot`) -- no changes needed there.
 
-Claude Code provides `${CLAUDE_PLUGIN_ROOT}` for path references within plugin scripts and hook commands. This resolves to the plugin's installed location regardless of where it was cloned or installed.
+## Installation for Users
+
+No new npm install needed. Users who already have Playwright (required for `/design-review`) just need to register the MCP server once:
 
 ```bash
-# In hooks.json
-"command": "${CLAUDE_PLUGIN_ROOT}/hooks/scripts/suggest-review.sh"
-
-# In shell scripts
-source "${CLAUDE_PLUGIN_ROOT}/lib/utils.sh"
+# One-time setup (add to /design init wizard or README)
+claude mcp add playwright -- npx @playwright/mcp@latest
 ```
 
-**Why this matters:** Users install plugins to `~/.claude/plugins/cache/<marketplace>/<name>/<version>/`. Hardcoded paths break on every machine. `${CLAUDE_PLUGIN_ROOT}` is the only portable path reference.
+If MCP is not registered, the `/design-audit` command detects this and either:
+1. Offers to register it automatically (`claude mcp add ...`)
+2. Falls back to generating a temporary Playwright script
 
 ## Sources
 
-- **HIGH confidence:** Direct file inspection of `~/.claude/plugins/` -- 20+ installed plugins examined
-- **HIGH confidence:** `~/.claude/plugins/marketplaces/claude-plugins-official/plugins/plugin-dev/` -- Anthropic's official plugin development reference (manifest-reference.md, component-patterns.md, frontmatter-reference.md, testing-strategies.md, marketplace-considerations.md)
-- **HIGH confidence:** `~/.claude/plugins/marketplaces/claude-plugins-official/README.md` -- Official marketplace structure and install syntax
-- **HIGH confidence:** `~/.claude/plugins/design-review/` -- Source plugin to port (22 files, v1.0.0)
-- **MEDIUM confidence:** `.context/gsd-research.md` -- GSD patterns analysis (verified against actual GSD plugin files)
+- [Playwright MCP GitHub](https://github.com/microsoft/playwright-mcp) -- Official repo, tool list, install instructions (HIGH confidence)
+- [Playwright Screenshots docs](https://playwright.dev/docs/screenshots) -- Screenshot API reference (HIGH confidence)
+- [Playwright Page API](https://playwright.dev/docs/api/class-page) -- page.evaluate, navigation (HIGH confidence)
+- [Web Animations API - getAnimations()](https://developer.mozilla.org/en-US/docs/Web/API/Element/getAnimations) -- Standard API for animation detection (HIGH confidence)
+- [Automating Animation Testing with Playwright](https://www.thegreenreport.blog/articles/automating-animation-testing-with-playwright-a-practical-guide/automating-animation-testing-with-playwright-a-practical-guide.html) -- Practical animation detection patterns (MEDIUM confidence)
+- [Base64 encoding images in Node.js](https://www.fourkitchens.com/blog/article/base64-encoding-images-nodejs/) -- Data URI approach for embedded images (HIGH confidence)
+- [Simon Willison on Playwright MCP + Claude Code](https://til.simonwillison.net/claude-code/playwright-mcp-claude-code) -- Real-world usage patterns (MEDIUM confidence)
+
+---
+*Stack research for: v1.1.0 Flow Audit milestone*
+*Researched: 2026-03-28*
