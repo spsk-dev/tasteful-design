@@ -86,7 +86,12 @@ Plans:
   3. Navigation stops after hitting the max screen limit (default 10) or when the agent detects flow completion / dead end
   4. User can provide `--steps url1,url2,url3` to force a deterministic navigation path instead of intent-guided exploration
   5. User can provide authentication credentials so the agent logs in before auditing a protected flow
-**Plans**: TBD
+**Plans:** 3 plans
+
+Plans:
+- [ ] 04-01-PLAN.md -- Foundation: flow config, navigation reference, plugin registration, router update
+- [ ] 04-02-PLAN.md -- Core design-audit.md command with intent and deterministic navigation modes
+- [ ] 04-03-PLAN.md -- Test fixtures and end-to-end verification of auth flow and graceful stop
 
 ### Phase 5: Per-Screen Review + Animation
 **Goal**: Each captured screen receives an 8-specialist design review with smart weighting, cross-screen consistency analysis flags visual drift between screens, and CSS animation/transition properties are detected and assessed
@@ -133,7 +138,7 @@ Phases execute in numeric order: 4 -> 5 -> 6 -> 7
 | 1. Scaffold + Port + Evals | v1.0.0 | 3/3 | Complete | 2026-03-29 |
 | 2. Init Wizard + Branding + Demo | v1.0.0 | 3/3 | Complete | 2026-03-29 |
 | 3. Second Skill + Release | v1.0.0 | 3/3 | Complete | 2026-03-29 |
-| 4. Flow Navigation Engine | v1.1.0 | 0/? | Not started | - |
+| 4. Flow Navigation Engine | v1.1.0 | 0/3 | Planning complete | - |
 | 5. Per-Screen Review + Animation | v1.1.0 | 0/? | Not started | - |
 | 6. HTML Diagnostic Report | v1.1.0 | 0/? | Not started | - |
 | 7. Release Polish | v1.1.0 | 0/? | Not started | - |
