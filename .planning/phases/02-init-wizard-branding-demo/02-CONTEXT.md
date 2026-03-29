@@ -30,7 +30,7 @@ Add the first-run experience (init wizard with 5 questions), branded output syst
 ### Branded Output
 - **D-26:** Signature line format: ` SpSk  design-review  v1.0.0  ───  8 specialists  ·  tier 1` (dynamic version, specialist count, tier).
 - **D-27:** Branding templates live in `shared/output.md` — a reference file loaded by all commands via `@${CLAUDE_PLUGIN_ROOT}/shared/output.md`.
-- **D-28:** Score display: `████████░░ 8.0/10` — block characters with numeric value.
+- **D-28:** Score display: `████████░░ 8.0/10` — block characters with numeric value. Internal 1.0-4.0 scale multiplied by 2.5 for /10 display (confirmed by user).
 - **D-29:** Symbol vocabulary: ✓ (pass), ✗ (fail), ◆ (in-progress), ○ (pending), ⚡ (auto), ⚠ (warning).
 - **D-30:** Unicode boxes for checkpoints and results (single-line borders, not double).
 - **D-31:** Footer on every output: `github.com/felipemachado/spsk` — subtle, always present.
