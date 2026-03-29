@@ -1,0 +1,16 @@
+{
+  "description": "Design review plugin hooks — suggests /design-review after frontend file edits",
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PLUGIN_ROOT}/scripts/suggest-review.sh"
+          }
+        ]
+      }
+    ]
+  }
+}

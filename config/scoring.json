@@ -1,0 +1,48 @@
+{
+  "weights": {
+    "intent_match": 3,
+    "originality": 3,
+    "ux_flow": 2,
+    "typography": 2,
+    "color": 2,
+    "layout": 1,
+    "icons": 1,
+    "motion": 1,
+    "copy": 1,
+    "code_a11y": 1
+  },
+  "total_weight": 17,
+  "quick_mode_weights": {
+    "intent_match": 3,
+    "originality": 3,
+    "ux_flow": 2,
+    "typography": 2,
+    "color": 2,
+    "layout": 1
+  },
+  "quick_mode_total_weight": 13,
+  "thresholds": {
+    "admin": 2.5,
+    "settings": 2.5,
+    "docs": 2.5,
+    "dashboard": 2.8,
+    "form": 2.8,
+    "e-commerce": 2.8,
+    "landing": 3.0,
+    "marketing": 3.0,
+    "saas": 3.0,
+    "portfolio": 3.5,
+    "showcase": 3.5,
+    "emotional": 3.0,
+    "personal": 3.0
+  },
+  "verdict_rules": {
+    "ship": "score >= threshold AND no critical issues",
+    "conditional_ship": "score within 0.3 of threshold AND fixable issues",
+    "block": "score < threshold - 0.3 OR critical issues"
+  },
+  "scale": {
+    "min": 1.0,
+    "max": 4.0
+  }
+}

@@ -1,0 +1,17 @@
+# Design review output
+.design-reviews/
+
+# Eval temp files
+evals/results/*.tmp
+
+# macOS
+.DS_Store
+
+# Node (if any tooling added later)
+node_modules/
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo

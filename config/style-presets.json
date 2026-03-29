@@ -1,0 +1,61 @@
+{
+  "_description": "Style presets — set 'active_preset' to apply a personality to all reviews and builds. Specialists evaluate against this style direction. Custom presets can be added.",
+  "active_preset": null,
+  "presets": {
+    "serious-dashboard": {
+      "description": "Clean, functional, data-dense. Think Linear, Grafana, Vercel Dashboard.",
+      "tone": "professional, precise, information-dense",
+      "animations": "minimal — micro-interactions only (hover, focus), no entrance animations",
+      "colors": "neutral palette (zinc/slate/gray), single accent color, dark mode preferred",
+      "typography": "system fonts or clean sans-serif (Geist, Inter, DM Sans), monospace for data",
+      "layout": "dense grid, sidebar nav, tables over cards, max information per viewport",
+      "icons": "Lucide or Phosphor, 16-20px, stroke only, no fill",
+      "borders": "subtle (1px, low-contrast), small radius (4-6px)",
+      "reference_sites": ["linear.app", "grafana.com", "vercel.com/dashboard"]
+    },
+    "fun-lighthearted": {
+      "description": "Playful, warm, personality-forward. Think Notion, Figma, Slack.",
+      "tone": "friendly, approachable, occasionally whimsical",
+      "animations": "generous — entrance animations, hover delights, scroll reveals, micro-celebrations",
+      "colors": "warm palette, multiple accent colors okay, pastels or saturated brights, light mode preferred",
+      "typography": "rounded sans-serif (Plus Jakarta Sans, Nunito, Quicksand), display font for headings",
+      "layout": "spacious, cards with rounded corners, generous whitespace, visual breathing room",
+      "icons": "Phosphor or custom, 20-24px, can mix filled and outline",
+      "borders": "rounded (12-16px), soft shadows, no harsh lines",
+      "reference_sites": ["notion.so", "figma.com", "slack.com"]
+    },
+    "animation-heavy": {
+      "description": "Motion-forward, cinematic, immersive. Think Apple, Stripe, Vercel homepage.",
+      "tone": "premium, immersive, scroll-driven storytelling",
+      "animations": "bold — parallax, scroll-triggered reveals, page transitions, 3D transforms, canvas/WebGL",
+      "colors": "high contrast, dark backgrounds, vibrant accents, gradients okay if intentional",
+      "typography": "display fonts for impact (Clash Display, Cabinet Grotesk), large hero text 64px+",
+      "layout": "full-bleed sections, asymmetric, cinematic proportions, viewport-height sections",
+      "icons": "custom SVGs with animation potential, no static icon libraries",
+      "borders": "minimal — rely on space and shadow, not borders",
+      "reference_sites": ["apple.com", "stripe.com", "vercel.com"]
+    },
+    "minimal-editorial": {
+      "description": "Typography-driven, content-first, quiet elegance. Think Medium, iA Writer, Monocle.",
+      "tone": "refined, intellectual, understated",
+      "animations": "almost none — subtle fade-ins only, respect prefers-reduced-motion",
+      "colors": "near-monochrome, off-white/charcoal, one muted accent maximum",
+      "typography": "serif for body (Newsreader, Literata, Instrument Serif), generous measure (65ch), large body text (18-20px)",
+      "layout": "single column, wide margins, generous line-height (1.7+), no sidebars",
+      "icons": "none or very sparse, text labels preferred",
+      "borders": "hairline (0.5-1px) or none, large radius or no radius",
+      "reference_sites": ["medium.com", "ia.net/writer", "monocle.com"]
+    },
+    "startup-landing": {
+      "description": "Bold, conversion-focused, energetic. Think Vercel homepage, Linear landing, Raycast.",
+      "tone": "confident, direct, feature-forward",
+      "animations": "moderate — hero animation, scroll reveals, hover states, product demos",
+      "colors": "dark mode, vibrant gradient accents, high contrast CTAs",
+      "typography": "geometric sans-serif (Geist, General Sans, Satoshi), large hero (56-72px), tight letter-spacing",
+      "layout": "full-width hero, alternating sections, product screenshots/demos, social proof",
+      "icons": "custom or Lucide, 20-24px, consistent stroke",
+      "borders": "medium radius (8-12px), subtle glass effects okay",
+      "reference_sites": ["vercel.com", "linear.app", "raycast.com"]
+    }
+  }
+}

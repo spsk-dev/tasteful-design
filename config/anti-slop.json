@@ -1,0 +1,40 @@
+{
+  "banned_fonts": [
+    "Dancing Script",
+    "Playfair Display",
+    "Poppins",
+    "Montserrat",
+    "Inter",
+    "Lobster",
+    "Pacifico",
+    "Great Vibes",
+    "Satisfy",
+    "Sacramento"
+  ],
+  "recommended_fonts": {
+    "sans": ["DM Sans", "Plus Jakarta Sans", "Figtree", "General Sans", "Satoshi", "Outfit"],
+    "serif": ["Instrument Serif", "Fraunces", "Newsreader", "Literata", "Lora"],
+    "mono": ["JetBrains Mono", "Fira Code", "IBM Plex Mono", "Source Code Pro"],
+    "display": ["Cabinet Grotesk", "Clash Display", "Switzer"]
+  },
+  "banned_palettes": {
+    "dark_gold": "Dark background + gold/amber accents — crypto exchange cliche",
+    "synthwave": "Purple gradient + neon cyan/pink — AI SaaS default",
+    "gray_everything": "All-gray palette with no accent — lifeless",
+    "purple_gradient": "Purple-to-blue gradient hero — most overused AI pattern"
+  },
+  "banned_patterns": {
+    "emoji_as_icons": "Use Lucide, Phosphor, or Heroicons SVGs instead",
+    "three_column_icon_grid": "The #1 AI layout fingerprint — vary your layouts",
+    "badge_hero_features_steps_testimonials_cta": "The AI landing page skeleton — restructure"
+  },
+  "required_accessibility": [
+    "prefers-reduced-motion support",
+    "Semantic HTML (nav, main, aside, header, section)",
+    "aria-labels on interactive elements",
+    "Focus-visible styles",
+    "WCAG AA contrast (4.5:1 normal text, 3:1 large text)"
+  ],
+  "max_font_families": 2,
+  "notes": "Edit this file to customize anti-slop rules for your project. The design-improve skill reads this during Phase A (build) to avoid common AI output patterns."
+}

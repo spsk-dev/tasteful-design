@@ -1,0 +1,85 @@
+{
+  "_description": "Example design system tokens. The plugin creates .design/system.json and .design/components.json automatically after the first review. This file shows the expected structure for reference only — do not copy manually.",
+  "tokens": {
+    "colors": {
+      "background": "",
+      "surface": "",
+      "text_primary": "",
+      "text_secondary": "",
+      "accent": "",
+      "accent_hover": "",
+      "border": "",
+      "error": "",
+      "success": ""
+    },
+    "typography": {
+      "font_primary": "",
+      "font_secondary": "",
+      "font_mono": "",
+      "size_scale": "12/14/16/20/24/32/48",
+      "weight_scale": "400/500/600/700",
+      "line_height_body": "1.5",
+      "line_height_heading": "1.2"
+    },
+    "spacing": {
+      "unit": "8px",
+      "scale": "4/8/12/16/24/32/48/64"
+    },
+    "borders": {
+      "radius_sm": "",
+      "radius_md": "",
+      "radius_lg": "",
+      "radius_full": "9999px",
+      "width": "1px",
+      "color": ""
+    },
+    "shadows": {
+      "sm": "",
+      "md": "",
+      "lg": ""
+    }
+  },
+  "components": {
+    "buttons": {
+      "border_radius": "",
+      "padding": "",
+      "font_weight": "",
+      "font_size": "",
+      "primary_bg": "",
+      "primary_text": "",
+      "secondary_bg": "",
+      "secondary_text": "",
+      "states": ["hover", "focus", "disabled", "loading"]
+    },
+    "inputs": {
+      "border_radius": "",
+      "padding": "",
+      "border_color": "",
+      "focus_ring": "",
+      "placeholder_color": ""
+    },
+    "cards": {
+      "border_radius": "",
+      "padding": "",
+      "background": "",
+      "border": "",
+      "shadow": ""
+    },
+    "navigation": {
+      "style": "",
+      "active_indicator": "",
+      "mobile_pattern": ""
+    }
+  },
+  "patterns": {
+    "icon_library": "",
+    "icon_size": "",
+    "icon_stroke_width": "",
+    "animation_duration_micro": "",
+    "animation_duration_macro": "",
+    "animation_easing": "",
+    "dark_mode": false,
+    "max_content_width": ""
+  },
+  "rules": []
+}

@@ -1,0 +1,8 @@
+{
+  "name": "spsk",
+  "version": "1.0.0",
+  "description": "AI-powered design review with 8 specialist agents, weighted scoring, and multi-tier degradation",
+  "author": "Felipe Machado",
+  "homepage": "https://github.com/felipemachado/spsk",
+  "license": "MIT"
+}
