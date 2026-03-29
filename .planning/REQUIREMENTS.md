@@ -9,25 +9,25 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Scaffold
 
-- [ ] **SCAF-01**: Plugin manifest (`.claude-plugin/plugin.json`) with correct metadata, version, description
-- [ ] **SCAF-02**: README.md with install command, demo GIF placeholder, architecture overview, usage guide
-- [ ] **SCAF-03**: CLAUDE.md with command documentation and usage instructions
-- [ ] **SCAF-04**: LICENSE (MIT)
+- [x] **SCAF-01**: Plugin manifest (`.claude-plugin/plugin.json`) with correct metadata, version, description
+- [x] **SCAF-02**: README.md with install command, demo GIF placeholder, architecture overview, usage guide
+- [x] **SCAF-03**: CLAUDE.md with command documentation and usage instructions
+- [x] **SCAF-04**: LICENSE (MIT)
 - [ ] **SCAF-05**: CHANGELOG.md with transparent failure history (v1 single-agent 40%, v4 multi-agent 100%)
 - [ ] **SCAF-06**: ARCHITECTURE.md documenting multi-agent design, specialist roles, boss synthesizer, scoring, degradation tiers
 
 ### Design-Review Port
 
-- [ ] **PORT-01**: `/design-review` command ported — 8 specialists, weighted scoring, SHIP/BLOCK verdict
-- [ ] **PORT-02**: `/design` orchestrator ported — routes to review/improve/validate/ship
-- [ ] **PORT-03**: `/design-improve` iterative loop ported — build/review/fix cycle with score progression
-- [ ] **PORT-04**: `/design-validate` functional tests ported — Playwright MCP integration
-- [ ] **PORT-05**: Configuration files ported — scoring.json, anti-slop.json, style-presets.json
-- [ ] **PORT-06**: Skill file (SKILL.md) and reference files ported with `${CLAUDE_PLUGIN_ROOT}` paths
-- [ ] **PORT-07**: Hooks ported — suggest-review.sh + hooks.json
-- [ ] **PORT-08**: All hardcoded paths replaced with `${CLAUDE_PLUGIN_ROOT}` variable
-- [ ] **PORT-09**: Degradation tiers working — Tier 1 (full), Tier 2 (no Gemini), Tier 3 (code-only)
-- [ ] **PORT-10**: Quick mode (`--quick`) working — 4 specialists instead of 8
+- [x] **PORT-01**: `/design-review` command ported — 8 specialists, weighted scoring, SHIP/BLOCK verdict
+- [x] **PORT-02**: `/design` orchestrator ported — routes to review/improve/validate/ship
+- [x] **PORT-03**: `/design-improve` iterative loop ported — build/review/fix cycle with score progression
+- [x] **PORT-04**: `/design-validate` functional tests ported — Playwright MCP integration
+- [x] **PORT-05**: Configuration files ported — scoring.json, anti-slop.json, style-presets.json
+- [x] **PORT-06**: Skill file (SKILL.md) and reference files ported with `${CLAUDE_PLUGIN_ROOT}` paths
+- [x] **PORT-07**: Hooks ported — suggest-review.sh + hooks.json
+- [x] **PORT-08**: All hardcoded paths replaced with `${CLAUDE_PLUGIN_ROOT}` variable
+- [x] **PORT-09**: Degradation tiers working — Tier 1 (full), Tier 2 (no Gemini), Tier 3 (code-only)
+- [x] **PORT-10**: Quick mode (`--quick`) working — 4 specialists instead of 8
 
 ### Evaluation Harness
 
@@ -118,22 +118,22 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| SCAF-01 | Phase 1 | Pending |
-| SCAF-02 | Phase 1 | Pending |
-| SCAF-03 | Phase 1 | Pending |
-| SCAF-04 | Phase 1 | Pending |
+| SCAF-01 | Phase 1 | Complete |
+| SCAF-02 | Phase 1 | Complete |
+| SCAF-03 | Phase 1 | Complete |
+| SCAF-04 | Phase 1 | Complete |
 | SCAF-05 | Phase 1 | Pending |
 | SCAF-06 | Phase 1 | Pending |
-| PORT-01 | Phase 1 | Pending |
-| PORT-02 | Phase 1 | Pending |
-| PORT-03 | Phase 1 | Pending |
-| PORT-04 | Phase 1 | Pending |
-| PORT-05 | Phase 1 | Pending |
-| PORT-06 | Phase 1 | Pending |
-| PORT-07 | Phase 1 | Pending |
-| PORT-08 | Phase 1 | Pending |
-| PORT-09 | Phase 1 | Pending |
-| PORT-10 | Phase 1 | Pending |
+| PORT-01 | Phase 1 | Complete |
+| PORT-02 | Phase 1 | Complete |
+| PORT-03 | Phase 1 | Complete |
+| PORT-04 | Phase 1 | Complete |
+| PORT-05 | Phase 1 | Complete |
+| PORT-06 | Phase 1 | Complete |
+| PORT-07 | Phase 1 | Complete |
+| PORT-08 | Phase 1 | Complete |
+| PORT-09 | Phase 1 | Complete |
+| PORT-10 | Phase 1 | Complete |
 | EVAL-01 | Phase 1 | Pending |
 | EVAL-02 | Phase 1 | Pending |
 | EVAL-03 | Phase 1 | Pending |
