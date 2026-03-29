@@ -28,12 +28,12 @@ Decimal phases appear between their surrounding integers in numeric order.
   3. Running `run-evals.sh` on a clean clone produces passing results against bundled test fixtures with range-based assertions
   4. ARCHITECTURE.md explains the multi-agent design clearly enough that a developer unfamiliar with the project understands specialist roles, boss synthesizer pattern, scoring, and degradation tiers
   5. CHANGELOG.md shows the transparent failure history -- v1 single-agent at 40%, progression to v4 multi-agent at 100%
-**Plans**: TBD
+**Plans:** 3 plans
 
 Plans:
-- [ ] 01-01: TBD
-- [ ] 01-02: TBD
-- [ ] 01-03: TBD
+- [ ] 01-01-PLAN.md -- Scaffold repo structure, port all 22 plugin files, audit hardcoded paths, create README + CLAUDE.md
+- [ ] 01-02-PLAN.md -- Portfolio-grade ARCHITECTURE.md and transparent CHANGELOG.md
+- [ ] 01-03-PLAN.md -- Two-layer eval harness with bundled fixtures and range-based assertions
 
 ### Phase 2: Init Wizard + Branding + Demo
 **Goal**: A new user goes from install to first configured review in under 2 minutes, with branded output that makes SpSk recognizable and a demo GIF that sells the tool from the README
