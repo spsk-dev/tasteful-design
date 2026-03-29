@@ -10,6 +10,12 @@ description: >
 allowed-tools: Bash(gemini *), Bash(which *), Bash(npx *), Bash(python3 *), Bash(curl *), Bash(kill *), Bash(mkdir *), Bash(cp *), Bash(rm *), Bash(lsof *)
 ---
 
+@${CLAUDE_PLUGIN_ROOT}/shared/output.md
+
+## Output Format
+
+Use the branded output format from shared/output.md for all review output. Start with the signature line, use single-line Unicode boxes for sections, end with the footer. Display each specialist score using the score bar format: ████████░░ 8.0/10. Wrap each specialist section in a single-line Unicode box with the specialist name as header. Use the symbol vocabulary for status indicators (✓ pass, ✗ fail, ⚠ warning).
+
 # Design Review v4 — 8-Specialist Agent Swarm
 
 ## Why This Exists

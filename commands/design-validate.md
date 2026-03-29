@@ -9,6 +9,12 @@ description: >
 allowed-tools: Bash(npx *), Bash(python3 *), Bash(curl *), Bash(kill *), Bash(lsof *)
 ---
 
+@${CLAUDE_PLUGIN_ROOT}/shared/output.md
+
+## Output Format
+
+Use the branded output format from shared/output.md for all validation output. Start with the signature line, use single-line Unicode boxes for sections, end with the footer. Use ✓ for passing checks, ✗ for failing checks, ⚠ for warnings.
+
 # Design Validate — Functional Reachability Check
 
 ## Why This Exists

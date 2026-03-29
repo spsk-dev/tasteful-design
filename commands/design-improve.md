@@ -9,6 +9,12 @@ description: >
 allowed-tools: Bash(gemini *), Bash(which *), Bash(npx *), Bash(python3 *), Bash(curl *), Bash(kill *), Bash(mkdir *), Bash(cp *), Bash(rm *), Bash(lsof *)
 ---
 
+@${CLAUDE_PLUGIN_ROOT}/shared/output.md
+
+## Output Format
+
+Use the branded output format from shared/output.md for all improvement output. Start with the signature line, use single-line Unicode boxes for sections, end with the footer. Show iteration count and score progression using the score bar format. Use ◆ for current iteration, ✓ for completed iterations, ○ for remaining.
+
 # Design Improve — Iterative Build→Review→Fix Loop
 
 ## Why This Exists
