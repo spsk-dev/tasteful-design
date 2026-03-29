@@ -44,13 +44,13 @@ Plans:
   2. When a user skips brand colors during init, the palette engine suggests 3 named palettes contextual to their page type (e.g., different palettes for dashboard vs landing page)
   3. Every SpSk command output includes the branded signature line, unicode boxes for results, progress bars for scores, and a footer with the repo link
   4. The README contains an embedded 30-second demo GIF showing a real design-review run
-**Plans**: TBD
+**Plans:** 3 plans
 **UI hint**: yes
 
 Plans:
-- [ ] 02-01: TBD
-- [ ] 02-02: TBD
-- [ ] 02-03: TBD
+- [ ] 02-01-PLAN.md -- Branding reference file, palette engine data, and eval validator updates
+- [ ] 02-02-PLAN.md -- Init wizard command with 5 questions and router update
+- [ ] 02-03-PLAN.md -- Branded output integration across commands, VHS demo tape, README GIF embed
 
 ### Phase 3: Second Skill + Release
 **Goal**: SpSk ships as a two-skill platform with measurable impact evidence, installable from the plugin registry and ready for public use
@@ -74,6 +74,6 @@ Phases execute in numeric order: 1 -> 2 -> 3
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Scaffold + Port + Evals | 0/3 | Not started | - |
+| 1. Scaffold + Port + Evals | 3/3 | Complete | 2026-03-29 |
 | 2. Init Wizard + Branding + Demo | 0/3 | Not started | - |
 | 3. Second Skill + Release | 0/2 | Not started | - |
