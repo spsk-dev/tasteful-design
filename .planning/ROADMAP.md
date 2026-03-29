@@ -48,8 +48,8 @@ Plans:
 **UI hint**: yes
 
 Plans:
-- [ ] 02-01-PLAN.md -- Branding reference file, palette engine data, and eval validator updates
-- [ ] 02-02-PLAN.md -- Init wizard command with 5 questions and router update
+- [x] 02-01-PLAN.md -- Branding reference file, palette engine data, and eval validator updates
+- [x] 02-02-PLAN.md -- Init wizard command with 5 questions and router update
 - [ ] 02-03-PLAN.md -- Branded output integration across commands, VHS demo tape, README GIF embed
 
 ### Phase 3: Second Skill + Release
