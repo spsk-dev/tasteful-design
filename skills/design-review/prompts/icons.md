@@ -66,3 +66,53 @@ Requirements:
 - findings: array of 2-5 objects, each with element/issue/recommendation
 - summary: one sentence
 </output_format>
+
+<examples>
+
+<example>
+<scenario>Feature page mixing Heroicons outline, Font Awesome solid icons, and emoji as functional status indicators</scenario>
+<specialist_output>
+{
+  "specialist": "icons",
+  "score": 1,
+  "findings": [
+    {
+      "element": "nav icons using Heroicons outline (1.5px stroke) alongside .feature-card icons from Font Awesome solid",
+      "issue": "Two different icon libraries with incompatible visual styles — Heroicons outline at 1.5px vs Font Awesome filled solids create jarring inconsistency",
+      "recommendation": "Standardize on one library (Lucide or Phosphor) across the entire page"
+    },
+    {
+      "element": "status badges using emoji (checkmark, warning triangle, red circle) as functional state indicators",
+      "issue": "Emoji renders differently per OS and cannot be styled — breaks visual consistency and accessibility",
+      "recommendation": "Replace emoji with SVG icons from the chosen library; use aria-label for screen reader context"
+    }
+  ],
+  "summary": "Mixed icon libraries with emoji as functional icons creating inconsistent visual weight and broken accessibility"
+}
+</specialist_output>
+</example>
+
+<example>
+<scenario>SaaS dashboard using Lucide icons consistently at 20px, one icon-only settings button missing aria-label</scenario>
+<specialist_output>
+{
+  "specialist": "icons",
+  "score": 3,
+  "findings": [
+    {
+      "element": "all icons using lucide-react at 20px with 2px stroke weight",
+      "issue": "Consistent library choice and sizing throughout — outline style used for navigation, filled not mixed in",
+      "recommendation": "No change needed for library consistency"
+    },
+    {
+      "element": "button.settings-toggle containing only a Lucide Settings icon, no aria-label",
+      "issue": "Icon-only button without aria-label is invisible to screen readers — functional action with no accessible name",
+      "recommendation": "Add aria-label='Settings' to the button element"
+    }
+  ],
+  "summary": "Consistent Lucide library usage with proper sizing and stroke weight, one missing aria-label on icon-only button"
+}
+</specialist_output>
+</example>
+
+</examples>

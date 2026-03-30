@@ -61,3 +61,53 @@ Requirements:
 - findings: array of 2-5 objects, each with element/issue/recommendation
 - summary: one sentence
 </output_format>
+
+<examples>
+
+<example>
+<scenario>Portfolio page with semantic HTML structure but missing focus styles, color-only status indicators, no skip link</scenario>
+<specialist_output>
+{
+  "specialist": "code_a11y",
+  "score": 2,
+  "findings": [
+    {
+      "element": "all interactive elements (a, button) — no :focus-visible styles defined",
+      "issue": "Keyboard users have no visible focus indicator when tabbing through the page — critical accessibility gap",
+      "recommendation": "Add :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; } to all interactive elements"
+    },
+    {
+      "element": ".project-status using only green/yellow/red background colors to indicate state",
+      "issue": "Color-only status indicators are invisible to colorblind users (8% of males) — WCAG 1.4.1 requires non-color indicators",
+      "recommendation": "Add an icon or text label alongside the color: checkmark for complete, clock for in-progress, exclamation for blocked"
+    }
+  ],
+  "summary": "Semantic HTML foundation is present but missing focus styles, color-only indicators, and no skip link for keyboard navigation"
+}
+</specialist_output>
+</example>
+
+<example>
+<scenario>Documentation site with full semantic HTML, CSS custom properties, skip link, focus-visible styles, mobile-first responsive</scenario>
+<specialist_output>
+{
+  "specialist": "code_a11y",
+  "score": 4,
+  "findings": [
+    {
+      "element": "nav, main, aside, footer with proper landmark roles; skip link as first focusable element",
+      "issue": "No issue — full semantic structure with skip-to-content link enables efficient keyboard and screen reader navigation",
+      "recommendation": "None needed; this is the standard to maintain"
+    },
+    {
+      "element": "all colors defined via CSS custom properties (--color-text, --color-bg, --color-accent) with :focus-visible on all interactive elements",
+      "issue": "CSS custom properties enable theming and consistency; focus-visible styles use 2px solid outline with offset — correct pattern",
+      "recommendation": "Consider adding prefers-contrast media query for users who need higher contrast modes"
+    }
+  ],
+  "summary": "Full semantic HTML with complete accessibility coverage, CSS custom properties for theming, and mobile-first responsive design"
+}
+</specialist_output>
+</example>
+
+</examples>

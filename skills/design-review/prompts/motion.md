@@ -67,3 +67,53 @@ Requirements:
 - findings: array of 2-5 objects, each with element/issue/recommendation
 - summary: one sentence
 </output_format>
+
+<examples>
+
+<example>
+<scenario>Startup landing page with animate-bounce on CTA button, linear easing on hover transitions, no prefers-reduced-motion</scenario>
+<specialist_output>
+{
+  "specialist": "motion",
+  "score": 2,
+  "findings": [
+    {
+      "element": ".cta-button with animation: bounce 1s infinite",
+      "issue": "animate-bounce on a functional CTA button is distracting and signals AI-generated output — bouncing draws attention but degrades perceived quality",
+      "recommendation": "Remove bounce; use a subtle scale transform on hover (transform: scale(1.02), 150ms ease-out) for interaction feedback"
+    },
+    {
+      "element": ".card:hover with transition: all 0.3s linear",
+      "issue": "Linear easing feels robotic and mechanical; transition: all is wasteful and can animate unintended properties",
+      "recommendation": "Use transition: transform 200ms ease-out, box-shadow 200ms ease-out — specify properties and use natural easing"
+    }
+  ],
+  "summary": "Basic transitions exist but animate-bounce on CTA, linear easing, and missing prefers-reduced-motion support"
+}
+</specialist_output>
+</example>
+
+<example>
+<scenario>Dashboard with ease-out hover transitions at 200ms, prefers-reduced-motion media query, one slightly long entrance animation</scenario>
+<specialist_output>
+{
+  "specialist": "motion",
+  "score": 3,
+  "findings": [
+    {
+      "element": ".sidebar-item:hover with transition: background-color 200ms ease-out, .modal with transition: opacity 250ms ease-out, transform 250ms cubic-bezier(0.16, 1, 0.3, 1)",
+      "issue": "Hover and modal transitions use proper easing curves and appropriate durations — GPU-composited properties (opacity, transform) only",
+      "recommendation": "No change needed for these interactions"
+    },
+    {
+      "element": ".dashboard-panel entrance animation at 800ms with fade-in + translateY",
+      "issue": "800ms entrance is noticeably long for a data panel — should be 300-500ms for scroll-reveal animations",
+      "recommendation": "Reduce to 400ms and use cubic-bezier(0.16, 1, 0.3, 1) for a snappier entrance that still feels smooth"
+    }
+  ],
+  "summary": "Appropriate durations with proper easing and reduced-motion support, one entrance animation slightly exceeds ideal duration"
+}
+</specialist_output>
+</example>
+
+</examples>
