@@ -135,7 +135,7 @@ Plans:
 **Plans:** 2 plans
 
 Plans:
-- [ ] 07-01-PLAN.md -- Docs update (README, ARCHITECTURE, CHANGELOG) and stale reference cleanup
+- [x] 07-01-PLAN.md -- Docs update (README, ARCHITECTURE, CHANGELOG) and stale reference cleanup
 - [ ] 07-02-PLAN.md -- Demo tape update, VERSION bump, plugin.json update, git tag v1.1.0
 
 ## Progress

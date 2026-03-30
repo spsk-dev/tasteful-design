@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.1.0
 milestone_name: Flow Audit + Polish
 status: Ready to plan
-stopped_at: Completed 06-02-PLAN.md
-last_updated: "2026-03-30T01:38:23.232Z"
+stopped_at: Completed 07-01-PLAN.md
+last_updated: "2026-03-30T01:50:20.005Z"
 progress:
   total_phases: 4
   completed_phases: 3
-  total_plans: 8
-  completed_plans: 8
+  total_plans: 10
+  completed_plans: 9
 ---
 
 # Project State
@@ -19,12 +19,12 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-29)
 
 **Core value:** Published skills must be immediately useful AND demonstrate architectural sophistication
-**Current focus:** Phase 06 -- html-diagnostic-report
+**Current focus:** Phase 07 -- release-polish
 
 ## Current Position
 
 Phase: 7
-Plan: Not started
+Plan: 1 of 2
 
 ## Performance Metrics
 
@@ -35,8 +35,8 @@ Plan: Not started
 
 **v1.1.0:**
 
-- Plans completed: 7/8
-- Phases completed: 2 of 4 (phase 6 in progress)
+- Plans completed: 9/10
+- Phases completed: 3 of 4 (phase 7 in progress)
 
 ## Accumulated Context
 
@@ -66,6 +66,8 @@ Plan: Not started
 - [Phase 06]: sips primary image converter with ImageMagick fallback for cross-platform JPEG conversion
 - [Phase 06]: 4MB image budget with auto-recompress at 60% quality if exceeded
 - [Phase 06]: Report generation failure is non-blocking -- terminal summary from Section 14 is the primary output
+- [Phase 07]: Playwright MCP listed as required (not optional) since flow audit depends on it
+- [Phase 07]: Flow audit section placed between Code Review and Case Studies in README
 
 ### Pending Todos
 
@@ -79,6 +81,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-30T01:37:37.450Z
-Stopped at: Completed 06-02-PLAN.md
+Last session: 2026-03-30T01:50:20.002Z
+Stopped at: Completed 07-01-PLAN.md
 Resume file: None
