@@ -2,11 +2,11 @@
 gsd_state_version: 1.0
 milestone: v1.2.0
 milestone_name: Prompting Excellence + Eval Credibility
-status: Defining requirements
+status: Ready to plan
 stopped_at: null
 last_updated: "2026-03-29"
 progress:
-  total_phases: 0
+  total_phases: 6
   completed_phases: 0
   total_plans: 0
   completed_plans: 0
@@ -19,58 +19,39 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-29)
 
 **Core value:** Published skills must be immediately useful AND demonstrate architectural sophistication
-**Current focus:** Defining requirements for v1.2.0
+**Current focus:** Phase 8 - Prompt Extraction + Restructuring
 
 ## Current Position
 
-Phase: Not started (defining requirements)
-Plan: —
-Status: Defining requirements
-Last activity: 2026-03-29 — Milestone v1.2.0 started
+Phase: 8 of 13 (Prompt Extraction + Restructuring)
+Plan: 0 of ? in current phase (not yet planned)
+Status: Ready to plan
+Last activity: 2026-03-29 -- Roadmap created for v1.2.0 milestone (Phases 8-13)
+
+Progress: [==============......] 70% (v1.0.0 + v1.1.0 complete, v1.2.0 starting)
 
 ## Performance Metrics
 
-**Velocity (v1.0.0):**
+**Velocity:**
+- Total plans completed: 19 (v1.0.0: 9, v1.1.0: 10)
 
-- Total plans completed: 9
-- Phases completed: 3
+**By Phase:**
 
-**v1.1.0:**
-
-- Plans completed: 9/10
-- Phases completed: 3 of 4 (phase 7 in progress)
+| Phase | Plans | Total | Avg/Plan |
+|-------|-------|-------|----------|
+| 1-3 (v1.0.0) | 9 | -- | -- |
+| 4-7 (v1.1.0) | 10 | -- | -- |
+| 8-13 (v1.2.0) | 0 | -- | -- |
 
 ## Accumulated Context
 
 ### Decisions
 
-- [v1.0.0]: Plugin named 'tasteful-design', distributed under spsk-dev org
-- [v1.0.0]: Code-review extracted to separate repo (spsk-dev/code-review)
-- [v1.1.0]: /design-audit navigates SPA flows guided by user-provided flow intent description
-- [v1.1.0]: HTML diagnostic report with embedded screenshots and per-screen specialist assessments
-- [v1.1.0]: Playwright MCP over CLI scripts for stateful browser navigation
-- [v1.1.0]: ANIM combined with REVW in Phase 5 (animation is per-screen enrichment, not standalone)
-- [Phase 04]: 800ms mutation quiet period for DOM stability detection
-- [Phase 04]: Viewport-only screenshots (1440x900) for flow audit, matching design-review standard
-- [Phase 04]: Slug generation priority: h1 > h2 > URL path > screen-N fallback
-- [Phase 04]: Snapshot-before-click pattern enforced as critical constraint for stale ref protection
-- [Phase 04]: Click retry with fresh snapshot then graceful termination, preserving partial flow-state
-- [Phase 04]: Static HTML fixtures with zero dependencies for flow audit smoke testing
-- [Phase 05]: Delta E threshold 10 for color drift, 4px spacing tolerance, 2px font size tolerance
-- [Phase 05]: Hybrid animation detection: pre/post snapshots + event listeners per PITFALLS.md Pitfall 6
-- [Phase 05]: Consistency is post-processing pass reading specialist findings, not a 9th specialist
-- [Phase 05]: Per-screen reviews sequential (not parallel) to manage token budget
-- [Phase 05]: Motion specialist receives runtime animation data from navigation alongside source analysis
-- [Phase 05]: Flow score uses position-weighted average (1.5x first/last), consistency penalty deferred to Plan 03
-- [Phase 05]: Consistency check labels match config keys exactly (button_style, color_palette, etc.) for traceability
-- [Phase 05]: Penalty formula uses point-based scoring (critical*3, issue*2, warning*1) normalized over 20 points, matching flow.md reference
-- [Phase 06]: Score bars as CSS percentage-width divs, not SVG or Unicode blocks
-- [Phase 06]: sips primary image converter with ImageMagick fallback for cross-platform JPEG conversion
-- [Phase 06]: 4MB image budget with auto-recompress at 60% quality if exceeded
-- [Phase 06]: Report generation failure is non-blocking -- terminal summary from Section 14 is the primary output
-- [Phase 07]: Playwright MCP listed as required (not optional) since flow audit depends on it
-- [Phase 07]: Flow audit section placed between Code Review and Case Studies in README
-- [Phase 07]: VHS not installed -- tape file is deliverable, recording deferred per D-111
+- [v1.2.0]: Phase ordering is load-bearing: prompts -> evals -> JSON -> merge -> interact -> polish
+- [v1.2.0]: Eval runner uses `claude --print` for non-interactive invocation (needs smoke test in Phase 9)
+- [v1.2.0]: Structured JSON via prompt enforcement, not Anthropic Structured Outputs API (unavailable in plugin context)
+- [v1.2.0]: Copy specialist folded into Intent/Originality/UX with 4 sub-scores (not standalone)
+- [v1.2.0]: Playwright interaction is opt-in `--interact` flag with baseline-interact-reset pattern
 
 ### Pending Todos
 
@@ -78,12 +59,11 @@ None yet.
 
 ### Blockers/Concerns
 
-- Playwright MCP not yet registered in this environment — needs `claude mcp add` before Phase 4 execution
-- ~~Cross-platform base64 encoding (macOS vs Linux flags)~~ -- resolved: generate-report.sh detects uname and uses correct flags
-- ~~Flow audit eval fixtures needed~~ — resolved: evals/fixtures/flow-test/ created in 04-03
+- Validate `claude --print` can invoke plugin commands non-interactively before committing to eval architecture in Phase 9
+- Current token count per full review is unknown -- measure at Phase 13 start before adding few-shot examples
 
 ## Session Continuity
 
-Last session: 2026-03-30T01:54:14.206Z
-Stopped at: Completed 07-02-PLAN.md
+Last session: 2026-03-29
+Stopped at: Roadmap created for v1.2.0 milestone (Phases 8-13)
 Resume file: None

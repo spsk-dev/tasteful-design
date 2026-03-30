@@ -64,16 +64,35 @@
 
 ## Traceability
 
-| Requirement | Phase | Plan |
-|-------------|-------|------|
-| PRMT-01..07 | TBD | TBD |
-| EVAL-01..06 | TBD | TBD |
-| JSON-01..05 | TBD | TBD |
-| SPEC-01..03 | TBD | TBD |
-| GNRT-01 | TBD | TBD |
-| INTR-01..03 | TBD | TBD |
-| TEST-01 | TBD | TBD |
+| Requirement | Phase | Status |
+|-------------|-------|--------|
+| PRMT-01 | Phase 8 | Pending |
+| PRMT-02 | Phase 8 | Pending |
+| PRMT-03 | Phase 8 | Pending |
+| PRMT-04 | Phase 13 | Pending |
+| PRMT-05 | Phase 13 | Pending |
+| PRMT-06 | Phase 8 | Pending |
+| PRMT-07 | Phase 8 | Pending |
+| EVAL-01 | Phase 9 | Pending |
+| EVAL-02 | Phase 9 | Pending |
+| EVAL-03 | Phase 9 | Pending |
+| EVAL-04 | Phase 9 | Pending |
+| EVAL-05 | Phase 9 | Pending |
+| EVAL-06 | Phase 9 | Pending |
+| JSON-01 | Phase 10 | Pending |
+| JSON-02 | Phase 10 | Pending |
+| JSON-03 | Phase 10 | Pending |
+| JSON-04 | Phase 10 | Pending |
+| JSON-05 | Phase 10 | Pending |
+| SPEC-01 | Phase 11 | Pending |
+| SPEC-02 | Phase 11 | Pending |
+| SPEC-03 | Phase 11 | Pending |
+| GNRT-01 | Phase 13 | Pending |
+| INTR-01 | Phase 12 | Pending |
+| INTR-02 | Phase 12 | Pending |
+| INTR-03 | Phase 12 | Pending |
+| TEST-01 | Phase 12 | Pending |
 
 ---
 *Defined: 2026-03-29*
-*Previous milestone requirements (v1.1.0): archived — all 28 requirements completed*
+*Previous milestone requirements (v1.1.0): archived -- all 28 requirements completed*

@@ -3,12 +3,13 @@
 ## Milestones
 
 - ✅ **v1.0.0 MVP** - Phases 1-3 (shipped 2026-03-29)
-- 🚧 **v1.1.0 Flow Audit + Polish** - Phases 4-7 (in progress)
+- ✅ **v1.1.0 Flow Audit + Polish** - Phases 4-7 (shipped 2026-03-29)
+- 🚧 **v1.2.0 Prompting Excellence + Eval Credibility** - Phases 8-13 (in progress)
 
 ## Phases
 
 <details>
-<summary>✅ v1.0.0 MVP (Phases 1-3) - SHIPPED 2026-03-29</summary>
+<summary>v1.0.0 MVP (Phases 1-3) - SHIPPED 2026-03-29</summary>
 
 - [x] **Phase 1: Scaffold + Port + Evals** - Working plugin installable from GitHub with reproducible benchmark proof (completed 2026-03-29)
 - [x] **Phase 2: Init Wizard + Branding + Demo** - First-run experience, visual identity, and README that sells the tool
@@ -65,16 +66,13 @@ Plans:
 
 </details>
 
-### v1.1.0 Flow Audit + Polish (In Progress)
-
-**Milestone Goal:** Add flow-level design audit that navigates SPAs screen-by-screen with 8 specialists, producing an HTML diagnostic report.
+<details>
+<summary>v1.1.0 Flow Audit + Polish (Phases 4-7) - SHIPPED 2026-03-29</summary>
 
 - [x] **Phase 4: Flow Navigation Engine** - Playwright MCP-driven SPA navigation with intent-guided screen capture
-- [ ] **Phase 5: Per-Screen Review + Animation** - 8-specialist review wired into flow context with cross-screen consistency and animation detection
-- [ ] **Phase 6: HTML Diagnostic Report** - Self-contained HTML report with embedded screenshots, scores, and fix recommendations
-- [ ] **Phase 7: Release Polish** - Demo GIF, docs updates, repo cleanup, and v1.1.0 release
-
-## Phase Details
+- [x] **Phase 5: Per-Screen Review + Animation** - 8-specialist review wired into flow context with cross-screen consistency and animation detection
+- [x] **Phase 6: HTML Diagnostic Report** - Self-contained HTML report with embedded screenshots, scores, and fix recommendations
+- [x] **Phase 7: Release Polish** - Demo GIF, docs updates, repo cleanup, and v1.1.0 release
 
 ### Phase 4: Flow Navigation Engine
 **Goal**: A user can run `/design-audit <url> --flow "checkout flow"` and watch the agent navigate through SPA screens, capturing a screenshot at each state change, with the flow stopping gracefully at completion or dead ends
@@ -86,7 +84,7 @@ Plans:
   3. Navigation stops after hitting the max screen limit (default 10) or when the agent detects flow completion / dead end
   4. User can provide `--steps url1,url2,url3` to force a deterministic navigation path instead of intent-guided exploration
   5. User can provide authentication credentials so the agent logs in before auditing a protected flow
-**Plans:** 3 plans
+**Plans:** 3/3 complete
 
 Plans:
 - [x] 04-01-PLAN.md -- Foundation: flow config, navigation reference, plugin registration, router update
@@ -102,7 +100,7 @@ Plans:
   2. Cross-screen consistency analysis flags when button styles, colors, spacing, or typography drift between screens in the same flow
   3. Per-screen scores are aggregated into an overall flow score that reflects the entire navigation path
   4. CSS transition/animation properties are detected between screen states, `prefers-reduced-motion` compliance is checked, and animation findings appear in per-screen specialist output
-**Plans:** 3 plans
+**Plans:** 3/3 complete
 
 Plans:
 - [x] 05-01-PLAN.md -- Config and reference contracts: smart weighting, flow scoring, animation patterns, consistency heuristics
@@ -118,7 +116,7 @@ Plans:
   2. Each screen section shows the screenshot, 8-specialist scores, specific issues found, and fix recommendations, with specialist details collapsed by default and expandable on click
   3. The report includes an overall flow score summary with the top 5 priority fixes across all screens
   4. The report prints cleanly to PDF via browser print dialog (`@media print` styles), and total file size stays under 5MB
-**Plans:** 2 plans
+**Plans:** 2/2 complete
 
 Plans:
 - [x] 06-01-PLAN.md -- Report generator script with HTML template, screenshot embedding, flow map, and test fixture
@@ -132,16 +130,98 @@ Plans:
   1. A 30-second demo GIF in the README shows a real `/design-audit` flow run with the HTML report output
   2. README documents `/design-audit` usage with flow examples and report screenshots, ARCHITECTURE.md includes the flow audit component diagram
   3. All repo references use the spsk-dev org consistently, VERSION reads 1.1.0, and the repo has a v1.1.0 git tag
-**Plans:** 2 plans
+**Plans:** 2/2 complete
 
 Plans:
 - [x] 07-01-PLAN.md -- Docs update (README, ARCHITECTURE, CHANGELOG) and stale reference cleanup
 - [x] 07-02-PLAN.md -- Demo tape update, VERSION bump, plugin.json update, git tag v1.1.0
 
+</details>
+
+### v1.2.0 Prompting Excellence + Eval Credibility (In Progress)
+
+**Milestone Goal:** Upgrade all prompts to best-practice standards, make quality evals functional, migrate specialists to structured JSON output, consolidate 8 to 7 specialists, and add Playwright interaction capture.
+
+- [ ] **Phase 8: Prompt Extraction + Restructuring** - Specialist prompts extracted to individual files, restructured with XML tags, aggressive directives removed, baselines recorded
+- [ ] **Phase 9: Layer 2 Eval Runner** - Quality eval runner executes real assertions against design-review output with calibrated ranges and verdict gates
+- [ ] **Phase 10: Structured JSON Output** - All specialists and boss emit structured JSON for deterministic parsing by evals, improve loop, and report generator
+- [ ] **Phase 11: Specialist Consolidation** - Copy folded into Intent/Originality/UX, scoring weights atomically updated, 8 to 7 specialists
+- [ ] **Phase 12: Playwright Interaction** - Opt-in hover/focus/scroll capture before specialist scoring with baseline-interact-reset pattern
+- [ ] **Phase 13: Few-Shot Examples + Polish** - Curated examples per specialist, chain-of-thought separation, Anthropic aesthetics integration
+
+## Phase Details
+
+### Phase 8: Prompt Extraction + Restructuring
+**Goal**: Every specialist prompt lives in its own file, follows XML best-practice structure, and has a recorded eval baseline -- enabling isolated testing and safe iteration on prompt quality
+**Depends on**: Phase 7 (v1.1.0 complete)
+**Requirements**: PRMT-01, PRMT-02, PRMT-03, PRMT-06, PRMT-07
+**Success Criteria** (what must be TRUE):
+  1. Running `/design-review` loads specialist prompts via `@` includes from `skills/design-review/prompts/*.md` -- each of the 8 specialists and the boss synthesizer has its own prompt file
+  2. Every specialist prompt uses XML-structured sections (`<role>`, `<context>`, `<instructions>`, `<output_format>`) and includes a 4-level scoring rubric with concrete anchors per level
+  3. No specialist prompt contains ALL-CAPS emphasis, "FLAG SPECIFICALLY", "NEVER", or "Find at least N" directives
+  4. Running the existing `run-evals.sh` against the restructured prompts produces passing results (no regression from extraction)
+**Plans**: TBD
+
+### Phase 9: Layer 2 Eval Runner
+**Goal**: A developer can run `run-quality-evals.sh` and get pass/fail results for every quality assertion against real design-review output -- the measurement instrument that validates all subsequent prompt changes
+**Depends on**: Phase 8
+**Requirements**: EVAL-01, EVAL-02, EVAL-03, EVAL-04, EVAL-05, EVAL-06
+**Success Criteria** (what must be TRUE):
+  1. Running `run-quality-evals.sh` serves test fixtures via python3, invokes `/design-review` via `claude --print`, and reports pass/fail per assertion with a final summary
+  2. Verdict-level assertions work as the primary gate: a known-bad fixture gets BLOCK, a known-good fixture gets SHIP, and a gray-area fixture gets CONDITIONAL
+  3. Range-based score assertions are calibrated from 3 baseline runs per fixture with observed spread + 0.3 buffer, and eval result snapshots are stored for regression detection
+  4. LLM-as-judge assertions using Claude Haiku evaluate specialist output quality against binary rubrics (requires ANTHROPIC_API_KEY, skipped gracefully when absent)
+**Plans**: TBD
+
+### Phase 10: Structured JSON Output
+**Goal**: Every specialist and the boss synthesizer emit structured JSON that the eval runner, improve loop, and report generator can parse deterministically -- ending regex-based output scraping
+**Depends on**: Phase 9
+**Requirements**: JSON-01, JSON-02, JSON-03, JSON-04, JSON-05
+**Success Criteria** (what must be TRUE):
+  1. All specialists emit JSON wrapped in `<specialist_output>` tags and the boss emits JSON wrapped in `<boss_output>` tags, parseable by `jq` after tag extraction
+  2. The output parser (`parse-review-output.sh`) tries JSON-first and falls back to regex for backward compatibility with pre-v1.2.0 output
+  3. `/design-improve` reads the `top_fixes` array from structured boss output programmatically instead of scraping fix text from terminal output
+  4. `generate-report.sh` reads structured JSON from `flow-state.json` for deterministic report generation without regex parsing
+  5. Running `run-quality-evals.sh` passes with structured JSON output (no regression from the migration)
+**Plans**: TBD
+
+### Phase 11: Specialist Consolidation
+**Goal**: The Copy specialist is merged into Intent/Originality/UX as a fourth sub-score, scoring weights are atomically correct, and the system runs cleanly as 7 specialists
+**Depends on**: Phase 10
+**Requirements**: SPEC-01, SPEC-02, SPEC-03
+**Success Criteria** (what must be TRUE):
+  1. Running `/design-review` dispatches 7 specialists (not 8), with Intent/Originality/UX producing 4 sub-scores: intent_match, originality, ux_flow, copy_quality
+  2. `scoring.json` reads total_weight: 16 (not 17), quick_mode weights are recalculated, and `validate-structure.sh` includes an assertion verifying sum of individual weights equals total_weight
+  3. Running `run-quality-evals.sh` passes with 7 specialists -- all assertion ranges recalibrated for the merged architecture
+**Plans**: TBD
+
+### Phase 12: Playwright Interaction
+**Goal**: Users can opt into hover/focus/scroll interaction capture before specialist scoring, giving specialists richer state information without mutating the page they review
+**Depends on**: Phase 8 (stable prompts)
+**Requirements**: INTR-01, INTR-02, INTR-03, TEST-01
+**Success Criteria** (what must be TRUE):
+  1. Running `/design-review <url> --interact` triggers Playwright hover, focus, and scroll interactions before specialist analysis, with interaction screenshots passed to relevant specialists (Motion, Code/A11y, Color/Layout)
+  2. The baseline-interact-reset pattern is followed: screenshot clean state first, perform interactions, reload page, then run the standard review -- specialists never see interaction-mutated DOM as the baseline
+  3. No more than 8 interactions are performed per review (budget cap enforced)
+  4. Running `/design-audit` on start.fusefinance.com completes a full flow audit with real SPA navigation, validating the complete pipeline end-to-end
+**Plans**: TBD
+
+### Phase 13: Few-Shot Examples + Polish
+**Goal**: Specialists produce better-calibrated scores through curated examples and chain-of-thought reasoning, and the build phase benefits from Anthropic's proven aesthetics guidance
+**Depends on**: Phase 10 (stable structured output)
+**Requirements**: PRMT-04, PRMT-05, GNRT-01
+**Success Criteria** (what must be TRUE):
+  1. Every specialist prompt includes 2-3 curated few-shot examples in `<examples>` tags showing ideal output format and scoring calibration at different score levels
+  2. Complex specialists (Intent, Layout, Boss) use `<thinking>` + `<answer>` separation, with reasoning visible in the thinking block and structured output in the answer block
+  3. `references/generation.md` exists with Anthropic's DISTILLED_AESTHETICS_PROMPT adapted for the `/design-improve` build phase, and `/design-improve` references it during page generation
+  4. Token usage per full review increases by no more than 30% compared to Phase 8 baseline (measured before and after)
+**Plans**: TBD
+
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 4 -> 5 -> 6 -> 7
+Phases execute in numeric order: 8 -> 9 -> 10 -> 11 -> 12 -> 13
+(Phase 12 depends on Phase 8 not Phase 11 -- can start after prompts stabilize, but sequenced after Phase 11 for simplicity)
 
 | Phase | Milestone | Plans Complete | Status | Completed |
 |-------|-----------|----------------|--------|-----------|
@@ -149,6 +229,12 @@ Phases execute in numeric order: 4 -> 5 -> 6 -> 7
 | 2. Init Wizard + Branding + Demo | v1.0.0 | 3/3 | Complete | 2026-03-29 |
 | 3. Second Skill + Release | v1.0.0 | 3/3 | Complete | 2026-03-29 |
 | 4. Flow Navigation Engine | v1.1.0 | 3/3 | Complete | 2026-03-30 |
-| 5. Per-Screen Review + Animation | v1.1.0 | 0/3 | Planned | - |
-| 6. HTML Diagnostic Report | v1.1.0 | 0/2 | Planned | - |
-| 7. Release Polish | v1.1.0 | 0/2 | Planned | - |
+| 5. Per-Screen Review + Animation | v1.1.0 | 3/3 | Complete | 2026-03-29 |
+| 6. HTML Diagnostic Report | v1.1.0 | 2/2 | Complete | 2026-03-29 |
+| 7. Release Polish | v1.1.0 | 2/2 | Complete | 2026-03-29 |
+| 8. Prompt Extraction + Restructuring | v1.2.0 | 0/? | Not started | - |
+| 9. Layer 2 Eval Runner | v1.2.0 | 0/? | Not started | - |
+| 10. Structured JSON Output | v1.2.0 | 0/? | Not started | - |
+| 11. Specialist Consolidation | v1.2.0 | 0/? | Not started | - |
+| 12. Playwright Interaction | v1.2.0 | 0/? | Not started | - |
+| 13. Few-Shot Examples + Polish | v1.2.0 | 0/? | Not started | - |
