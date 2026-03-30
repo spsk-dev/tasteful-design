@@ -147,7 +147,7 @@ Plans:
 - [x] **Phase 10: Structured JSON Output** - All specialists and boss emit structured JSON for deterministic parsing by evals, improve loop, and report generator (completed 2026-03-30)
 - [x] **Phase 11: Specialist Consolidation** - Copy folded into Intent/Originality/UX, scoring weights atomically updated, 8 to 7 specialists (completed 2026-03-30)
 - [x] **Phase 12: Playwright Interaction** - Opt-in hover/focus/scroll capture before specialist scoring with baseline-interact-reset pattern (completed 2026-03-30)
-- [ ] **Phase 13: Few-Shot Examples + Polish** - Curated examples per specialist, chain-of-thought separation, Anthropic aesthetics integration
+- [x] **Phase 13: Few-Shot Examples + Polish** - Curated examples per specialist, chain-of-thought separation, Anthropic aesthetics integration (completed 2026-03-30)
 
 ## Phase Details
 
@@ -235,10 +235,10 @@ Plans:
   2. Complex specialists (Intent, Layout, Boss) use `<thinking>` + `<answer>` separation, with reasoning visible in the thinking block and structured output in the answer block
   3. `references/generation.md` exists with Anthropic's DISTILLED_AESTHETICS_PROMPT adapted for the `/design-improve` build phase, and `/design-improve` references it during page generation
   4. Token usage per full review increases by no more than 30% compared to Phase 8 baseline (measured before and after)
-**Plans:** 1/2 plans executed
+**Plans:** 2/2 plans complete
 
 Plans:
-- [ ] 13-01-PLAN.md -- Few-shot examples for all 8 prompt files + enhanced CoT for complex specialists (Intent, Layout, Boss)
+- [x] 13-01-PLAN.md -- Few-shot examples for all 8 prompt files + enhanced CoT for complex specialists (Intent, Layout, Boss)
 - [x] 13-02-PLAN.md -- Anthropic generation.md aesthetics reference, design-improve wiring, Playfair Display context resolution
 
 ## Progress
@@ -261,4 +261,4 @@ Phases execute in numeric order: 8 -> 9 -> 10 -> 11 -> 12 -> 13
 | 10. Structured JSON Output | v1.2.0 | 2/2 | Complete    | 2026-03-30 |
 | 11. Specialist Consolidation | v1.2.0 | 2/2 | Complete    | 2026-03-30 |
 | 12. Playwright Interaction | v1.2.0 | 2/2 | Complete    | 2026-03-30 |
-| 13. Few-Shot Examples + Polish | v1.2.0 | 1/2 | In Progress|  |
+| 13. Few-Shot Examples + Polish | v1.2.0 | 2/2 | Complete   | 2026-03-30 |

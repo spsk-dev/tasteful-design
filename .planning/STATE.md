@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v1.2.0
 milestone_name: Prompting Excellence + Eval Credibility
-status: Ready to execute
-stopped_at: Completed 13-02-PLAN.md (generation.md + anti-slop resolution)
-last_updated: "2026-03-30T06:09:08.759Z"
+status: Phase complete — ready for verification
+stopped_at: Completed 13-01-PLAN.md (few-shot examples + enhanced CoT for all 8 specialists)
+last_updated: "2026-03-30T06:13:18.717Z"
 progress:
   total_phases: 6
-  completed_phases: 5
+  completed_phases: 6
   total_plans: 12
-  completed_plans: 11
+  completed_plans: 12
 ---
 
 # Project State
@@ -50,6 +50,7 @@ Plan: 2 of 2
 | Phase 12 P01 | 2min | 2 tasks | 3 files |
 | Phase 12 P02 | 1min | 2 tasks | 1 files |
 | Phase 13 P02 | 2min | 2 tasks | 3 files |
+| Phase 13 P01 | 6min | 2 tasks | 8 files |
 
 ## Accumulated Context
 
@@ -87,6 +88,8 @@ Plan: 2 of 2
 - [Phase 13]: Playfair Display moved to context-conditional: banned for SaaS/landing, acceptable for editorial
 - [Phase 13]: generation.md placed after anti-slop.json in Phase A read sequence (avoid first, aspire second)
 - [Phase 13]: Context-conditional banning pattern: context_banned_fonts object with per-font usage rules
+- [Phase 13]: Simple specialists get examples-only (no CoT enhancement); complex specialists (Intent, Layout, Boss) get both enhanced CoT and examples
+- [Phase 13]: Few-shot examples use 1-2 findings per example to limit token growth while demonstrating format and scoring calibration
 
 ### Pending Todos
 
@@ -99,6 +102,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-30T06:09:08.757Z
-Stopped at: Completed 13-02-PLAN.md (generation.md + anti-slop resolution)
+Last session: 2026-03-30T06:13:18.714Z
+Stopped at: Completed 13-01-PLAN.md (few-shot examples + enhanced CoT for all 8 specialists)
 Resume file: None

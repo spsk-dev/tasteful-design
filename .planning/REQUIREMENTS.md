@@ -10,8 +10,8 @@
 - [x] **PRMT-01**: All specialist prompts use XML-structured sections (`<role>`, `<context>`, `<instructions>`, `<output_format>`, `<examples>`)
 - [x] **PRMT-02**: Every specialist has a 4-level scoring rubric with concrete anchors per level (not bare "Score 1-4")
 - [x] **PRMT-03**: Over-aggressive directives removed (ALL-CAPS emphasis, "FLAG SPECIFICALLY", "NEVER", "Find at least N")
-- [ ] **PRMT-04**: 2-3 curated few-shot examples per specialist showing ideal output format and scoring calibration
-- [ ] **PRMT-05**: Chain-of-thought `<thinking>` + `<answer>` separation in complex specialists (Intent, Layout, Boss)
+- [x] **PRMT-04**: 2-3 curated few-shot examples per specialist showing ideal output format and scoring calibration
+- [x] **PRMT-05**: Chain-of-thought `<thinking>` + `<answer>` separation in complex specialists (Intent, Layout, Boss)
 - [x] **PRMT-06**: Specialist prompts extracted to individual files (`skills/design-review/prompts/*.md`) with `@` includes from commands
 - [x] **PRMT-07**: Boss synthesizer prompt restructured with XML tags, explicit output schema, and cross-specialist reasoning instructions
 
@@ -69,8 +69,8 @@
 | PRMT-01 | Phase 8 | Complete |
 | PRMT-02 | Phase 8 | Complete |
 | PRMT-03 | Phase 8 | Complete |
-| PRMT-04 | Phase 13 | Pending |
-| PRMT-05 | Phase 13 | Pending |
+| PRMT-04 | Phase 13 | Complete |
+| PRMT-05 | Phase 13 | Complete |
 | PRMT-06 | Phase 8 | Complete |
 | PRMT-07 | Phase 8 | Complete |
 | EVAL-01 | Phase 9 | Complete |
