@@ -71,8 +71,32 @@ Each score must be justified by specific evidence from the page.
 </scoring_rubric>
 
 <output_format>
-Return three scores and findings:
-- Intent Match: score 1-4 + issues + one-line summary
-- Originality: score 1-4 + issues + one-line summary
-- UX Flow: score 1-4 + issues + one-line summary
+First, analyze intent match, originality, and UX flow in <thinking> tags.
+
+Then output your structured evaluation:
+
+<specialist_output>
+{
+  "specialist": "intent",
+  "scores": {
+    "intent_match": 3,
+    "originality": 2,
+    "ux_flow": 3
+  },
+  "findings": [
+    {
+      "dimension": "originality",
+      "element": "hero section",
+      "issue": "Three-column icon grid is the most common AI layout pattern",
+      "recommendation": "Use asymmetric bento grid or featured card layout"
+    }
+  ],
+  "summary": "Strong intent alignment undercut by template-like originality"
+}
+</specialist_output>
+
+Requirements:
+- scores: object with intent_match, originality, ux_flow (each integer 1-4)
+- findings: array of 2-5 objects, each with dimension/element/issue/recommendation
+- summary: one sentence
 </output_format>

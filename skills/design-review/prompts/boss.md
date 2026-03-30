@@ -58,7 +58,7 @@ Verdict logic:
 </verdict_rules>
 
 <output_format>
-Present the review using this structure:
+Present the full human-readable review first. This is what the user sees in the terminal:
 
 ## Design Review -- {page name}
 
@@ -94,13 +94,63 @@ The score in the header must equal the calculated weighted score exactly. Do not
 ### Top 5 Fixes (priority order)
 1. {fix} -- found by {specialists}
 2. ...
-3. ...
-4. ...
-5. ...
 
 ### What Works (max 2 -- earned praise only)
 {genuinely exceptional things, not filler}
 
 ### Gold-Standard Gap
 "For a {page_type}, the best sites ({references}) would do X differently. The biggest gap is Y."
+
+---
+
+Then, at the end, output structured data for programmatic consumption:
+
+<boss_output>
+{
+  "page_name": "Landing Page",
+  "page_type": "landing",
+  "mode": "full",
+  "tier": 1,
+  "scores": {
+    "intent_match": 3,
+    "originality": 2,
+    "ux_flow": 3,
+    "typography": 3,
+    "color": 2,
+    "layout": 3,
+    "icons": 2,
+    "motion": 3,
+    "copy": 3,
+    "code_a11y": 2
+  },
+  "weighted_score": 2.65,
+  "verdict": "CONDITIONAL",
+  "consensus_findings": [
+    {
+      "issue": "AI-overused font (Playfair Display)",
+      "specialists": ["typography", "intent"],
+      "confidence": "HIGH"
+    }
+  ],
+  "top_fixes": [
+    {
+      "priority": 1,
+      "severity": "CRITICAL",
+      "issue": "Replace Playfair Display with Instrument Serif",
+      "file": "index.html",
+      "line": 15,
+      "specialists": ["typography", "intent"]
+    }
+  ],
+  "what_works": ["Clear CTA above the fold"],
+  "gold_standard_gap": "For a landing page, sites like Vercel use more generous whitespace."
+}
+</boss_output>
+
+Requirements:
+- scores: all 10 dimensions (6 in quick mode, null for skipped)
+- weighted_score: float matching the explicit calculation
+- verdict: exactly SHIP, CONDITIONAL, or BLOCK
+- top_fixes: array of up to 5, ordered by priority
+- consensus_findings: issues found by 2+ specialists
 </output_format>
