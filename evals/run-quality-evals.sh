@@ -49,6 +49,51 @@ check_skip() {
 }
 
 # ==============================================================================
+# Section 0b: LLM-as-judge function (Claude Haiku via Anthropic API)
+# ==============================================================================
+
+llm_judge() {
+  local review_output="$1"
+  local rubric="$2"
+  local api_key="${ANTHROPIC_API_KEY:-}"
+
+  if [ -z "$api_key" ]; then
+    echo "SKIP"
+    return 2
+  fi
+
+  local response
+  response=$(curl -s -w "\n%{http_code}" \
+    "https://api.anthropic.com/v1/messages" \
+    -H "content-type: application/json" \
+    -H "x-api-key: $api_key" \
+    -H "anthropic-version: 2023-06-01" \
+    -d "$(jq -n \
+      --arg content "Review output:\n$review_output\n\nRubric:\n$rubric\n\nDoes this review output pass the rubric? Answer exactly PASS or FAIL. Nothing else." \
+      '{
+        "model": "claude-haiku-4-5",
+        "max_tokens": 10,
+        "messages": [{"role": "user", "content": $content}]
+      }'
+    )")
+
+  local http_code
+  http_code=$(echo "$response" | tail -1)
+  local body
+  body=$(echo "$response" | sed '$d')
+
+  if [ "$http_code" != "200" ]; then
+    echo "SKIP"
+    return 2
+  fi
+
+  local verdict
+  verdict=$(echo "$body" | jq -r '.content[0].text' | tr '[:lower:]' '[:upper:]' | grep -oE 'PASS|FAIL' | head -1)
+  echo "${verdict:-SKIP}"
+  [ "$verdict" = "PASS" ] && return 0 || return 1
+}
+
+# ==============================================================================
 # Section 1: Dependency checks and argument parsing
 # ==============================================================================
 
@@ -275,11 +320,14 @@ done
 # Section 5: Execute assertions from assertions.json
 # ==============================================================================
 
-echo "--- Assertion Results ---"
+echo "--- Score & Verdict Assertions ---"
 
-TOTAL_ASSERTIONS=$(jq '.assertions | length' "$ASSERTIONS_FILE")
+# Filter to only score/verdict assertions (skip judge and ranking types -- handled in Section 5b/5c)
+SCORE_ASSERTION_INDICES=$(jq '[range(.assertions | length)] | map(select(. as $i | (.assertions[$i].type // "score") | IN("judge","ranking") | not))' "$ASSERTIONS_FILE")
+SCORE_ASSERTION_COUNT=$(echo "$SCORE_ASSERTION_INDICES" | jq 'length')
 
-for i in $(seq 0 $((TOTAL_ASSERTIONS - 1))); do
+for idx in $(echo "$SCORE_ASSERTION_INDICES" | jq -r '.[]'); do
+  i=$idx
   # Read assertion fields
   assertion_name=$(jq -r ".assertions[$i].name" "$ASSERTIONS_FILE")
   fixture_path=$(jq -r ".assertions[$i].fixture" "$ASSERTIONS_FILE")
@@ -311,7 +359,7 @@ for i in $(seq 0 $((TOTAL_ASSERTIONS - 1))); do
 
   # Route by dimension type
   if [ "$dimension" = "verdict" ]; then
-    # Verdict assertion: compare expected verdict
+    # Verdict assertion: compare expected verdict (supports also_accept array)
     expected=$(jq -r ".assertions[$i].expected" "$ASSERTIONS_FILE")
     actual=$(extract_verdict "$review_output")
 
@@ -320,7 +368,23 @@ for i in $(seq 0 $((TOTAL_ASSERTIONS - 1))); do
       continue
     fi
 
-    check "$assertion_name (expected=$expected, actual=$actual)" verdict_matches "$actual" "$expected"
+    # Check primary expected value
+    verdict_passed=false
+    if verdict_matches "$actual" "$expected"; then
+      verdict_passed=true
+    else
+      # Check also_accept array if present
+      also_accept_count=$(jq -r ".assertions[$i].also_accept // [] | length" "$ASSERTIONS_FILE")
+      for ai in $(seq 0 $((also_accept_count - 1))); do
+        alt=$(jq -r ".assertions[$i].also_accept[$ai]" "$ASSERTIONS_FILE")
+        if verdict_matches "$actual" "$alt"; then
+          verdict_passed=true
+          break
+        fi
+      done
+    fi
+
+    check "$assertion_name (expected=$expected, actual=$actual)" [ "$verdict_passed" = "true" ]
 
   elif [ "$dimension" = "overall" ]; then
     # Overall score range assertion
@@ -349,6 +413,212 @@ for i in $(seq 0 $((TOTAL_ASSERTIONS - 1))); do
     check "$assertion_name ($dimension=$actual, range=[$min_val, $max_val])" float_in_range "$actual" "$min_val" "$max_val"
   fi
 done
+
+# ==============================================================================
+# Section 5b: LLM-as-Judge Assertions
+# ==============================================================================
+
+echo ""
+echo "--- LLM-as-Judge Assertions ---"
+
+JUDGE_COUNT=$(jq '[.assertions[] | select(.type == "judge")] | length' "$ASSERTIONS_FILE")
+
+if [ "$JUDGE_COUNT" -gt 0 ]; then
+  if [ -z "${ANTHROPIC_API_KEY:-}" ]; then
+    echo "[INFO] ANTHROPIC_API_KEY not set -- skipping $JUDGE_COUNT judge assertions"
+    for ji in $(seq 0 $((JUDGE_COUNT - 1))); do
+      JUDGE_NAME=$(jq -r "[.assertions[] | select(.type == \"judge\")][$ji].name" "$ASSERTIONS_FILE")
+      check_skip "$JUDGE_NAME" "no ANTHROPIC_API_KEY"
+    done
+  else
+    # Run each judge assertion
+    for ji in $(seq 0 $((JUDGE_COUNT - 1))); do
+      JUDGE_ASSERTION=$(jq -c "[.assertions[] | select(.type == \"judge\")][$ji]" "$ASSERTIONS_FILE")
+      JUDGE_NAME=$(echo "$JUDGE_ASSERTION" | jq -r '.name')
+      RUBRIC=$(echo "$JUDGE_ASSERTION" | jq -r '.rubric')
+      FIXTURE_KEY=$(echo "$JUDGE_ASSERTION" | jq -r '.fixture' | sed 's|fixtures/||; s|\.html||')
+
+      # Get the cached output for this fixture
+      judge_output_file="$TMPDIR_EVALS/${FIXTURE_KEY}.txt"
+      if [ ! -f "$judge_output_file" ] || [ ! -s "$judge_output_file" ]; then
+        check_skip "$JUDGE_NAME" "no review output for $FIXTURE_KEY"
+        continue
+      fi
+
+      REVIEW_TEXT=$(cat "$judge_output_file")
+      RESULT=$(llm_judge "$REVIEW_TEXT" "$RUBRIC")
+      EXIT_CODE=$?
+
+      if [ $EXIT_CODE -eq 2 ]; then
+        check_skip "$JUDGE_NAME" "API unavailable"
+      elif [ $EXIT_CODE -eq 0 ]; then
+        check "$JUDGE_NAME" true
+      else
+        check "$JUDGE_NAME" false
+      fi
+    done
+  fi
+else
+  echo "[INFO] No judge assertions defined"
+fi
+
+# ==============================================================================
+# Section 5c: Ranking Assertions
+# ==============================================================================
+
+echo ""
+echo "--- Ranking Assertions ---"
+
+RANKING_COUNT=$(jq '[.assertions[] | select(.type == "ranking")] | length' "$ASSERTIONS_FILE")
+
+if [ "$RANKING_COUNT" -gt 0 ]; then
+  for ri in $(seq 0 $((RANKING_COUNT - 1))); do
+    RANKING_ASSERTION=$(jq -c "[.assertions[] | select(.type == \"ranking\")][$ri]" "$ASSERTIONS_FILE")
+    RANKING_NAME=$(echo "$RANKING_ASSERTION" | jq -r '.name')
+    RANKING_DIM=$(echo "$RANKING_ASSERTION" | jq -r '.dimension // "overall"')
+    ORDER_COUNT=$(echo "$RANKING_ASSERTION" | jq '.order | length')
+
+    # Collect scores for ordered fixtures
+    ranking_skip=false
+    scores=()
+    fixture_labels=()
+    for oi in $(seq 0 $((ORDER_COUNT - 1))); do
+      rank_fixture=$(echo "$RANKING_ASSERTION" | jq -r ".order[$oi]")
+      fixture_labels+=("$rank_fixture")
+      rank_output_file="$TMPDIR_EVALS/${rank_fixture}.txt"
+      if [ ! -f "$rank_output_file" ] || [ ! -s "$rank_output_file" ]; then
+        check_skip "$RANKING_NAME" "missing review output for $rank_fixture"
+        ranking_skip=true
+        break
+      fi
+
+      rank_output=$(cat "$rank_output_file")
+      if [ "$RANKING_DIM" = "overall" ]; then
+        rank_score=$(extract_overall "$rank_output")
+      else
+        rank_score=$(extract_score "$RANKING_DIM" "$rank_output")
+      fi
+
+      if [ -z "$rank_score" ]; then
+        check_skip "$RANKING_NAME" "no $RANKING_DIM score for $rank_fixture"
+        ranking_skip=true
+        break
+      fi
+
+      scores+=("$rank_score")
+    done
+
+    if [ "$ranking_skip" = true ]; then
+      continue
+    fi
+
+    # Verify ordering: score[0] <= score[1] <= ... <= score[N]
+    ranking_valid=true
+    for oi in $(seq 1 $((${#scores[@]} - 1))); do
+      prev_idx=$((oi - 1))
+      is_ordered=$(python3 -c "print('yes' if float('${scores[$prev_idx]}') <= float('${scores[$oi]}') else 'no')")
+      if [ "$is_ordered" != "yes" ]; then
+        ranking_valid=false
+        echo "  [DEBUG] ${fixture_labels[$prev_idx]}=${scores[$prev_idx]} > ${fixture_labels[$oi]}=${scores[$oi]}"
+      fi
+    done
+
+    scores_display=$(printf "%s=%s " $(paste -d= <(printf '%s\n' "${fixture_labels[@]}") <(printf '%s\n' "${scores[@]}")) 2>/dev/null || true)
+    check "$RANKING_NAME ($scores_display)" [ "$ranking_valid" = "true" ]
+  done
+else
+  echo "[INFO] No ranking assertions defined"
+fi
+
+# ==============================================================================
+# Section 5d: Save Eval Snapshot
+# ==============================================================================
+
+echo ""
+echo "--- Saving Eval Snapshot ---"
+
+SNAPSHOT_DIR="$SCRIPT_DIR/results"
+mkdir -p "$SNAPSHOT_DIR"
+TIMESTAMP=$(date -u +"%Y-%m-%dT%H%M%S")
+SNAPSHOT_FILE="$SNAPSHOT_DIR/${TIMESTAMP}.json"
+
+# Build snapshot JSON with fixture scores and assertion results
+SNAPSHOT=$(jq -n \
+  --arg ts "$(date -u +"%Y-%m-%dT%H:%M:%SZ")" \
+  --arg version "1.0.0" \
+  --arg model "claude-sonnet-4-6" \
+  --argjson pass "$PASS" \
+  --argjson fail "$FAIL" \
+  --argjson skip "$SKIP" \
+  '{
+    timestamp: $ts,
+    runner_version: $version,
+    model: $model,
+    mode: "full",
+    fixtures: {},
+    assertions: { total: ($pass + $fail + $skip), passed: $pass, failed: $fail, skipped: $skip }
+  }')
+
+# Add per-fixture score data
+for fixture_file in "$TMPDIR_EVALS"/*.txt; do
+  [ -f "$fixture_file" ] || continue
+  FIXTURE_KEY=$(basename "$fixture_file" .txt)
+  OUTPUT=$(cat "$fixture_file")
+
+  VERDICT=$(extract_verdict "$OUTPUT")
+  OVERALL=$(extract_overall "$OUTPUT")
+
+  # Extract all specialist scores
+  SCORES_JSON="{}"
+  SCORES_JSON=$(echo "$SCORES_JSON" | jq --arg v "${OVERALL:-0}" '. + {overall: ($v | tonumber)}')
+  for dim in intent_match originality ux_flow typography color layout icons motion copy code_a11y; do
+    SCORE=$(extract_score "$dim" "$OUTPUT")
+    SCORES_JSON=$(echo "$SCORES_JSON" | jq --arg k "$dim" --arg v "${SCORE:-0}" '. + {($k): ($v | tonumber)}')
+  done
+
+  SNAPSHOT=$(echo "$SNAPSHOT" | jq \
+    --arg key "$FIXTURE_KEY" \
+    --argjson scores "$SCORES_JSON" \
+    --arg verdict "${VERDICT:-unknown}" \
+    '.fixtures[$key] = {scores: $scores, verdict: $verdict}')
+done
+
+echo "$SNAPSHOT" | jq '.' > "$SNAPSHOT_FILE"
+echo "[INFO] Snapshot saved: $SNAPSHOT_FILE"
+
+# ==============================================================================
+# Section 5e: Regression Detection
+# ==============================================================================
+
+PREV_SNAPSHOT=$(ls -t "$SNAPSHOT_DIR"/*.json 2>/dev/null | grep -v "$(basename "$SNAPSHOT_FILE")" | head -1)
+
+if [ -n "$PREV_SNAPSHOT" ] && [ -f "$PREV_SNAPSHOT" ]; then
+  echo ""
+  echo "--- Regression Detection (vs $(basename "$PREV_SNAPSHOT")) ---"
+  REGRESSIONS=0
+
+  for fixture in $(jq -r '.fixtures | keys[]' "$SNAPSHOT_FILE"); do
+    CURR=$(jq -r ".fixtures[\"$fixture\"].scores.overall // 0" "$SNAPSHOT_FILE")
+    PREV=$(jq -r ".fixtures[\"$fixture\"].scores.overall // 0" "$PREV_SNAPSHOT")
+
+    DROPPED=$(python3 -c "print('yes' if float('$PREV') - float('$CURR') > 0.5 else 'no')")
+    if [ "$DROPPED" = "yes" ]; then
+      echo "  [REGRESSION] $fixture: $PREV -> $CURR (dropped > 0.5)"
+      REGRESSIONS=$((REGRESSIONS + 1))
+    else
+      echo "  [OK] $fixture: $PREV -> $CURR"
+    fi
+  done
+
+  if [ "$REGRESSIONS" -gt 0 ]; then
+    echo "[WARN] $REGRESSIONS regression(s) detected"
+  else
+    echo "[INFO] No regressions detected"
+  fi
+else
+  echo ""
+  echo "[INFO] No previous snapshot for regression comparison"
+fi
 
 # ==============================================================================
 # Section 6: Summary
