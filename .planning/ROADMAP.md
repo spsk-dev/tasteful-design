@@ -178,7 +178,7 @@ Plans:
 **Plans:** 2 plans
 
 Plans:
-- [ ] 09-01-PLAN.md -- Gray-area fixture, output parser, core eval runner with smoke test and verdict/score assertions
+- [x] 09-01-PLAN.md -- Gray-area fixture, output parser, core eval runner with smoke test and verdict/score assertions
 - [ ] 09-02-PLAN.md -- LLM-as-judge assertions, eval snapshots with regression detection, calibration helper, orchestrator wiring
 
 ### Phase 10: Structured JSON Output

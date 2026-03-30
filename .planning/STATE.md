@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v1.2.0
 milestone_name: Prompting Excellence + Eval Credibility
-status: Ready to plan
-stopped_at: Completed 08-02-PLAN.md (prompt wiring + structural validation)
-last_updated: "2026-03-30T03:57:48.001Z"
+status: Ready to execute
+stopped_at: Completed 09-01-PLAN.md (Layer 2 eval runner core)
+last_updated: "2026-03-30T04:18:52.821Z"
 progress:
   total_phases: 6
   completed_phases: 1
-  total_plans: 2
-  completed_plans: 2
+  total_plans: 4
+  completed_plans: 3
 ---
 
 # Project State
@@ -19,12 +19,12 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-29)
 
 **Core value:** Published skills must be immediately useful AND demonstrate architectural sophistication
-**Current focus:** Phase 08 — Prompt Extraction + Restructuring
+**Current focus:** Phase 09 — Layer 2 Eval Runner
 
 ## Current Position
 
-Phase: 9
-Plan: Not started
+Phase: 09 (Layer 2 Eval Runner) — EXECUTING
+Plan: 2 of 2
 
 ## Performance Metrics
 
@@ -41,6 +41,7 @@ Plan: Not started
 | 8-13 (v1.2.0) | 0 | -- | -- |
 | Phase 08 P01 | 4min | 2 tasks | 9 files |
 | Phase 08 P02 | 4min | 2 tasks | 2 files |
+| Phase 09 P01 | 3min | 2 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -56,6 +57,9 @@ Plan: Not started
 - [Phase 08]: Copy and code-a11y prompts omit reference_knowledge tag (no reference files exist for these specialists)
 - [Phase 08]: Gemini specialists use read-and-construct pattern for prompt loading (@ includes are Claude Code-only)
 - [Phase 08]: Boss synthesis replaced entirely with @ include -- no inline remnants to prevent double-application
+- [Phase 09]: Output parser normalizes CONDITIONAL SHIP to CONDITIONAL for assertion matching
+- [Phase 09]: Strategy A (task description with --plugin-dir) for claude -p invocation, no --bare flag
+- [Phase 09]: Dry-run mode caches to evals/results/cache-{fixture}.txt for development iteration
 
 ### Pending Todos
 
@@ -68,6 +72,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-30T03:52:18.854Z
-Stopped at: Completed 08-02-PLAN.md (prompt wiring + structural validation)
+Last session: 2026-03-30T04:18:52.819Z
+Stopped at: Completed 09-01-PLAN.md (Layer 2 eval runner core)
 Resume file: None

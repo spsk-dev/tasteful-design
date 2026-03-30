@@ -17,10 +17,10 @@
 
 ### Eval Credibility
 
-- [ ] **EVAL-01**: Layer 2 eval runner (`run-quality-evals.sh`) executes all assertions against real design-review output
+- [x] **EVAL-01**: Layer 2 eval runner (`run-quality-evals.sh`) executes all assertions against real design-review output
 - [ ] **EVAL-02**: Assertion ranges calibrated from 3 baseline runs per fixture with observed spread + buffer
-- [ ] **EVAL-03**: Verdict-level assertions (binary: bad page gets BLOCK, good page gets SHIP) as primary gate
-- [ ] **EVAL-04**: At least one gray-area fixture added (mediocre page that should get CONDITIONAL)
+- [x] **EVAL-03**: Verdict-level assertions (binary: bad page gets BLOCK, good page gets SHIP) as primary gate
+- [x] **EVAL-04**: At least one gray-area fixture added (mediocre page that should get CONDITIONAL)
 - [ ] **EVAL-05**: LLM-as-judge binary rubric assertions using Claude Haiku for quality checks (requires ANTHROPIC_API_KEY)
 - [ ] **EVAL-06**: Eval result snapshots with per-specialist scores stored for regression detection across runs
 
@@ -73,10 +73,10 @@
 | PRMT-05 | Phase 13 | Pending |
 | PRMT-06 | Phase 8 | Complete |
 | PRMT-07 | Phase 8 | Complete |
-| EVAL-01 | Phase 9 | Pending |
+| EVAL-01 | Phase 9 | Complete |
 | EVAL-02 | Phase 9 | Pending |
-| EVAL-03 | Phase 9 | Pending |
-| EVAL-04 | Phase 9 | Pending |
+| EVAL-03 | Phase 9 | Complete |
+| EVAL-04 | Phase 9 | Complete |
 | EVAL-05 | Phase 9 | Pending |
 | EVAL-06 | Phase 9 | Pending |
 | JSON-01 | Phase 10 | Pending |
