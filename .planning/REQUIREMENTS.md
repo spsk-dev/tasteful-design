@@ -28,9 +28,9 @@
 
 - [x] **JSON-01**: All specialists emit structured JSON wrapped in `<specialist_output>` tags
 - [x] **JSON-02**: Boss synthesizer emits structured JSON wrapped in `<boss_output>` tags
-- [ ] **JSON-03**: Output parser supports dual-format (JSON-first with regex fallback for backward compatibility)
-- [ ] **JSON-04**: `/design-improve` consumes `top_fixes` array programmatically from structured JSON
-- [ ] **JSON-05**: `generate-report.sh` reads structured JSON from flow-state.json for deterministic report generation
+- [x] **JSON-03**: Output parser supports dual-format (JSON-first with regex fallback for backward compatibility)
+- [x] **JSON-04**: `/design-improve` consumes `top_fixes` array programmatically from structured JSON
+- [x] **JSON-05**: `generate-report.sh` reads structured JSON from flow-state.json for deterministic report generation
 
 ### Specialist Architecture
 
@@ -81,9 +81,9 @@
 | EVAL-06 | Phase 9 | Complete |
 | JSON-01 | Phase 10 | Complete |
 | JSON-02 | Phase 10 | Complete |
-| JSON-03 | Phase 10 | Pending |
-| JSON-04 | Phase 10 | Pending |
-| JSON-05 | Phase 10 | Pending |
+| JSON-03 | Phase 10 | Complete |
+| JSON-04 | Phase 10 | Complete |
+| JSON-05 | Phase 10 | Complete |
 | SPEC-01 | Phase 11 | Pending |
 | SPEC-02 | Phase 11 | Pending |
 | SPEC-03 | Phase 11 | Pending |

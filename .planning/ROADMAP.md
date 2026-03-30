@@ -144,7 +144,7 @@ Plans:
 
 - [ ] **Phase 8: Prompt Extraction + Restructuring** - Specialist prompts extracted to individual files, restructured with XML tags, aggressive directives removed, baselines recorded
 - [ ] **Phase 9: Layer 2 Eval Runner** - Quality eval runner executes real assertions against design-review output with calibrated ranges and verdict gates
-- [ ] **Phase 10: Structured JSON Output** - All specialists and boss emit structured JSON for deterministic parsing by evals, improve loop, and report generator
+- [x] **Phase 10: Structured JSON Output** - All specialists and boss emit structured JSON for deterministic parsing by evals, improve loop, and report generator (completed 2026-03-30)
 - [ ] **Phase 11: Specialist Consolidation** - Copy folded into Intent/Originality/UX, scoring weights atomically updated, 8 to 7 specialists
 - [ ] **Phase 12: Playwright Interaction** - Opt-in hover/focus/scroll capture before specialist scoring with baseline-interact-reset pattern
 - [ ] **Phase 13: Few-Shot Examples + Polish** - Curated examples per specialist, chain-of-thought separation, Anthropic aesthetics integration
@@ -191,11 +191,11 @@ Plans:
   3. `/design-improve` reads the `top_fixes` array from structured boss output programmatically instead of scraping fix text from terminal output
   4. `generate-report.sh` reads structured JSON from `flow-state.json` for deterministic report generation without regex parsing
   5. Running `run-quality-evals.sh` passes with structured JSON output (no regression from the migration)
-**Plans:** 1/2 plans executed
+**Plans:** 2/2 plans complete
 
 Plans:
 - [x] 10-01-PLAN.md -- Migrate all 9 specialist prompts + boss to structured JSON output with think-then-structure pattern
-- [ ] 10-02-PLAN.md -- Upgrade parser to JSON-first with regex fallback, wire structured JSON into design-improve, design-audit, and report generator
+- [x] 10-02-PLAN.md -- Upgrade parser to JSON-first with regex fallback, wire structured JSON into design-improve, design-audit, and report generator
 
 ### Phase 11: Specialist Consolidation
 **Goal**: The Copy specialist is merged into Intent/Originality/UX as a fourth sub-score, scoring weights are atomically correct, and the system runs cleanly as 7 specialists
@@ -246,7 +246,7 @@ Phases execute in numeric order: 8 -> 9 -> 10 -> 11 -> 12 -> 13
 | 7. Release Polish | v1.1.0 | 2/2 | Complete | 2026-03-29 |
 | 8. Prompt Extraction + Restructuring | v1.2.0 | 2/2 | Complete | 2026-03-30 |
 | 9. Layer 2 Eval Runner | v1.2.0 | 2/2 | Complete | 2026-03-30 |
-| 10. Structured JSON Output | v1.2.0 | 1/2 | In Progress|  |
+| 10. Structured JSON Output | v1.2.0 | 2/2 | Complete   | 2026-03-30 |
 | 11. Specialist Consolidation | v1.2.0 | 0/? | Not started | - |
 | 12. Playwright Interaction | v1.2.0 | 0/? | Not started | - |
 | 13. Few-Shot Examples + Polish | v1.2.0 | 0/? | Not started | - |
