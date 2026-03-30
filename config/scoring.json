@@ -8,10 +8,9 @@
     "layout": 1,
     "icons": 1,
     "motion": 1,
-    "copy": 1,
     "code_a11y": 1
   },
-  "total_weight": 17,
+  "total_weight": 16,
   "quick_mode_weights": {
     "intent_match": 3,
     "originality": 3,
