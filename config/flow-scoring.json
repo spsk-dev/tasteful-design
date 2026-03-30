@@ -21,5 +21,53 @@
     "action_timeout_ms": 5000,
     "navigation_timeout_ms": 60000,
     "post_click_settle_ms": 300
+  },
+  "smart_weighting": {
+    "full_review_positions": ["first", "last"],
+    "quick_review_positions": ["middle"],
+    "quick_specialists": ["font", "color", "layout", "intent"],
+    "full_specialist_count": 8,
+    "quick_specialist_count": 4
+  },
+  "flow_score": {
+    "aggregation": "weighted_average",
+    "position_weights": {
+      "first": 1.5,
+      "last": 1.5,
+      "middle": 1.0
+    },
+    "consistency_penalty_weight": 0.15,
+    "per_screen_scale": { "min": 1.0, "max": 4.0 },
+    "flow_scale": { "min": 1.0, "max": 4.0 }
+  },
+  "consistency": {
+    "checks": ["button_style", "color_palette", "spacing", "typography", "component_variants"],
+    "severity_levels": {
+      "drift": "warning",
+      "mismatch": "issue",
+      "conflict": "critical"
+    },
+    "thresholds": {
+      "color_drift_delta_e": 10,
+      "spacing_tolerance_px": 4,
+      "font_size_tolerance_px": 2
+    }
+  },
+  "animation": {
+    "detection_method": "runtime",
+    "inject_before_click": true,
+    "inject_after_stable": true,
+    "checks": ["transitions", "animations", "prefers_reduced_motion"],
+    "duration_ranges_ms": {
+      "micro_interaction": [150, 300],
+      "layout_change": [300, 500],
+      "page_transition": [300, 800],
+      "sluggish_threshold": 500
+    },
+    "easing_quality": {
+      "good": ["ease-in-out", "cubic-bezier"],
+      "acceptable": ["ease", "ease-out"],
+      "poor": ["linear"]
+    }
   }
 }
