@@ -6,7 +6,7 @@ description: >
   review and reporting. Use when the user says "audit the flow", "design audit",
   "walk through the onboarding", "/design audit", or wants to evaluate a multi-screen
   user journey.
-allowed-tools: Bash(mkdir *), Bash(cp *), Bash(rm *), Bash(cat *), Bash(npx *)
+allowed-tools: Bash(mkdir *), Bash(cp *), Bash(rm *), Bash(cat *), Bash(npx *), Bash(gemini *), Bash(which *), Bash(kill *), Bash(lsof *)
 ---
 
 @${CLAUDE_PLUGIN_ROOT}/shared/output.md
@@ -649,36 +649,14 @@ If an error occurred, also set:
 }
 ```
 
-### 8b. Show branded summary
+### 8b. Transition to per-screen review
 
+Display a brief transition message:
 ```
-┌─ FLOW COMPLETE ─────────────────────────────────────────────┐
-│  Status:      {complete | dead_end | max_screens_reached}    │
-│  Screens:     {N} captured                                   │
-│  Duration:    {elapsed time}                                 │
-│  Screenshots: {AUDIT_DIR}/                                   │
-│  Flow state:  {AUDIT_DIR}/flow-state.json                    │
-└──────────────────────────────────────────────────────────────┘
+✓ Navigation complete -- {N} screens captured. Starting per-screen review...
 ```
 
-List each captured screen:
-```
-  1. {screen_name} -- {screenshot_filename}
-  2. {screen_name} -- {screenshot_filename}
-  ...
-```
-
-### 8c. Next step hint
-
-```
-Next: Run Phase 5 review to analyze captured screens
-```
-
-### 8d. Footer
-
-```
-github.com/spsk-dev/tasteful-design
-```
+If status is "error" and fewer than 2 screens were captured, skip review and jump to Section 13 (error summary). Otherwise proceed to Section 10.
 
 ## 9. Error Handling
 
@@ -722,10 +700,340 @@ If `browser_snapshot` returns an empty or minimal accessibility tree:
 
 ## Key Constraints
 
-- **Phase 4 is navigation + capture only.** Do NOT import or dispatch specialist reviews -- that is Phase 5.
 - **Do NOT generate HTML reports.** That is Phase 6.
 - **Every browser interaction uses Playwright MCP tools.** Never write shell scripts for navigation.
 - **Always take a fresh `browser_snapshot` immediately before `browser_click`.** Stale element refs cause failures (Pitfall 5).
 - **Never use `networkidle`.** SPAs with analytics/WebSockets never reach idle (Pitfall 1).
-- **Progressive persistence.** Write flow-state.json after every screen capture. Mid-flow failures must preserve partial results.
-- **The flow-state.json is the contract** between Phase 4 and Phases 5/6. Match the schema exactly.
+- **Progressive persistence.** Write flow-state.json after every screen capture and after every screen review. Mid-flow failures must preserve partial results.
+- **The flow-state.json is the contract** between navigation (Sections 1-9) and downstream reporting (Phase 6). Match the schema exactly.
+- **Sections 10-13 run only after navigation completes.** If navigation errors with <2 screens, skip review and show error summary.
+- **Per-screen reviews are sequential (not parallel) to manage token budget.** Each screen review completes fully before the next starts.
+
+---
+
+## 10. Per-Screen Review Dispatch
+
+After navigation completes with status "complete", "dead_end", or "max_screens_reached", dispatch specialist reviews for each captured screen.
+
+**Skip review if** status is "error" and fewer than 2 screens were captured -- not enough data for meaningful review. Jump to Section 13 (error summary).
+
+### 10a. Determine review mode per screen
+
+Read `smart_weighting` from config/flow-scoring.json.
+
+For each screen in flow-state.json `screens` array:
+- If screen.number === 1 (first) OR screen.number === total_screens (last): **FULL mode** (8 specialists)
+- Otherwise: **QUICK mode** (4 specialists: Font, Color, Layout, Intent)
+
+Display the plan:
+```
+┌─ REVIEW PLAN ───────────────────────────────────────────────┐
+│  Screen 1: {name} ── full (8 specialists)                    │
+│  Screen 2: {name} ── quick (4 specialists)                   │
+│  Screen 3: {name} ── quick (4 specialists)                   │
+│  Screen 4: {name} ── full (8 specialists)                    │
+└──────────────────────────────────────────────────────────────┘
+```
+
+**Edge cases:**
+- If only 1 screen captured, it is both first AND last -- run full mode.
+- If only 2 screens captured, both are first/last -- both get full mode.
+
+### 10b. Dispatch per-screen reviews
+
+For each screen, follow the design-review.md workflow adapted for flow context. Reviews are sequential -- each screen completes fully before the next starts.
+
+**Phase 1 (Page Analysis):** Instead of running the Haiku agent fresh, provide the flow-level PAGE_BRIEF:
+- Page TYPE: derive from the screen's content (the flow intent provides context)
+- PAGE INTENT: "{flow_intent} -- Screen {N}: {screen_name}"
+- The flow intent enriches per-screen intent -- Screen 1's intent is "entry point for {flow}", last screen's is "completion of {flow}"
+
+**Phase 2 (Specialist Dispatch):** Run specialists per design-review.md Phase 2.
+- Full mode: all 8 specialists (Font, Color, Layout, Icon, Motion, Intent/Originality/UX, Copy, Code/A11y)
+- Quick mode: specialists 1 (Font), 2 (Color), 3 (Layout), 6 (Intent/Originality/UX)
+- Each specialist receives: the screen's screenshot (from screenshot_path), source code access via the browser, and the PAGE_BRIEF with flow context
+
+**Animation enrichment (per ANIM-03):** For the Motion specialist (#5, full mode only), append the screen's animation data from flow-state.json to the prompt:
+
+```
+ANIMATION DATA FROM FLOW NAVIGATION:
+- Pre-click state: {animation.pre_click}
+- Post-stable state: {animation.post_stable}
+- Events during transition: {animation.events}
+- prefers-reduced-motion: {animation.prefers_reduced_motion.verdict}
+
+Evaluate animation QUALITY using this runtime data alongside your source code analysis.
+Flag any animations that lack prefers-reduced-motion support.
+Assess transition timing against the ranges in config/flow-scoring.json:
+  - Micro-interaction: 150-300ms
+  - Layout change: 300-500ms
+  - Page transition: 300-800ms
+  - Sluggish threshold: >500ms for single elements
+
+Easing quality:
+  - Good: ease-in-out, cubic-bezier(...)
+  - Acceptable: ease, ease-out
+  - Poor: linear (flag on UI elements, acceptable for progress bars)
+```
+
+**Phase 3 (Boss Synthesis):** Run the boss synthesizer per design-review.md Phase 3.
+- Use weights from config/scoring.json (full mode: /17, quick mode: /13)
+- Produce per-screen score, findings, and verdict
+
+### 10c. Store per-screen results
+
+After each screen's review completes, update that screen's entry in flow-state.json:
+
+```json
+{
+  "number": 1,
+  "name": "...",
+  "review": {
+    "mode": "full|quick",
+    "specialist_count": 8,
+    "scores": {
+      "intent_match": 3.0,
+      "originality": 2.5,
+      "ux_flow": 3.0,
+      "typography": 3.5,
+      "color": 2.0,
+      "layout": 3.0,
+      "icons": 2.5,
+      "motion": 3.0,
+      "copy": 3.0,
+      "code_a11y": 2.5
+    },
+    "weighted_score": 2.85,
+    "verdict": "CONDITIONAL",
+    "findings": ["finding 1", "finding 2"],
+    "cross_specialist_findings": ["cross-finding 1"]
+  }
+}
+```
+
+For quick mode screens, only the 4 specialist scores (mapped to the 6 scored dimensions from design-review.md quick mode) are present. Missing dimensions are null:
+```json
+{
+  "scores": {
+    "intent_match": 3.0,
+    "originality": 2.5,
+    "ux_flow": 3.0,
+    "typography": 3.5,
+    "color": 2.0,
+    "layout": 3.0,
+    "icons": null,
+    "motion": null,
+    "copy": null,
+    "code_a11y": null
+  }
+}
+```
+
+Write flow-state.json after EACH screen review completes (progressive persistence).
+
+### 10d. Display per-screen progress
+
+After each screen review, show branded output (score converted to /10 display scale per shared/output.md: internal * 2.5):
+```
+✓ Screen {N}: {name} ── {display_score}/10 ({verdict}) ── {mode} mode
+```
+
+---
+
+## 11. Animation Summary
+
+After all per-screen reviews complete, summarize animation findings across the flow.
+
+### 11a. Compile animation data
+
+Read the `animation` field from each screen in flow-state.json.
+
+### 11b. Animation quality assessment
+
+For each screen, evaluate:
+1. **Transition coverage:** Did interactive elements (buttons, links, form fields) have CSS transitions? List elements with and without.
+2. **Duration quality:** Compare detected durations against config/flow-scoring.json `animation.duration_ranges_ms`. Flag durations outside expected ranges:
+   - Micro-interaction (150-300ms): button hover, toggle, checkbox
+   - Layout change (300-500ms): accordion, tab switch, sidebar
+   - Page transition (300-800ms): route change, modal, full-page swap
+   - Sluggish (>500ms for single element): flag as too slow
+3. **Easing quality:** Compare detected timing functions against config `animation.easing_quality`. Flag `linear` easing on UI elements (acceptable for progress bars).
+4. **Cross-screen transition events:** How many animation/transition events fired during each screen transition? Zero events on a navigation = missing page transitions (flag as finding).
+
+### 11c. prefers-reduced-motion summary
+
+Compile PRM results across all screens:
+- How many screens passed PRM check?
+- Which screens have animations without PRM support?
+- Overall PRM compliance: PASS (all screens) / PARTIAL (some) / FAIL (none)
+
+### 11d. Store animation summary
+
+Add a top-level `animation_summary` to flow-state.json:
+
+```json
+{
+  "animation_summary": {
+    "total_transitions_detected": 12,
+    "total_animation_events": 8,
+    "screens_with_animations": [1, 3, 4],
+    "screens_without_transitions": [2],
+    "duration_findings": [
+      "Screen 3: button hover at 800ms exceeds micro-interaction range (150-300ms)"
+    ],
+    "easing_findings": [
+      "Screen 3: linear easing on button hover (use ease-in-out)"
+    ],
+    "prefers_reduced_motion": {
+      "compliant_screens": 3,
+      "non_compliant_screens": 1,
+      "overall": "PARTIAL"
+    },
+    "findings": [
+      "Screen 2 has no transition events -- navigation feels abrupt",
+      "Screen 3: linear easing on button hover (use ease-in-out)",
+      "Screen 4: animations lack prefers-reduced-motion support"
+    ]
+  }
+}
+```
+
+---
+
+## 12. Flow Score Aggregation
+
+### 12a. Compute weighted flow score
+
+Read `flow_score` config from flow-scoring.json.
+
+For each screen:
+- Get the screen's weighted_score (from review.weighted_score)
+- Get the position weight: first=1.5, last=1.5, middle=1.0
+
+Formula:
+```
+flow_score = sum(screen_score * position_weight) / sum(position_weight)
+```
+
+Example with 4 screens:
+```
+Screen 1 (first): 3.0 * 1.5 = 4.5
+Screen 2 (middle): 2.5 * 1.0 = 2.5
+Screen 3 (middle): 2.8 * 1.0 = 2.8
+Screen 4 (last): 3.2 * 1.5 = 4.8
+Total weighted = 14.6, total weights = 5.0
+flow_score = 14.6 / 5.0 = 2.92
+```
+
+**Note:** Consistency penalty (from Plan 03) will further adjust this score. At this stage, compute the pre-penalty flow score.
+
+### 12b. Determine flow verdict
+
+Use the page type from the first screen's PAGE_BRIEF and the thresholds from config/scoring.json:
+- **SHIP:** flow_score >= threshold AND no critical cross-screen issues
+- **CONDITIONAL:** flow_score within 0.3 of threshold AND issues are fixable
+- **BLOCK:** flow_score < threshold - 0.3 OR critical issues found
+
+### 12c. Store flow score
+
+Add to flow-state.json top level:
+
+```json
+{
+  "flow_score": {
+    "weighted_score": 2.92,
+    "display_score": 7.3,
+    "verdict": "CONDITIONAL",
+    "position_weights_applied": { "1": 1.5, "2": 1.0, "3": 1.0, "4": 1.5 },
+    "page_type": "landing",
+    "threshold": 3.0,
+    "consistency_penalty": null
+  }
+}
+```
+
+The `display_score` is `weighted_score * 2.5` (per shared/output.md conversion). The `consistency_penalty` is null until Plan 03's consistency pass fills it in.
+
+---
+
+## 13. Flow Review Summary
+
+Display the complete flow audit results using branded output from shared/output.md.
+
+### 13a. Per-screen score table
+
+```
+┌─ FLOW REVIEW ───────────────────────────────────────────────┐
+│                                                               │
+│  Screen 1: {name}                                             │
+│  {score_bar} {display_score}/10  ·  {verdict}  ·  full        │
+│  Top finding: {highest priority finding}                      │
+│                                                               │
+│  Screen 2: {name}                                             │
+│  {score_bar} {display_score}/10  ·  {verdict}  ·  quick       │
+│  Top finding: {highest priority finding}                      │
+│                                                               │
+│  Screen 3: {name}                                             │
+│  {score_bar} {display_score}/10  ·  {verdict}  ·  quick       │
+│  Top finding: {highest priority finding}                      │
+│                                                               │
+│  Screen 4: {name}                                             │
+│  {score_bar} {display_score}/10  ·  {verdict}  ·  full        │
+│  Top finding: {highest priority finding}                      │
+└──────────────────────────────────────────────────────────────┘
+```
+
+Score bars follow shared/output.md format: `{filled}{empty} {display}/10` where filled=round(internal*2.5) blocks of `█`, empty blocks of `░`, total 10.
+
+### 13b. Animation findings box
+
+```
+┌─ ANIMATION ─────────────────────────────────────────────────┐
+│  Transitions: {total} detected across {N} screens            │
+│  Events: {total} animation/transition events captured         │
+│  prefers-reduced-motion: {PASS|PARTIAL|FAIL}                 │
+│                                                               │
+│  {finding 1}                                                  │
+│  {finding 2}                                                  │
+└──────────────────────────────────────────────────────────────┘
+```
+
+### 13c. Flow verdict box
+
+```
+┌─ FLOW VERDICT ──────────────────────────────────────────────┐
+│  {score_bar} {display_score}/10  ·  {verdict}                │
+│                                                               │
+│  {N} screens  ·  {full_count} full  ·  {quick_count} quick   │
+│  Weakest: Screen {N} ({name}) at {score}/10                  │
+│  Strongest: Screen {N} ({name}) at {score}/10                │
+└──────────────────────────────────────────────────────────────┘
+```
+
+### 13d. Top 5 flow-wide fixes
+
+Aggregate findings across all screens, deduplicate, and rank by:
+1. Cross-specialist agreement (found by 2+ specialists across screens)
+2. Severity (critical > high > medium)
+3. Frequency (appears on multiple screens)
+
+```
+### Top 5 Fixes
+1. {fix} -- Screen(s) {N, M} -- {specialist(s)}
+2. {fix} -- Screen(s) {N} -- {specialist(s)}
+3. {fix} -- Screen(s) {N, M, P} -- {specialist(s)}
+4. {fix} -- Screen(s) {N} -- {specialist(s)}
+5. {fix} -- Screen(s) {N, M} -- {specialist(s)}
+```
+
+### 13e. Next step hint
+
+```
+Next: Run Phase 6 to generate the HTML diagnostic report
+```
+
+### 13f. Footer
+
+```
+github.com/spsk-dev/tasteful-design
+```
