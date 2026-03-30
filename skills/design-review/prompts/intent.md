@@ -86,7 +86,7 @@ Each score must be justified by specific evidence from the page.
 </scoring_rubric>
 
 <output_format>
-First, analyze intent match, originality, and UX flow in <thinking> tags.
+First, analyze intent match, originality, and UX flow in <thinking> tags. In your <thinking> section, reason through each of the four dimensions explicitly: (1) Does the visual tone match the content's purpose? (2) What AI-default patterns are present vs what is genuinely designed? (3) Can the user find and complete the primary action? (4) Is the copy specific, correct, and tone-appropriate? Then assign scores based on your reasoning.
 
 Then output your structured evaluation:
 
@@ -122,3 +122,115 @@ Requirements:
 - findings: array of 2-6 objects, each with dimension/element/issue/recommendation
 - summary: one sentence
 </output_format>
+
+<examples>
+
+<example>
+<scenario>AI-generated SaaS landing page with Inter font, purple gradient hero, three-column icon grid, buried CTA, generic "Learn More" button</scenario>
+<thinking>
+(1) Intent match: The page claims to be a "developer platform" but the visual tone is generic startup template — purple gradient hero and stock imagery create no emotional connection with developers. Score 2.
+(2) Originality: Inter font as sole typeface, three-column icon grid (the #1 AI layout fingerprint), purple-to-blue gradient hero, and uniform 16px border-radius everywhere. Every known AI default is present. Score 2.
+(3) UX flow: The primary CTA ("Learn More") is buried below the fold after three feature sections. No clear action hierarchy — the hero has two equally weighted buttons. After clicking "Learn More" there is no obvious next step. Score 2.
+(4) Copy quality: "Build the future of development" headline is generic AI copy. "Learn More" CTA communicates no value. Feature descriptions use hedging language ("can potentially help"). Score 2.
+</thinking>
+<specialist_output>
+{
+  "specialist": "intent",
+  "scores": {
+    "intent_match": 2,
+    "originality": 2,
+    "ux_flow": 2,
+    "copy_quality": 2
+  },
+  "findings": [
+    {
+      "dimension": "originality",
+      "element": "hero section with purple-to-blue gradient and three-column icon grid below",
+      "issue": "Every major AI-default pattern present: purple gradient, three-column icons, Inter font, uniform border-radius",
+      "recommendation": "Replace gradient with a distinctive color system; use asymmetric bento grid or featured card layout instead of three-column icons"
+    },
+    {
+      "dimension": "ux_flow",
+      "element": "primary CTA 'Learn More' positioned below three feature sections",
+      "issue": "CTA is buried below the fold with a generic label that communicates no value — users have no reason to scroll",
+      "recommendation": "Move primary CTA to hero section with specific label like 'Start Building Free' and reduce to one prominent button"
+    }
+  ],
+  "summary": "AI-default patterns throughout with buried CTA, generic copy, and no distinct visual identity"
+}
+</specialist_output>
+</example>
+
+<example>
+<scenario>Well-designed SaaS dashboard with clear information hierarchy, consistent UI patterns, correct copy, one generic subheading</scenario>
+<thinking>
+(1) Intent match: This is a data dashboard and it looks like one — dense information layout, functional color usage for status indicators, no decorative elements competing with data. The tone matches the product context. Score 3.
+(2) Originality: Uses DM Sans (not a default), custom color tokens with tinted neutrals, sidebar navigation follows conventions appropriately for a dashboard. Not trying to be creative where it should not be. Score 3.
+(3) UX flow: Primary action (create new report) is clearly visible in the top-right. Data table supports sorting and filtering. Navigation sidebar has clear grouping. Minor: the secondary "Export" action is visually close to "Create" with no clear hierarchy between them. Score 3.
+(4) Copy quality: Labels are specific ("Revenue by Region", "Active Users This Week"), CTAs are clear ("Create Report", "Export CSV"). One subheading reads "Your data, your way" which is generic filler that adds no information. Score 3.
+</thinking>
+<specialist_output>
+{
+  "specialist": "intent",
+  "scores": {
+    "intent_match": 3,
+    "originality": 3,
+    "ux_flow": 3,
+    "copy_quality": 3
+  },
+  "findings": [
+    {
+      "dimension": "ux_flow",
+      "element": "top-right action bar with 'Create Report' and 'Export CSV' buttons at equal visual weight",
+      "issue": "Primary and secondary actions have no visual hierarchy — both are filled buttons at the same size",
+      "recommendation": "Make 'Create Report' the primary filled button and 'Export CSV' an outline/ghost button to establish clear action priority"
+    },
+    {
+      "dimension": "copy_quality",
+      "element": "dashboard subheading 'Your data, your way'",
+      "issue": "Generic filler phrase that adds no information — every dashboard could say this",
+      "recommendation": "Replace with specific context like 'Q1 2024 Performance' or remove the subheading entirely"
+    }
+  ],
+  "summary": "Well-designed dashboard with appropriate intent match and good UX flow, minor action hierarchy and one generic copy issue"
+}
+</specialist_output>
+</example>
+
+<example>
+<scenario>Personal portfolio site with emotionally resonant photography and custom color palette, but Bootstrap grid layout and slightly unclear project navigation</scenario>
+<thinking>
+(1) Intent match: The portfolio feels deeply personal — photography is warm and specific (not stock), the color palette draws from earth tones that match the creator's aesthetic. Every visual choice reinforces "this was made by someone with taste." Score 4.
+(2) Originality: Despite strong visual identity, the underlying layout is a recognizable Bootstrap grid with standard 12-column breakpoints and uniform card sizing. The typography and imagery carry the design but the structure is template-derived. Score 2.
+(3) UX flow: The hero communicates "I'm a designer, here's my work" clearly. However, the project grid uses identical cards with no featured piece — all projects have equal visual weight. Clicking a project opens a page but there's no clear path back to the grid without using the browser back button. Score 3.
+(4) Copy quality: Project descriptions are specific and personal ("Redesigned the checkout flow, reducing cart abandonment by 23%"). Bio copy has genuine voice. One project card uses "View Project" three times consecutively which is repetitive. Score 3.
+</thinking>
+<specialist_output>
+{
+  "specialist": "intent",
+  "scores": {
+    "intent_match": 4,
+    "originality": 2,
+    "ux_flow": 3,
+    "copy_quality": 3
+  },
+  "findings": [
+    {
+      "dimension": "originality",
+      "element": "project grid using Bootstrap 12-column layout with uniform col-md-4 cards",
+      "issue": "Standard Bootstrap grid is immediately recognizable as template-derived — undermines the otherwise strong personal identity",
+      "recommendation": "Use a masonry or bento layout with a featured project spanning 2 columns to break the uniform grid and let the best work lead"
+    },
+    {
+      "dimension": "ux_flow",
+      "element": "project detail pages with no visible navigation back to portfolio grid",
+      "issue": "Users must use browser back button — no in-page navigation between project detail and portfolio overview",
+      "recommendation": "Add a sticky breadcrumb or back-to-portfolio link at the top of each project detail page"
+    }
+  ],
+  "summary": "Emotionally resonant portfolio with strong intent match undercut by template grid layout and minor navigation gap"
+}
+</specialist_output>
+</example>
+
+</examples>
