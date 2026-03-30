@@ -1,6 +1,6 @@
 # SpSk -- Design Review Plugin
 
-AI-powered design review using 8 independent specialist agents. Each specialist evaluates one domain (typography, color, layout, icons, motion, intent/originality/UX, copy, code/accessibility) against curated reference knowledge. A boss synthesizer merges findings with cross-specialist confidence scoring and delivers a weighted SHIP/BLOCK verdict.
+AI-powered design review using 7 independent specialist agents. Each specialist evaluates one domain (typography, color, layout, icons, motion, intent/originality/UX/copy, code/accessibility) against curated reference knowledge. A boss synthesizer merges findings with cross-specialist confidence scoring and delivers a weighted SHIP/BLOCK verdict.
 
 ## Available Commands
 
@@ -22,7 +22,7 @@ All flags pass through to sub-commands: `--ref`, `--figma`, `--direction`, `--pa
 
 ### `/design-review` -- Visual Design Review
 
-Full 8-specialist review with weighted scoring and SHIP/CONDITIONAL/BLOCK verdict.
+Full 7-specialist review with weighted scoring and SHIP/CONDITIONAL/BLOCK verdict.
 
 ```bash
 /design-review                              # Review current page (auto-detects dev server)
@@ -42,7 +42,7 @@ Full 8-specialist review with weighted scoring and SHIP/CONDITIONAL/BLOCK verdic
 
 | Flag | Effect |
 |------|--------|
-| `--quick` | Run 4 core specialists instead of 8. Uses `/13` weights instead of `/17`. Saves ~40% tokens. |
+| `--quick` | Run 4 core specialists instead of 7. Uses `/13` weights instead of `/16`. Saves ~40% tokens. |
 | `--ref <url\|file\|figma>` | Compare against a reference instead of generic gold standards |
 | `--figma <url>` | Review a Figma design before building. Add `--compare` to check implementation fidelity |
 | `--direction "<text>"` | Evaluate against a text creative brief |
@@ -146,10 +146,10 @@ Gemini rate limits are handled with retry + fallback. The tier is always reporte
 
 ## Quick Mode
 
-`--quick` runs 4 core specialists instead of 8:
+`--quick` runs 4 core specialists instead of 7:
 - Font, Color, Layout, Intent/Originality/UX
-- Skips: Icon, Motion, Copy, Code/A11y
-- Uses `/13` weight divisor instead of `/17`
+- Skips: Icon, Motion, Code/A11y
+- Uses `/13` weight divisor instead of `/16`
 - Saves ~40-50% tokens
 - Best for: iterative fix cycles where you want fast feedback
 
@@ -160,14 +160,14 @@ Use full mode for final reviews before shipping.
 
 **SpSk (Simple Skill)**
 
-A GitHub portfolio project that publishes Felipe Machado's most polished AI agent skills as open-source Claude Code plugins. Design-review is the flagship skill (8 specialist agents, 10 scored dimensions, 8.6/10 consensus score). The repo serves as a professional showcase demonstrating deep understanding of AI agent architectures, harnesses, and their practical value for developers.
+A GitHub portfolio project that publishes Felipe Machado's most polished AI agent skills as open-source Claude Code plugins. Design-review is the flagship skill (7 specialist agents, 9 scored dimensions, 8.6/10 consensus score). The repo serves as a professional showcase demonstrating deep understanding of AI agent architectures, harnesses, and their practical value for developers.
 
 **Core Value:** The published skills must be immediately useful to other developers AND demonstrate architectural sophistication — the tool is the proof, the architecture is the CV.
 
 ### Constraints
 
 - **Distribution**: Claude Code plugin registry as primary (`claude /install-plugin tasteful-design@spsk-dev/tasteful-design`) + install.sh for manual
-- **Branding**: Clean and compact, NOT big ASCII art. Signature line format: ` SpSk  design-review  v1.2.0  ---  8 specialists  ·  tier 1`
+- **Branding**: Clean and compact, NOT big ASCII art. Signature line format: ` SpSk  design-review  v1.2.0  ---  7 specialists  ·  tier 1`
 - **Init wizard**: Exactly 5 questions with opinionated defaults (page type, vibe preset, light/dark, brand colors, font preference)
 - **Quality bar**: Must show what DIDN'T work in CHANGELOG (v1 single-agent scored 40%) — transparency builds credibility
 <!-- GSD:project-end -->

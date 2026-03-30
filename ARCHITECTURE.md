@@ -4,7 +4,7 @@ How the design-review plugin works, why it works this way, and what happens when
 
 ## Overview
 
-The design-review plugin is a multi-agent system that evaluates visual design quality by dispatching 8 specialist agents in parallel, each focused on a single design dimension. A boss synthesizer merges their findings into a weighted score and delivers a SHIP, CONDITIONAL, or BLOCK verdict.
+The design-review plugin is a multi-agent system that evaluates visual design quality by dispatching 7 specialist agents in parallel, each focused on a single design dimension. A boss synthesizer merges their findings into a weighted score and delivers a SHIP, CONDITIONAL, or BLOCK verdict.
 
 This architecture exists because single-agent review does not work. When one Claude instance tries to evaluate everything -- typography, color, layout, accessibility, intent -- it produces generic, reliably positive feedback that misses domain-specific issues. In benchmarks, single-agent review scored roughly 40% on quality assertions. The multi-agent approach with weighted specialists scores 100%.
 
@@ -27,12 +27,12 @@ The key insight: generalists produce generalist feedback. Specialists with domai
                     |  Page Brief  |  Haiku agent classifies intent,
                     +--------------+  audience, design bar
                            |
-          +----------------+----------------+
-          |    |    |    |    |    |    |    |
-         S1   S2   S3   S4   S5   S6   S7   S8
-        Font Color Layout Icon Motion Intent Copy Code
-          |    |    |    |    |    |    |    |
-          +----------------+----------------+
+          +----------------+-------------+
+          |    |    |    |    |    |    |
+         S1   S2   S3   S4   S5   S6   S7
+        Font Color Layout Icon Motion Intent Code
+          |    |    |    |    |    |    |
+          +----------------+-------------+
                            |
                     +--------------+
                     |  Phase 3     |
@@ -45,9 +45,9 @@ The key insight: generalists produce generalist feedback. Specialists with domai
 
 Each specialist receives the full page brief from Phase 1 (intent, audience, primary action, UX priorities) so they evaluate their domain in service of the page's purpose -- not in a vacuum. A font specialist reviewing an admin dashboard applies different standards than one reviewing a personal love letter.
 
-## The 8 Specialists
+## The 7 Specialists
 
-Each specialist is an independent agent with its own reference knowledge file. Specialists 1, 4-8 run as Claude agents that read files directly. Specialists 2 and 3 run via Gemini CLI for cross-model diversity (with Claude fallback if Gemini is unavailable).
+Each specialist is an independent agent with its own reference knowledge file. Specialists 1, 4-7 run as Claude agents that read files directly. Specialists 2 and 3 run via Gemini CLI for cross-model diversity (with Claude fallback if Gemini is unavailable).
 
 | # | Specialist | Dimension | What It Evaluates | Weight | Agent |
 |---|-----------|-----------|-------------------|--------|-------|
@@ -56,9 +56,8 @@ Each specialist is an independent agent with its own reference knowledge file. S
 | 3 | Layout | Layout Quality | Spacing consistency, responsive behavior, section rhythm, alignment, whitespace | 1x | Gemini |
 | 4 | Icon | Icon Quality | Library consistency, sizing, stroke weight, filled vs outline, aria-labels | 1x | Claude |
 | 5 | Motion | Motion Quality | Animation quality, performance, prefers-reduced-motion, timing curves | 1x | Claude |
-| 6 | Intent/Originality/UX | Intent Match, Originality, UX Flow | Design-purpose alignment, creative distinctiveness, user flow and CTA clarity | 3x + 3x + 2x | Claude |
-| 7 | Copy | Copy Quality | Spelling, grammar, placeholders, tone match, CTA quality | 1x | Claude |
-| 8 | Code & A11y | Code Quality | Hardcoded values, missing states, responsive code, semantic HTML, ARIA, focus | 1x | Claude |
+| 6 | Intent/Originality/UX | Intent Match, Originality, UX Flow, Copy Quality | Design-purpose alignment, creative distinctiveness, user flow, CTA clarity, copy quality | 3x + 3x + 2x | Claude |
+| 7 | Code & A11y | Code Quality | Hardcoded values, missing states, responsive code, semantic HTML, ARIA, focus | 1x | Claude |
 
 Specialist 6 is the most heavily weighted because it answers the hardest questions: does the design match its purpose, is it distinguishable from generic AI output, and can users actually accomplish what the page wants them to do? It returns three separate scores (Intent Match, Originality, UX Flow) that are weighted independently.
 
@@ -66,7 +65,7 @@ Every specialist must find at least 2 issues. "Looks great" is not allowed -- th
 
 ## Boss Synthesizer Pattern
 
-After all 8 specialists return their findings and scores, the boss synthesizer (the orchestrator itself) merges the results. It does not re-evaluate the design -- it trusts the specialists and synthesizes.
+After all 7 specialists return their findings and scores, the boss synthesizer (the orchestrator itself) merges the results. It does not re-evaluate the design -- it trusts the specialists and synthesizes.
 
 The boss performs four operations:
 
@@ -86,15 +85,15 @@ The weighted scoring formula from `config/scoring.json`:
 
 ```
 Score = (Intent*3 + Originality*3 + UX_Flow*2 + Typography*2 + Color*2
-         + Layout*1 + Icons*1 + Motion*1 + Copy*1 + Code*1) / 17
+         + Layout*1 + Icons*1 + Motion*1 + Code*1) / 16
 ```
 
-Each dimension is scored on a 1.0 to 4.0 scale. The total weight divisor is 17.
+Each dimension is scored on a 1.0 to 4.0 scale. The total weight divisor is 16. Copy quality is evaluated by the Intent specialist but is informational (not weighted).
 
 **Weight rationale:**
 - Intent Match (3x) and Originality (3x): The most important questions -- does the design match its purpose, and is it distinguishable from generic AI output?
 - UX Flow (2x), Typography (2x), Color (2x): High visual impact and direct effect on usability.
-- Layout, Icons, Motion, Copy, Code (1x each): Important but less differentiating.
+- Layout, Icons, Motion, Code (1x each): Important but less differentiating.
 
 **Verdict thresholds** (from `config/scoring.json`):
 
@@ -111,7 +110,7 @@ Each dimension is scored on a 1.0 to 4.0 scale. The total weight divisor is 17.
 - **CONDITIONAL SHIP**: Score within 0.3 of threshold AND issues are fixable
 - **BLOCK**: Score < threshold - 0.3 OR critical issues present
 
-**Quick mode** (`--quick`): Runs 4 specialists instead of 8 -- Font, Color, Layout, and Intent/Originality/UX. Uses a reduced weight divisor of 13 instead of 17. Saves approximately 40-50% of tokens. Best for iterative fix cycles where fast feedback matters more than comprehensive coverage. Full mode should be used for final reviews before shipping.
+**Quick mode** (`--quick`): Runs 4 specialists instead of 7 -- Font, Color, Layout, and Intent/Originality/UX. Uses a reduced weight divisor of 13 instead of 16. Saves approximately 40-50% of tokens. Best for iterative fix cycles where fast feedback matters more than comprehensive coverage. Full mode should be used for final reviews before shipping.
 
 Quick mode formula:
 ```
@@ -154,7 +153,7 @@ The plugin provides 4 commands that compose into workflows:
 | Command | Role | When to Use |
 |---------|------|-------------|
 | `/design` | Router/orchestrator | Entry point. Routes to sub-commands, supports pipeline modes (`ship`, `check`) |
-| `/design-review` | Core review engine | Full 8-specialist review with scoring and verdict. The main command. |
+| `/design-review` | Core review engine | Full 7-specialist review with scoring and verdict. The main command. |
 | `/design-improve` | Iterative build-fix loop | Builds a page, reviews it, applies top fixes, re-reviews until SHIP or max iterations |
 | `/design-validate` | Functional testing | Clicks buttons, fills forms, checks console errors via Playwright. Catches broken functionality. |
 
@@ -170,7 +169,7 @@ All flags (`--ref`, `--figma`, `--direction`, `--palette`, `--fonts`, `--quick`,
 
 | Decision | Alternative | Why This Way |
 |----------|------------|--------------|
-| Multi-agent (8 specialists) over single-agent | One agent reviews everything | Single-agent scored 40% on quality assertions. Specialists with domain knowledge catch issues a generalist misses -- typography rules, color theory, accessibility requirements. |
+| Multi-agent (7 specialists) over single-agent | One agent reviews everything | Single-agent scored 40% on quality assertions. Specialists with domain knowledge catch issues a generalist misses -- typography rules, color theory, accessibility requirements. |
 | Markdown commands over JavaScript | npm package with JS entry points | No build step, no dependencies, no package manager. Commands ARE prompts -- the markdown file is both the documentation and the implementation. Instant portability. |
 | JSON config over hardcoded values | Embed weights and rules in command prompts | Tunable without editing prompts. Users can adjust scoring weights, add banned fonts, change thresholds per page type. Separation of data from logic. |
 | Weighted scoring over simple average | All dimensions weighted equally | Not all dimensions matter equally. Intent Match (does it serve its purpose?) matters 3x more than Icon consistency. Weighting reflects real design priorities and prevents minor issues from dominating the score. |
@@ -187,7 +186,7 @@ spsk/
 |   +-- plugin.json          # Plugin manifest (name, version, description)
 +-- commands/
 |   +-- design.md            # /design -- router and orchestrator
-|   +-- design-review.md     # /design-review -- core 8-specialist review
+|   +-- design-review.md     # /design-review -- core 7-specialist review
 |   +-- design-improve.md    # /design-improve -- iterative build-fix loop
 |   +-- design-validate.md   # /design-validate -- functional testing
 |   +-- design-audit.md      # /design-audit -- flow-level SPA audit
@@ -246,8 +245,8 @@ User: /design-audit <url> --flow "checkout"
      |                       |
 +----------+           +----------+
 | Full     |           | Quick    |  Smart weighting:
-| Review   |           | Review   |  first/last = 8 specialists
-| (8 spec) |           | (4 spec) |  middle = 4 specialists
+| Review   |           | Review   |  first/last = 7 specialists
+| (7 spec) |           | (4 spec) |  middle = 4 specialists
 +----------+           +----------+
      |                       |
      +-----------+-----------+
@@ -276,8 +275,8 @@ Screen detection uses DOM mutation observation (not networkidle) with a configur
 ### Smart Weighting
 
 Not all screens in a flow deserve equal review depth:
-- **First screen** (entry point): Full 8-specialist review (1.5x score weight)
-- **Last screen** (completion): Full 8-specialist review (1.5x score weight)
+- **First screen** (entry point): Full 7-specialist review (1.5x score weight)
+- **Last screen** (completion): Full 7-specialist review (1.5x score weight)
 - **Middle screens**: Quick 4-specialist review (1.0x score weight)
 
 This balances token budget against review thoroughness -- the user's first impression and final experience get the most scrutiny.

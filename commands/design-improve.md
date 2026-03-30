@@ -19,7 +19,7 @@ Use the branded output format from shared/output.md for all improvement output. 
 
 ## Why This Exists
 
-`/design-review` catches problems but doesn't fix them. This skill closes the loop: build a page, review it with 8 specialists, apply the top fixes, re-review only the failing dimensions, and repeat until the page ships. Each iteration produces measurably better output because the fixes come from domain-specialist critique, not Claude's own taste.
+`/design-review` catches problems but doesn't fix them. This skill closes the loop: build a page, review it with 7 specialists, apply the top fixes, re-review only the failing dimensions, and repeat until the page ships. Each iteration produces measurably better output because the fixes come from domain-specialist critique, not Claude's own taste.
 
 ## How It Works
 
@@ -53,10 +53,10 @@ Users can customize `anti-slop.json` to add project-specific banned/recommended 
 
 ## Phase B: First Review
 
-Run `/design-review` on the page. This triggers the full 8-specialist pipeline:
+Run `/design-review` on the page. This triggers the full 7-specialist pipeline:
 1. Screenshots (Playwright)
 2. Page classification (Haiku)
-3. 8 specialist dispatch (Font, Color, Layout, Icon, Motion, Intent, Copy, Code)
+3. 7 specialist dispatch (Font, Color, Layout, Icon, Motion, Intent, Code)
 4. Boss synthesis with weighted scoring
 
 Read the verdict and score.
@@ -85,7 +85,6 @@ When the review produces structured JSON output (v1.2.0+), extract fixes from th
 - For color changes: update CSS custom properties (usually in `:root {}`)
 - For layout changes: modify the specific section's HTML/CSS structure
 - For accessibility: add `aria-label`, semantic elements, `prefers-reduced-motion`
-- For copy: fix spelling, accents, placeholder text
 
 **After applying fixes, log what you changed:**
 ```
@@ -190,7 +189,7 @@ This turns the loop from "make it generically better" into "make it match this s
 | Want to build AND iterate to high quality | `/design-improve` |
 | Got a BLOCK, want to fix and re-review | `/design-improve` (pass the page path) |
 | Quick check during development | `/design-review --quick` |
-| Final review before shipping | `/design-review` (full 8 specialists) |
+| Final review before shipping | `/design-review` (full 7 specialists) |
 
 ## Important: Design Limitations Still Apply
 

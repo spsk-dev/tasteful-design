@@ -2,13 +2,13 @@
 
 AI-powered design review and multi-model code review for Claude Code. Two skills, one plugin:
 
-- **`/design-review`** -- 8 specialist agents evaluate your UI across typography, color, layout, icons, motion, intent, copy, and accessibility. A boss synthesizer delivers a weighted SHIP/BLOCK verdict.
+- **`/design-review`** -- 7 specialist agents evaluate your UI across typography, color, layout, icons, motion, intent/originality/UX, and accessibility. A boss synthesizer delivers a weighted SHIP/BLOCK verdict.
 - **`/code-review`** -- 3 models (Claude, Codex, Gemini) review your PR in parallel with confidence-scored findings and cross-model agreement detection.
 
 Built because AI models are terrible self-critics. They "reliably skew positive" on visual output and miss concurrency bugs in code. These skills fix that with independent specialist critique and multi-model consensus.
 
 <p align="center">
-  <img src="assets/demo.gif" alt="SpSk design-review demo -- 8 specialists scoring a landing page" width="720">
+  <img src="assets/demo.gif" alt="SpSk design-review demo -- 7 specialists scoring a landing page" width="720">
 </p>
 
 ## Install
@@ -32,7 +32,7 @@ cd spsk && bash install.sh
 # Review the page you're working on
 /design-review
 
-# Get a fast check with 4 specialists instead of 8
+# Get a fast check with 4 specialists instead of 7
 /design-review --quick
 
 # Review against a reference site
@@ -51,7 +51,7 @@ A full review takes ~8 minutes and produces a structured verdict with scores per
 
 | Command | What It Does | Key Flags |
 |---------|-------------|-----------|
-| `/design-review` | Full 8-specialist visual review | `--quick`, `--ref <url>`, `--figma <url>`, `--direction "brief"` |
+| `/design-review` | Full 7-specialist visual review | `--quick`, `--ref <url>`, `--figma <url>`, `--direction "brief"` |
 | `/design-improve` | Build and iterate until SHIP | `--max N`, `--ref <url>`, `--validate`, `--style <preset>` |
 | `/design-validate` | Functional validation (Playwright) | URL or auto-detect |
 | `/design` | Orchestrator -- routes to sub-commands | `review`, `improve`, `validate`, `check`, `ship` |
@@ -86,7 +86,7 @@ See the [code-review case study](docs/case-studies/code-review-bugs-caught.md) f
 
 ## Flow Audit
 
-Multi-screen SPA design audit. Navigates through your app screen-by-screen, runs 8-specialist review on each screen, checks cross-screen consistency, and generates a self-contained HTML diagnostic report.
+Multi-screen SPA design audit. Navigates through your app screen-by-screen, runs 7-specialist review on each screen, checks cross-screen consistency, and generates a self-contained HTML diagnostic report.
 
 ```bash
 # Audit a checkout flow (intent-guided navigation)
@@ -102,7 +102,7 @@ Multi-screen SPA design audit. Navigates through your app screen-by-screen, runs
 **How it works:**
 1. Navigates SPA screens by clicking CTAs that match your flow description (or follows --steps URLs)
 2. Captures a screenshot at each screen state change (DOM stability detection)
-3. First and last screens get full 8-specialist review; middle screens get quick 4-specialist review
+3. First and last screens get full 7-specialist review; middle screens get quick 4-specialist review
 4. Cross-screen consistency analysis flags visual drift (color, spacing, typography, button styles)
 5. Generates a self-contained HTML report with embedded screenshots, scores, and fix recommendations
 
@@ -121,19 +121,18 @@ The review pipeline runs in 5 phases:
 
 1. **Screenshots** -- Playwright captures desktop (1440x900), mobile (375x812), and above-the-fold views
 2. **Page Classification** -- Haiku agent classifies page type and sets the design bar
-3. **8 Specialists** -- Dispatched in parallel, each with curated domain knowledge:
+3. **7 Specialists** -- Dispatched in parallel, each with curated domain knowledge:
    - **Font** (Claude) -- typography quality, AI-overused fonts, hierarchy
    - **Color** (Gemini) -- palette cohesion, WCAG contrast, dark mode
    - **Layout** (Gemini) -- spacing, responsive behavior, section rhythm
    - **Icon** (Claude) -- library consistency, sizing, accessibility
    - **Motion** (Claude) -- animation quality, performance, reduced-motion
-   - **Intent, Originality & UX** (Claude) -- purpose match, AI slop detection, user flow
-   - **Copy** (Claude) -- spelling, accents, tone, placeholder text
+   - **Intent, Originality, UX & Copy** (Claude) -- purpose match, AI slop detection, user flow, copy quality
    - **Code & A11y** (Claude) -- semantic HTML, ARIA, focus management
 4. **Boss Synthesis** -- Cross-specialist consensus, weighted scoring, SHIP/CONDITIONAL/BLOCK verdict
 5. **Fix List** -- Prioritized fixes with `[CRITICAL]`/`[HIGH]`/`[MEDIUM]` tags and file:line references
 
-Intent and Originality carry 3x weight. Typography and Color carry 2x. The formula: `(Intent*3 + Originality*3 + UX*2 + Typography*2 + Color*2 + Layout + Icons + Motion + Copy + Code) / 17`
+Intent and Originality carry 3x weight. Typography and Color carry 2x. The formula: `(Intent*3 + Originality*3 + UX*2 + Typography*2 + Color*2 + Layout + Icons + Motion + Code) / 16`
 
 The flow audit pipeline (`/design-audit`) extends this to multi-screen flows -- navigating SPAs, running per-screen reviews with smart weighting, detecting cross-screen consistency drift, and generating HTML diagnostic reports.
 

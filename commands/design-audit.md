@@ -724,16 +724,16 @@ After navigation completes with status "complete", "dead_end", or "max_screens_r
 Read `smart_weighting` from config/flow-scoring.json.
 
 For each screen in flow-state.json `screens` array:
-- If screen.number === 1 (first) OR screen.number === total_screens (last): **FULL mode** (8 specialists)
+- If screen.number === 1 (first) OR screen.number === total_screens (last): **FULL mode** (7 specialists)
 - Otherwise: **QUICK mode** (4 specialists: Font, Color, Layout, Intent)
 
 Display the plan:
 ```
 ┌─ REVIEW PLAN ───────────────────────────────────────────────┐
-│  Screen 1: {name} ── full (8 specialists)                    │
+│  Screen 1: {name} ── full (7 specialists)                    │
 │  Screen 2: {name} ── quick (4 specialists)                   │
 │  Screen 3: {name} ── quick (4 specialists)                   │
-│  Screen 4: {name} ── full (8 specialists)                    │
+│  Screen 4: {name} ── full (7 specialists)                    │
 └──────────────────────────────────────────────────────────────┘
 ```
 
@@ -751,7 +751,7 @@ For each screen, follow the design-review.md workflow adapted for flow context. 
 - The flow intent enriches per-screen intent -- Screen 1's intent is "entry point for {flow}", last screen's is "completion of {flow}"
 
 **Phase 2 (Specialist Dispatch):** Run specialists per design-review.md Phase 2.
-- Full mode: all 8 specialists (Font, Color, Layout, Icon, Motion, Intent/Originality/UX, Copy, Code/A11y)
+- Full mode: all 7 specialists (Font, Color, Layout, Icon, Motion, Intent/Originality/UX, Code/A11y)
 - Quick mode: specialists 1 (Font), 2 (Color), 3 (Layout), 6 (Intent/Originality/UX)
 - Each specialist receives: the screen's screenshot (from screenshot_path), source code access via the browser, and the PAGE_BRIEF with flow context
 
@@ -779,7 +779,7 @@ Easing quality:
 ```
 
 **Phase 3 (Boss Synthesis):** Run the boss synthesizer per design-review.md Phase 3.
-- Use weights from config/scoring.json (full mode: /17, quick mode: /13)
+- Use weights from config/scoring.json (full mode: /16, quick mode: /13)
 - Produce per-screen score, findings, and verdict
 
 ### 10c. Store per-screen results
@@ -792,7 +792,7 @@ After each screen's review completes, update that screen's entry in flow-state.j
   "name": "...",
   "review": {
     "mode": "full|quick",
-    "specialist_count": 8,
+    "specialist_count": 7,
     "scores": {
       "intent_match": 3.0,
       "originality": 2.5,
@@ -802,7 +802,7 @@ After each screen's review completes, update that screen's entry in flow-state.j
       "layout": 3.0,
       "icons": 2.5,
       "motion": 3.0,
-      "copy": 3.0,
+      "copy_quality": 3.0,
       "code_a11y": 2.5
     },
     "weighted_score": 2.85,
@@ -837,7 +837,7 @@ For quick mode screens, only the 4 specialist scores (mapped to the 6 scored dim
     "layout": 3.0,
     "icons": null,
     "motion": null,
-    "copy": null,
+    "copy_quality": null,
     "code_a11y": null
   }
 }

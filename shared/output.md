@@ -16,7 +16,7 @@ The first line of every command output. Read version dynamically from `${CLAUDE_
 
 - **{command}**: the command name (`design-review`, `design-improve`, `design-validate`, `design-init`)
 - **{version}**: read from `${CLAUDE_PLUGIN_ROOT}/VERSION` (currently `1.0.0`)
-- **{specialist_count}**: `8` for full mode, `4` for quick mode (`--quick`)
+- **{specialist_count}**: `7` for full mode, `4` for quick mode (`--quick`)
 - **{tier}**: from environment detection:
   - Tier 1: Gemini + Playwright available (full capability)
   - Tier 2: Playwright only, no Gemini (Claude handles all specialists)
@@ -24,7 +24,7 @@ The first line of every command output. Read version dynamically from `${CLAUDE_
 
 **Example:**
 ```
- SpSk  design-review  v1.0.0  ───  8 specialists  ·  tier 1
+ SpSk  design-review  v1.0.0  ───  7 specialists  ·  tier 1
 ```
 
 ---
@@ -115,7 +115,7 @@ The final verdict uses a box with the overall score:
 ┌─ VERDICT ────────────────────────────────────────────────────┐
 │  ████████░░ 8.0/10  ·  SHIP                                 │
 │                                                               │
-│  8 specialists  ·  6 passed  ·  2 conditional                │
+│  7 specialists  ·  6 passed  ·  2 conditional                │
 └──────────────────────────────────────────────────────────────┘
 ```
 
@@ -144,7 +144,7 @@ Every SpSk command output follows this order:
 
 Minimal example:
 ```
- SpSk  design-review  v1.0.0  ───  8 specialists  ·  tier 1
+ SpSk  design-review  v1.0.0  ───  7 specialists  ·  tier 1
 
 ┌─ TYPOGRAPHY ─────────────────────────────────────────────────┐
 │  ████████░░ 8.0/10                                           │
