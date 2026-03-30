@@ -160,7 +160,11 @@ Plans:
   2. Every specialist prompt uses XML-structured sections (`<role>`, `<context>`, `<instructions>`, `<output_format>`) and includes a 4-level scoring rubric with concrete anchors per level
   3. No specialist prompt contains ALL-CAPS emphasis, "FLAG SPECIFICALLY", "NEVER", or "Find at least N" directives
   4. Running the existing `run-evals.sh` against the restructured prompts produces passing results (no regression from extraction)
-**Plans**: TBD
+**Plans:** 2 plans
+
+Plans:
+- [ ] 08-01-PLAN.md -- Extract 8 specialist prompts + boss synthesizer to individual files with XML structure, rubrics, and directive cleanup
+- [ ] 08-02-PLAN.md -- Wire design-review.md to @ includes, extend validate-structure.sh with 51 structural checks
 
 ### Phase 9: Layer 2 Eval Runner
 **Goal**: A developer can run `run-quality-evals.sh` and get pass/fail results for every quality assertion against real design-review output -- the measurement instrument that validates all subsequent prompt changes
@@ -232,7 +236,7 @@ Phases execute in numeric order: 8 -> 9 -> 10 -> 11 -> 12 -> 13
 | 5. Per-Screen Review + Animation | v1.1.0 | 3/3 | Complete | 2026-03-29 |
 | 6. HTML Diagnostic Report | v1.1.0 | 2/2 | Complete | 2026-03-29 |
 | 7. Release Polish | v1.1.0 | 2/2 | Complete | 2026-03-29 |
-| 8. Prompt Extraction + Restructuring | v1.2.0 | 0/? | Not started | - |
+| 8. Prompt Extraction + Restructuring | v1.2.0 | 0/2 | In Progress | - |
 | 9. Layer 2 Eval Runner | v1.2.0 | 0/? | Not started | - |
 | 10. Structured JSON Output | v1.2.0 | 0/? | Not started | - |
 | 11. Specialist Consolidation | v1.2.0 | 0/? | Not started | - |
