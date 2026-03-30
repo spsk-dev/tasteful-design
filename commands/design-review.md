@@ -53,6 +53,13 @@ Quick mode runs: Font (#1), Color (#2), Layout (#3), Intent/Originality/UX (#6) 
 Quick mode skips: Icon (#4), Motion (#5), Code (#7). Saves ~40-50% tokens.
 If `--quick` AND Tier 3: run Intent + Code only (minimal useful review). Warn user.
 
+### Interaction capture (parse `$ARGUMENTS`)
+
+- **`--interact`**: Opt-in Playwright MCP interaction capture. Triggers hover, focus, and scroll interactions before specialist scoring. Requires Playwright MCP (Tier 1 or 2). If Tier 3 (no Playwright), warn: "Cannot use --interact without Playwright. Install with: npx playwright install chromium" and ignore the flag.
+- **Default (no `--interact`)**: Standard screenshot-only review. No behavior change.
+
+Store: `INTERACT_MODE=true` if `--interact` present, `false` otherwise.
+
 ### Style preset (parse `$ARGUMENTS` or config)
 
 Read `${CLAUDE_PLUGIN_ROOT}/config/style-presets.json`. Check `active_preset` field — if set, load that preset. Can also be overridden with `--style <preset-name>` in arguments.
@@ -188,6 +195,119 @@ If no screenshots: tell the user to run `npx playwright install chromium`. Do NO
 
 ---
 
+## Phase 0.5i: Interaction Capture (only when --interact)
+
+This phase runs ONLY when `--interact` flag is present. It follows the baseline-interact-reset pattern:
+1. Phase 0 already captured BASELINE screenshots (clean state)
+2. This phase captures INTERACTION state (hover, focus, scroll)
+3. After interactions, the page is RELOADED so Phase 1+ sees clean DOM
+
+### 0.5i-a. Launch Playwright MCP session
+
+Call `browser_navigate` with `$DEV_URL` to open the page in a persistent browser session.
+
+**If browser_navigate fails** (MCP not registered), show:
+```
+⚠ --interact requires Playwright MCP. Run:
+  claude mcp add playwright -- npx @playwright/mcp@latest
+
+Falling back to standard screenshot-only review.
+```
+Set `INTERACT_MODE=false` and skip to Phase 0.5.
+
+Call `browser_resize` to set viewport 1440x900.
+
+### 0.5i-b. Discover interactive elements
+
+Call `browser_snapshot` to get the accessibility tree.
+
+Identify up to 8 interaction targets from the snapshot, prioritized:
+1. **Hover targets**: Buttons, links, cards, nav items -- elements likely to have hover states (background change, shadow, underline, scale)
+2. **Focus targets**: Form inputs, interactive controls -- elements that show focus rings or focus styles
+3. **Scroll reveals**: If the page has sections below the fold, scroll to reveal them (likely lazy-loaded content, scroll-triggered animations)
+
+**Budget cap: 8 interactions maximum.** Select the 8 most design-relevant elements. Prioritize:
+- Primary CTA buttons (1-2 hover interactions)
+- Navigation links (1 hover interaction)
+- Form inputs if present (1-2 focus interactions)
+- Cards or interactive panels (1-2 hover interactions)
+- Below-fold scroll (1 scroll interaction)
+
+Store the list as `INTERACTION_TARGETS` with element refs from the snapshot.
+
+### 0.5i-c. Execute interactions and capture
+
+Create an interaction screenshots directory:
+```
+INTERACT_DIR="$REVIEW_DIR/interactions"
+mkdir -p "$INTERACT_DIR"
+```
+
+For each target (up to 8):
+
+**Hover interaction:**
+1. Call `browser_hover` with `ref="{element_ref}"`
+2. Wait 300ms (let CSS transitions complete)
+3. Call `browser_take_screenshot` -- save to `$INTERACT_DIR/interact-{N}-hover-{element_desc}.png`
+
+**Focus interaction:**
+1. Call `browser_click` with `ref="{element_ref}"` (clicking focuses the element)
+2. Wait 200ms
+3. Call `browser_take_screenshot` -- save to `$INTERACT_DIR/interact-{N}-focus-{element_desc}.png`
+
+**Scroll interaction:**
+1. Call `browser_evaluate` with: `window.scrollBy(0, window.innerHeight)`
+2. Wait 500ms (let scroll-triggered animations and lazy loads complete)
+3. Call `browser_take_screenshot` -- save to `$INTERACT_DIR/interact-{N}-scroll-{section_desc}.png`
+
+Track each interaction in `INTERACTION_LOG`:
+```json
+[
+  {"type": "hover", "element": "button.cta-primary", "ref": "e45", "screenshot": "interact-1-hover-cta-primary.png"},
+  {"type": "focus", "element": "input.email", "ref": "e72", "screenshot": "interact-2-focus-email-input.png"},
+  {"type": "scroll", "element": "viewport", "ref": null, "screenshot": "interact-3-scroll-features-section.png"}
+]
+```
+
+Count interactions. If count reaches 8, stop and note:
+```
+✓ Interaction budget reached (8/8). Proceeding to reset.
+```
+
+### 0.5i-d. Reset page state
+
+After all interactions, reload the page to restore clean DOM:
+
+1. Call `browser_navigate` with `$DEV_URL` (re-navigates to the same URL, effectively a reload)
+2. Run DOM stability check via `browser_evaluate` (same MutationObserver pattern from design-audit.md):
+```javascript
+(function() {
+  return new Promise((resolve) => {
+    let timer = null;
+    const observer = new MutationObserver(() => {
+      clearTimeout(timer);
+      timer = setTimeout(() => { observer.disconnect(); resolve({ stable: true }); }, 800);
+    });
+    observer.observe(document.body, { childList: true, subtree: true, attributes: true, characterData: true });
+    timer = setTimeout(() => { observer.disconnect(); resolve({ stable: true, waited: false }); }, 2000);
+  });
+})()
+```
+3. Call `browser_close` to release the MCP session
+
+The page is now clean. Specialists in Phase 2 will evaluate the baseline screenshots (from Phase 0), not the interaction-mutated state.
+
+### 0.5i-e. Store interaction context
+
+Store `INTERACTION_LOG` and `INTERACT_DIR` path for Phase 2 specialist dispatch.
+
+Show summary:
+```
+✓ Interaction capture complete: {N} interactions ({hover_count} hover, {focus_count} focus, {scroll_count} scroll)
+```
+
+---
+
 ## Phase 0.5: Load Project Design Context
 
 The design plugin maintains a `.design/` directory in the project root — like GSD's `.planning/`. This directory persists across sessions and pages, building up project-level design knowledge.
@@ -288,6 +408,28 @@ Buttons should use border-radius: {buttons.border_radius}, colors: {tokens.color
 
 Given this context, evaluate {your domain}. A choice that's wrong for a dashboard might be right for a love letter. Score based on how well your domain SERVES this specific intent AND follows the established design system (if one exists).
 ```
+
+**If `INTERACT_MODE` is true**, append interaction context to the following specialists ONLY:
+
+- **Specialist 2: Color** -- pass interaction hover screenshots showing color state changes
+- **Specialist 3: Layout** -- pass interaction hover/scroll screenshots showing layout shifts
+- **Specialist 5: Motion** -- pass ALL interaction screenshots (hover transitions, focus animations, scroll reveals)
+- **Specialist 7: Code & Accessibility** -- pass focus interaction screenshots (focus ring visibility, focus order)
+
+Append to these specialists' prompts:
+```
+INTERACTION CONTEXT: The reviewer captured {N} interaction states before this review.
+These screenshots show hover states, focus rings, and scroll-revealed content.
+Evaluate these interaction states alongside the baseline screenshots.
+- Are hover states well-designed? (Color change, shadow, scale — not just cursor change)
+- Are focus rings visible and accessible? (Minimum 2:1 contrast ratio)
+- Do scroll-triggered elements load/animate gracefully?
+- Flag any interaction state that feels broken, missing, or inconsistent with the baseline.
+```
+
+Pass the interaction screenshot files from `$INTERACT_DIR/` alongside the regular screenshots.
+
+Specialists 1 (Font), 4 (Icon), and 6 (Intent) do NOT receive interaction screenshots -- their domains are not affected by hover/focus/scroll states.
 
 **IMPORTANT — Orchestrator responsibilities** (subagents cannot run Bash):
 1. YOU (the orchestrator) take all screenshots in Phase 0
