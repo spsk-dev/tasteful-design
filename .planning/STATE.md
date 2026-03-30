@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v1.2.0
 milestone_name: Prompting Excellence + Eval Credibility
-status: Ready to execute
-stopped_at: Completed 09-01-PLAN.md (Layer 2 eval runner core)
-last_updated: "2026-03-30T04:18:52.821Z"
+status: Phase complete — ready for verification
+stopped_at: Completed 09-02-PLAN.md (Layer 2 judge + snapshots + regression)
+last_updated: "2026-03-30T04:25:36.190Z"
 progress:
   total_phases: 6
-  completed_phases: 1
+  completed_phases: 2
   total_plans: 4
-  completed_plans: 3
+  completed_plans: 4
 ---
 
 # Project State
@@ -42,6 +42,7 @@ Plan: 2 of 2
 | Phase 08 P01 | 4min | 2 tasks | 9 files |
 | Phase 08 P02 | 4min | 2 tasks | 2 files |
 | Phase 09 P01 | 3min | 2 tasks | 3 files |
+| Phase 09 P02 | 4min | 2 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -60,6 +61,9 @@ Plan: 2 of 2
 - [Phase 09]: Output parser normalizes CONDITIONAL SHIP to CONDITIONAL for assertion matching
 - [Phase 09]: Strategy A (task description with --plugin-dir) for claude -p invocation, no --bare flag
 - [Phase 09]: Dry-run mode caches to evals/results/cache-{fixture}.txt for development iteration
+- [Phase 09]: LLM-as-judge uses claude-haiku-4-5 with graceful SKIP when API key absent
+- [Phase 09]: Verdict assertions support also_accept array for flexible matching (CONDITIONAL also accepts BLOCK/SHIP)
+- [Phase 09]: Regression threshold at 0.5 score drop -- balances sensitivity with LLM stochasticity tolerance
 
 ### Pending Todos
 
@@ -72,6 +76,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-30T04:18:52.819Z
-Stopped at: Completed 09-01-PLAN.md (Layer 2 eval runner core)
+Last session: 2026-03-30T04:25:36.188Z
+Stopped at: Completed 09-02-PLAN.md (Layer 2 judge + snapshots + regression)
 Resume file: None
