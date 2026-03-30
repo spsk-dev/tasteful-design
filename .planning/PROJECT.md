@@ -21,25 +21,33 @@ The published skills must be immediately useful to other developers AND demonstr
 - ✓ Multi-model code-review skill (extracted to spsk-dev/code-review) — v1.0.0 Phase 3
 - ✓ Case studies with measurable impact — v1.0.0 Phase 3
 - ✓ v1.0.0 release + install.sh — v1.0.0 Phase 3
+- ✓ `/design-audit` SPA flow navigation with per-screen review — v1.1.0 Phase 4-5
+- ✓ HTML diagnostic report with embedded screenshots — v1.1.0 Phase 6
+- ✓ Animation/transition detection between screen states — v1.1.0 Phase 5
+- ✓ Demo GIF tape file + repo reference cleanup — v1.1.0 Phase 7
 
 ### Active
 
-- [ ] `/design-audit` — SPA flow navigation with per-screen 8-specialist review
-- [ ] Flow intent guidance — user describes goal, agent navigates
-- [ ] HTML diagnostic report — screenshots, per-screen scores, fix recommendations
-- [ ] Animation/transition detection between screen states
-- [ ] Demo GIF recording (deferred from v1.0.0)
-- [ ] Repo reference cleanup for spsk-dev org
+- [ ] Prompt overhaul — all specialist, boss, and flow audit prompts rewritten to best-practice standards
+- [ ] Quality evals Layer 2 — assertions against real design-review output, not just structural checks
+- [ ] Structured JSON specialist output — for tighter improve loop and report generation
+- [ ] Anthropic aesthetics integration — generation.md from DISTILLED_AESTHETICS_PROMPT
+- [ ] Playwright interaction before scoring — hover, click, scroll before specialist analysis
+- [ ] Fold Copy into Intent — reduce 8→7 specialists
+- [ ] Live validation on start.fusefinance.com
 
-## Current Milestone: v1.1.0 Flow Audit + Polish
+## Current Milestone: v1.2.0 Prompting Excellence + Eval Credibility
 
-**Goal:** Add flow-level design audit that navigates SPAs screen-by-screen with 8 specialists, producing an HTML diagnostic report.
+**Goal:** Upgrade all prompts to best-practice standards, make quality evals functional, and integrate Anthropic's proven patterns.
 
 **Target features:**
-- `/design-audit <url> --flow "description"` — full SPA flow review
-- HTML report with embedded screenshots and per-screen specialist assessments
-- Animation/transition CSS analysis between screen states
-- v1.0.0 polish items (demo GIF, repo references)
+- Review and rewrite ALL specialist prompts against prompting best practices (clear roles, constraints, few-shot examples, chain-of-thought, structured output schemas)
+- Quality evals Layer 2 functional — real design-review output tested with range-based assertions
+- Structured JSON output from specialists for tighter improve loop
+- Anthropic's DISTILLED_AESTHETICS_PROMPT integrated as generation guidance
+- Playwright page interaction before specialist scoring
+- Copy specialist folded into Intent/Originality/UX (8→7)
+- Full flow audit validation on start.fusefinance.com
 
 ### Out of Scope
 
@@ -93,4 +101,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-03-29 after starting milestone v1.1.0*
+*Last updated: 2026-03-29 after starting milestone v1.2.0*

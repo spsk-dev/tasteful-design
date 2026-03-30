@@ -1,15 +1,15 @@
 ---
 gsd_state_version: 1.0
-milestone: v1.1.0
-milestone_name: Flow Audit + Polish
-status: Milestone complete
-stopped_at: Completed 07-02-PLAN.md
-last_updated: "2026-03-30T01:55:08.965Z"
+milestone: v1.2.0
+milestone_name: Prompting Excellence + Eval Credibility
+status: Defining requirements
+stopped_at: null
+last_updated: "2026-03-29"
 progress:
-  total_phases: 4
-  completed_phases: 4
-  total_plans: 10
-  completed_plans: 10
+  total_phases: 0
+  completed_phases: 0
+  total_plans: 0
+  completed_plans: 0
 ---
 
 # Project State
@@ -19,12 +19,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-29)
 
 **Core value:** Published skills must be immediately useful AND demonstrate architectural sophistication
-**Current focus:** Phase 07 -- release-polish
+**Current focus:** Defining requirements for v1.2.0
 
 ## Current Position
 
-Phase: 07
-Plan: Not started
+Phase: Not started (defining requirements)
+Plan: —
+Status: Defining requirements
+Last activity: 2026-03-29 — Milestone v1.2.0 started
 
 ## Performance Metrics
 
