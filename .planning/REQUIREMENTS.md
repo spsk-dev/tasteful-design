@@ -25,13 +25,13 @@
 
 ### HTML Report
 
-- [ ] **REPT-01**: Self-contained HTML file with base64-embedded JPEG screenshots (no external dependencies)
-- [ ] **REPT-02**: Flow map showing screen progression (screen 1 → 2 → 3 → ...)
-- [ ] **REPT-03**: Per-screen section with screenshot, 8-specialist scores, specific issues, and fix recommendations
-- [ ] **REPT-04**: Overall flow score and summary with top 5 priority fixes
-- [ ] **REPT-05**: Expandable specialist details (collapsed by default, expand on click)
-- [ ] **REPT-06**: Print-to-PDF support via `@media print` styles
-- [ ] **REPT-07**: Report file size under 5MB (JPEG compression, max 1200px width screenshots)
+- [x] **REPT-01**: Self-contained HTML file with base64-embedded JPEG screenshots (no external dependencies)
+- [x] **REPT-02**: Flow map showing screen progression (screen 1 → 2 → 3 → ...)
+- [x] **REPT-03**: Per-screen section with screenshot, 8-specialist scores, specific issues, and fix recommendations
+- [x] **REPT-04**: Overall flow score and summary with top 5 priority fixes
+- [x] **REPT-05**: Expandable specialist details (collapsed by default, expand on click)
+- [x] **REPT-06**: Print-to-PDF support via `@media print` styles
+- [x] **REPT-07**: Report file size under 5MB (JPEG compression, max 1200px width screenshots)
 
 ### Animation Detection
 
@@ -74,13 +74,13 @@
 | REVW-02 | Phase 5 | Complete |
 | REVW-03 | Phase 5 | Complete |
 | REVW-04 | Phase 5 | Complete |
-| REPT-01 | Phase 6 | Pending |
-| REPT-02 | Phase 6 | Pending |
-| REPT-03 | Phase 6 | Pending |
-| REPT-04 | Phase 6 | Pending |
-| REPT-05 | Phase 6 | Pending |
-| REPT-06 | Phase 6 | Pending |
-| REPT-07 | Phase 6 | Pending |
+| REPT-01 | Phase 6 | Complete |
+| REPT-02 | Phase 6 | Complete |
+| REPT-03 | Phase 6 | Complete |
+| REPT-04 | Phase 6 | Complete |
+| REPT-05 | Phase 6 | Complete |
+| REPT-06 | Phase 6 | Complete |
+| REPT-07 | Phase 6 | Complete |
 | ANIM-01 | Phase 5 | Complete |
 | ANIM-02 | Phase 5 | Complete |
 | ANIM-03 | Phase 5 | Complete |
