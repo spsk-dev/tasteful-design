@@ -65,7 +65,7 @@ Plans:
 
 </details>
 
-### 🚧 v1.1.0 Flow Audit + Polish (In Progress)
+### v1.1.0 Flow Audit + Polish (In Progress)
 
 **Milestone Goal:** Add flow-level design audit that navigates SPAs screen-by-screen with 8 specialists, producing an HTML diagnostic report.
 
@@ -102,8 +102,12 @@ Plans:
   2. Cross-screen consistency analysis flags when button styles, colors, spacing, or typography drift between screens in the same flow
   3. Per-screen scores are aggregated into an overall flow score that reflects the entire navigation path
   4. CSS transition/animation properties are detected between screen states, `prefers-reduced-motion` compliance is checked, and animation findings appear in per-screen specialist output
-**Plans**: TBD
-**UI hint**: yes
+**Plans:** 3 plans
+
+Plans:
+- [ ] 05-01-PLAN.md -- Config and reference contracts: smart weighting, flow scoring, animation patterns, consistency heuristics
+- [ ] 05-02-PLAN.md -- Per-screen review dispatch with animation detection hooks and flow score aggregation
+- [ ] 05-03-PLAN.md -- Cross-screen consistency analysis with visual drift detection and score penalty
 
 ### Phase 6: HTML Diagnostic Report
 **Goal**: The flow audit produces a self-contained HTML file that a developer can open in any browser to see the full flow map, per-screen screenshots with specialist scores, and actionable fix recommendations -- shareable without any external dependencies
@@ -139,6 +143,6 @@ Phases execute in numeric order: 4 -> 5 -> 6 -> 7
 | 2. Init Wizard + Branding + Demo | v1.0.0 | 3/3 | Complete | 2026-03-29 |
 | 3. Second Skill + Release | v1.0.0 | 3/3 | Complete | 2026-03-29 |
 | 4. Flow Navigation Engine | v1.1.0 | 3/3 | Complete | 2026-03-30 |
-| 5. Per-Screen Review + Animation | v1.1.0 | 0/? | Not started | - |
+| 5. Per-Screen Review + Animation | v1.1.0 | 0/3 | Planned | - |
 | 6. HTML Diagnostic Report | v1.1.0 | 0/? | Not started | - |
 | 7. Release Polish | v1.1.0 | 0/? | Not started | - |
