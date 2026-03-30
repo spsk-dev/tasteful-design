@@ -13,8 +13,8 @@
 - [x] **FLOW-04**: Screen detection — agent knows when a new "screen" has loaded (DOM stability, not networkidle)
 - [x] **FLOW-05**: Max screen limit (default 10) prevents runaway navigation
 - [x] **FLOW-06**: URL sequence fallback via `--steps url1,url2,url3` for deterministic paths
-- [ ] **FLOW-07**: Authenticated flow support — can login first, then audit the protected flow
-- [ ] **FLOW-08**: Flow stops gracefully at completion/success state or dead end
+- [x] **FLOW-07**: Authenticated flow support — can login first, then audit the protected flow
+- [x] **FLOW-08**: Flow stops gracefully at completion/success state or dead end
 
 ### Per-Screen Review
 
@@ -68,8 +68,8 @@
 | FLOW-04 | Phase 4 | Complete |
 | FLOW-05 | Phase 4 | Complete |
 | FLOW-06 | Phase 4 | Complete |
-| FLOW-07 | Phase 4 | Pending |
-| FLOW-08 | Phase 4 | Pending |
+| FLOW-07 | Phase 4 | Complete |
+| FLOW-08 | Phase 4 | Complete |
 | REVW-01 | Phase 5 | Pending |
 | REVW-02 | Phase 5 | Pending |
 | REVW-03 | Phase 5 | Pending |
