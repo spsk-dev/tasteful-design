@@ -180,6 +180,12 @@ WEIGHT_SUM=$(jq '[.weights[]] | add' config/scoring.json)
 TOTAL_WEIGHT=$(jq '.total_weight' config/scoring.json)
 check "Sum of individual weights ($WEIGHT_SUM) equals total_weight ($TOTAL_WEIGHT)" test "$WEIGHT_SUM" -eq "$TOTAL_WEIGHT"
 
+# Phase 12: Playwright interaction protocol
+check "Phase 12: design-review.md contains --interact flag" grep -q '\-\-interact' "commands/design-review.md"
+check "Phase 12: design-review.md contains Phase 0.5i interaction protocol" grep -q 'Phase 0.5i' "commands/design-review.md"
+check "Phase 12: design-review.md uses browser_hover for Playwright MCP hover" grep -q 'browser_hover' "commands/design-review.md"
+check "Phase 12: design-review.md contains INTERACT_MODE flag state variable" grep -q 'INTERACT_MODE' "commands/design-review.md"
+
 echo ""
 TOTAL=$((PASS + FAIL))
 echo "$PASS/$TOTAL checks passed"

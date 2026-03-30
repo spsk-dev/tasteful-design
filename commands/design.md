@@ -21,7 +21,7 @@ Parse `$ARGUMENTS` and route:
 | Command | Routes To | What It Does |
 |---------|-----------|-------------|
 | `/design init` | `/design-init` | Interactive setup wizard |
-| `/design review` | `/design-review` | Visual review (7 specialists) |
+| `/design review` | `/design-review` | Visual review (7 specialists, supports --interact) |
 | `/design review --quick` | `/design-review --quick` | Quick visual review (4 specialists) |
 | `/design validate` | `/design-validate` | Functional validation (click, test, verify) |
 | `/design improve "prompt"` | `/design-improve` | Build & iterate until SHIP |
@@ -32,7 +32,7 @@ Parse `$ARGUMENTS` and route:
 | `/design audit <url> --steps u1,u2` | `/design-audit` | Deterministic flow audit |
 | `/design` (no args) | Ask user | Show available commands and ask what they want |
 
-All flags pass through: `--ref`, `--figma`, `--compare`, `--direction`, `--palette`, `--fonts`, `--quick`, `--max N`, `--validate`, `--flow`, `--steps`, `--auth`, `--max-screens`.
+All flags pass through: `--ref`, `--figma`, `--compare`, `--direction`, `--palette`, `--fonts`, `--quick`, `--max N`, `--validate`, `--flow`, `--steps`, `--auth`, `--max-screens`, `--interact`.
 
 ## `/design ship` — Full Production Pipeline
 
@@ -120,6 +120,7 @@ Flags (work with any command):
   --steps u1,u2,u3         Deterministic URL sequence for audit
   --auth                   Authenticated flow (pause for manual login)
   --max-screens N          Max screens to capture in audit (default 10)
+  --interact               Capture hover/focus/scroll states before review
 
 What would you like to do?
 ```
