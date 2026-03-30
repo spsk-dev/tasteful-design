@@ -175,7 +175,11 @@ Plans:
   2. Verdict-level assertions work as the primary gate: a known-bad fixture gets BLOCK, a known-good fixture gets SHIP, and a gray-area fixture gets CONDITIONAL
   3. Range-based score assertions are calibrated from 3 baseline runs per fixture with observed spread + 0.3 buffer, and eval result snapshots are stored for regression detection
   4. LLM-as-judge assertions using Claude Haiku evaluate specialist output quality against binary rubrics (requires ANTHROPIC_API_KEY, skipped gracefully when absent)
-**Plans**: TBD
+**Plans:** 2 plans
+
+Plans:
+- [ ] 09-01-PLAN.md -- Gray-area fixture, output parser, core eval runner with smoke test and verdict/score assertions
+- [ ] 09-02-PLAN.md -- LLM-as-judge assertions, eval snapshots with regression detection, calibration helper, orchestrator wiring
 
 ### Phase 10: Structured JSON Output
 **Goal**: Every specialist and the boss synthesizer emit structured JSON that the eval runner, improve loop, and report generator can parse deterministically -- ending regex-based output scraping
@@ -236,8 +240,8 @@ Phases execute in numeric order: 8 -> 9 -> 10 -> 11 -> 12 -> 13
 | 5. Per-Screen Review + Animation | v1.1.0 | 3/3 | Complete | 2026-03-29 |
 | 6. HTML Diagnostic Report | v1.1.0 | 2/2 | Complete | 2026-03-29 |
 | 7. Release Polish | v1.1.0 | 2/2 | Complete | 2026-03-29 |
-| 8. Prompt Extraction + Restructuring | v1.2.0 | 0/2 | In Progress | - |
-| 9. Layer 2 Eval Runner | v1.2.0 | 0/? | Not started | - |
+| 8. Prompt Extraction + Restructuring | v1.2.0 | 2/2 | Complete | 2026-03-30 |
+| 9. Layer 2 Eval Runner | v1.2.0 | 0/2 | Planned | - |
 | 10. Structured JSON Output | v1.2.0 | 0/? | Not started | - |
 | 11. Specialist Consolidation | v1.2.0 | 0/? | Not started | - |
 | 12. Playwright Interaction | v1.2.0 | 0/? | Not started | - |
