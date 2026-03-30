@@ -656,7 +656,7 @@ Display a brief transition message:
 ✓ Navigation complete -- {N} screens captured. Starting per-screen review...
 ```
 
-If status is "error" and fewer than 2 screens were captured, skip review and jump to Section 13 (error summary). Otherwise proceed to Section 10.
+If status is "error" and fewer than 2 screens were captured, skip review and jump to Section 14 (error summary). Otherwise proceed to Section 10.
 
 ## 9. Error Handling
 
@@ -705,8 +705,8 @@ If `browser_snapshot` returns an empty or minimal accessibility tree:
 - **Always take a fresh `browser_snapshot` immediately before `browser_click`.** Stale element refs cause failures (Pitfall 5).
 - **Never use `networkidle`.** SPAs with analytics/WebSockets never reach idle (Pitfall 1).
 - **Progressive persistence.** Write flow-state.json after every screen capture and after every screen review. Mid-flow failures must preserve partial results.
-- **The flow-state.json is the contract** between navigation (Sections 1-9) and downstream reporting (Phase 6). Match the schema exactly.
-- **Sections 10-13 run only after navigation completes.** If navigation errors with <2 screens, skip review and show error summary.
+- **The flow-state.json is the contract** between navigation (Sections 1-9), review (Sections 10-11), consistency (Section 12), scoring (Section 13), and reporting (Phase 6). Match the schema exactly.
+- **Sections 10-14 run only after navigation completes.** If navigation errors with <2 screens, skip review and show error summary.
 - **Per-screen reviews are sequential (not parallel) to manage token budget.** Each screen review completes fully before the next starts.
 
 ---
@@ -715,7 +715,7 @@ If `browser_snapshot` returns an empty or minimal accessibility tree:
 
 After navigation completes with status "complete", "dead_end", or "max_screens_reached", dispatch specialist reviews for each captured screen.
 
-**Skip review if** status is "error" and fewer than 2 screens were captured -- not enough data for meaningful review. Jump to Section 13 (error summary).
+**Skip review if** status is "error" and fewer than 2 screens were captured -- not enough data for meaningful review. Jump to Section 14 (error summary).
 
 ### 10a. Determine review mode per screen
 
@@ -900,9 +900,168 @@ Add a top-level `animation_summary` to flow-state.json:
 
 ---
 
-## 12. Flow Score Aggregation
+## 12. Cross-Screen Consistency Analysis
 
-### 12a. Compute weighted flow score
+**Runs after all per-screen reviews complete (Section 10) and animation summary (Section 11).**
+
+This is a POST-PROCESSING pass (per D-84), not a 9th specialist. It reads the per-screen specialist findings from flow-state.json and compares visual properties across all screens.
+
+**Skip if** fewer than 2 screens have reviews (nothing to compare).
+
+### 12a. Extract comparable properties from specialist findings
+
+For each screen, extract design properties from the specialist findings and scores:
+
+**From Font specialist (#1) findings:**
+- Body text font family and size
+- Heading font family, size, and weight
+- Line-height values
+
+**From Color specialist (#2) findings:**
+- Primary color (most dominant non-white/non-black)
+- Secondary/accent colors
+- Background colors
+- Button colors
+
+**From Layout specialist (#3) findings:**
+- Section padding values
+- Card/component gap values
+- Content max-width
+- Grid column counts
+
+**From specialist findings text (pattern matching):**
+- Button border-radius, background-color, padding, font-weight mentions
+- Component descriptions (card style, nav pattern, input style)
+
+If a finding mentions a specific CSS value (e.g., "16px body text", "#3B82F6 primary", "24px gap"), extract it as a comparable property.
+
+### 12b. Compare across screens
+
+Read `consistency.thresholds` from config/flow-scoring.json.
+
+For each consistency check in `consistency.checks` (`button_style`, `color_palette`, `spacing`, `typography`, `component_variants`):
+
+**button_style -- Button style drift:**
+Compare button-related properties across screens. Flag when:
+- Border-radius differs between screens (e.g., rounded-lg on screen 1, rounded on screen 3)
+- Button background colors differ for primary CTAs
+- Button padding or font-weight differs
+
+**color_palette -- Color palette consistency:**
+Compare extracted colors across screens. Flag when:
+- Primary color varies between screens (Delta E > `color_drift_delta_e` threshold, default 10)
+- New accent colors appear on some screens but not others
+- Background color changes unexpectedly between screens
+
+**spacing -- Spacing/padding patterns:**
+Compare spacing values. Flag when:
+- Section padding differs by more than `spacing_tolerance_px` (default 4px) between screens
+- Card/component gaps are inconsistent
+- Content max-width changes between screens
+
+**typography -- Typography consistency:**
+Compare font properties. Flag when:
+- Body text size differs by more than `font_size_tolerance_px` (default 2px) between screens
+- Font family changes between screens (e.g., Inter on screen 1, Poppins on screen 3)
+- Heading hierarchy breaks (h1 size on screen 2 < h1 size on screen 1)
+
+**component_variants -- Component variant drift:**
+Compare how repeated components are described across screens. Flag when:
+- Cards have different styling on different screens
+- Navigation looks different between screens
+- Form inputs have different styling
+
+### 12c. Classify severity
+
+For each finding, assign severity from `consistency.severity_levels` in config/flow-scoring.json:
+
+- **drift (warning):** Subtle variation that might be intentional (e.g., 2px spacing difference)
+- **mismatch (issue):** Clear inconsistency that looks unintentional (e.g., different font family on one screen)
+- **conflict (critical):** Contradictory styles that break visual coherence (e.g., rounded buttons on 3 screens, square on 1)
+
+### 12d. Store consistency results
+
+Add a top-level `consistency` section to flow-state.json (per D-83):
+```json
+{
+  "consistency": {
+    "findings": [
+      {
+        "check": "typography",
+        "severity": "mismatch",
+        "description": "Body text is 16px on Screens 1, 3, 4 but 14px on Screen 2",
+        "screens_affected": [2],
+        "screens_reference": [1, 3, 4]
+      },
+      {
+        "check": "color_palette",
+        "severity": "drift",
+        "description": "Primary blue shifts from #3B82F6 (Screen 1) to #2563EB (Screen 2-4)",
+        "screens_affected": [2, 3, 4],
+        "screens_reference": [1]
+      },
+      {
+        "check": "spacing",
+        "severity": "conflict",
+        "description": "Section padding is 64px on Screens 1, 4 but 32px on Screens 2, 3",
+        "screens_affected": [2, 3],
+        "screens_reference": [1, 4]
+      }
+    ],
+    "summary": {
+      "total_findings": 3,
+      "by_severity": { "drift": 1, "mismatch": 1, "conflict": 1 },
+      "penalty_points": 6,
+      "penalty_factor": 0.30,
+      "score_adjustment": -0.045
+    }
+  }
+}
+```
+
+### 12e. Apply consistency penalty to flow score
+
+Read `flow_score.consistency_penalty_weight` from config (0.15).
+
+Compute penalty using severity weights from references/flow.md Section 11:
+```
+critical_count = number of "conflict" severity findings
+issue_count = number of "mismatch" severity findings
+warning_count = number of "drift" severity findings
+
+penalty_points = critical_count * 3 + issue_count * 2 + warning_count * 1
+penalty_ratio = min(1.0, penalty_points / 20)
+consistency_penalty = penalty_ratio * consistency_penalty_weight
+```
+
+The penalty is applied in Section 13 (Flow Score Aggregation):
+```
+final_flow_score = weighted_flow_score * (1 - consistency_penalty)
+```
+
+Update `flow_score.consistency_penalty` in flow-state.json with the computed penalty value (replacing null).
+
+### 12f. Display consistency findings
+
+```
+┌─ CONSISTENCY ───────────────────────────────────────────────┐
+│  {total} findings: {critical} critical · {issues} issues · {warnings} warnings
+│                                                               │
+│  ✗ {critical finding 1}                                       │
+│  ⚠ {issue finding 1}                                         │
+│  ○ {warning finding 1}                                        │
+│                                                               │
+│  Score penalty: -{penalty_percentage}%                        │
+└──────────────────────────────────────────────────────────────┘
+```
+
+If no consistency findings: show `✓ No cross-screen consistency issues detected` and skip the penalty.
+
+---
+
+## 13. Flow Score Aggregation
+
+### 13a. Compute weighted flow score
 
 Read `flow_score` config from flow-scoring.json.
 
@@ -925,16 +1084,21 @@ Total weighted = 14.6, total weights = 5.0
 flow_score = 14.6 / 5.0 = 2.92
 ```
 
-**Note:** Consistency penalty (from Plan 03) will further adjust this score. At this stage, compute the pre-penalty flow score.
+**Consistency penalty:** After computing the weighted average, apply the consistency penalty from Section 12:
+```
+final_flow_score = weighted_flow_score * (1 - consistency_penalty)
+```
 
-### 12b. Determine flow verdict
+If consistency_penalty is 0 (no findings), the final score equals the weighted average. The penalty reduces the score by up to 15% (when consistency issues are severe).
+
+### 13b. Determine flow verdict
 
 Use the page type from the first screen's PAGE_BRIEF and the thresholds from config/scoring.json:
 - **SHIP:** flow_score >= threshold AND no critical cross-screen issues
 - **CONDITIONAL:** flow_score within 0.3 of threshold AND issues are fixable
 - **BLOCK:** flow_score < threshold - 0.3 OR critical issues found
 
-### 12c. Store flow score
+### 13c. Store flow score
 
 Add to flow-state.json top level:
 
@@ -947,20 +1111,21 @@ Add to flow-state.json top level:
     "position_weights_applied": { "1": 1.5, "2": 1.0, "3": 1.0, "4": 1.5 },
     "page_type": "landing",
     "threshold": 3.0,
-    "consistency_penalty": null
+    "consistency_penalty": 0.045,
+    "pre_penalty_score": 2.92
   }
 }
 ```
 
-The `display_score` is `weighted_score * 2.5` (per shared/output.md conversion). The `consistency_penalty` is null until Plan 03's consistency pass fills it in.
+The `display_score` is `final_flow_score * 2.5` (per shared/output.md conversion). The `consistency_penalty` is computed by Section 12 -- it is 0 when no consistency issues are found. The `pre_penalty_score` preserves the weighted average before penalty application.
 
 ---
 
-## 13. Flow Review Summary
+## 14. Flow Review Summary
 
 Display the complete flow audit results using branded output from shared/output.md.
 
-### 13a. Per-screen score table
+### 14a. Per-screen score table
 
 ```
 ┌─ FLOW REVIEW ───────────────────────────────────────────────┐
@@ -985,7 +1150,7 @@ Display the complete flow audit results using branded output from shared/output.
 
 Score bars follow shared/output.md format: `{filled}{empty} {display}/10` where filled=round(internal*2.5) blocks of `█`, empty blocks of `░`, total 10.
 
-### 13b. Animation findings box
+### 14b. Animation findings box
 
 ```
 ┌─ ANIMATION ─────────────────────────────────────────────────┐
@@ -998,7 +1163,28 @@ Score bars follow shared/output.md format: `{filled}{empty} {display}/10` where 
 └──────────────────────────────────────────────────────────────┘
 ```
 
-### 13c. Flow verdict box
+### 14c. Consistency findings box
+
+```
+┌─ CONSISTENCY ───────────────────────────────────────────────┐
+│  {total} findings: {critical} critical · {issues} issues · {warnings} warnings
+│                                                               │
+│  ✗ {critical finding description}                             │
+│  ⚠ {issue finding description}                               │
+│  ○ {warning finding description}                              │
+│                                                               │
+│  Score penalty: -{penalty_percentage}%                        │
+└──────────────────────────────────────────────────────────────┘
+```
+
+If no consistency findings were detected:
+```
+┌─ CONSISTENCY ───────────────────────────────────────────────┐
+│  ✓ No cross-screen consistency issues detected               │
+└──────────────────────────────────────────────────────────────┘
+```
+
+### 14d. Flow verdict box
 
 ```
 ┌─ FLOW VERDICT ──────────────────────────────────────────────┐
@@ -1010,12 +1196,15 @@ Score bars follow shared/output.md format: `{filled}{empty} {display}/10` where 
 └──────────────────────────────────────────────────────────────┘
 ```
 
-### 13d. Top 5 flow-wide fixes
+### 14e. Top 5 flow-wide fixes
 
-Aggregate findings across all screens, deduplicate, and rank by:
-1. Cross-specialist agreement (found by 2+ specialists across screens)
-2. Severity (critical > high > medium)
-3. Frequency (appears on multiple screens)
+Aggregate findings across all screens AND consistency findings, deduplicate, and rank by:
+1. Consistency conflicts rank highest (cross-screen issues affect every user)
+2. Cross-specialist agreement (found by 2+ specialists across screens)
+3. Severity (critical > high > medium)
+4. Frequency (appears on multiple screens)
+
+Consistency findings with "conflict" severity should rank above single-screen issues. A consistency "mismatch" ranks alongside cross-specialist agreements.
 
 ```
 ### Top 5 Fixes
@@ -1026,13 +1215,13 @@ Aggregate findings across all screens, deduplicate, and rank by:
 5. {fix} -- Screen(s) {N, M} -- {specialist(s)}
 ```
 
-### 13e. Next step hint
+### 14f. Next step hint
 
 ```
 Next: Run Phase 6 to generate the HTML diagnostic report
 ```
 
-### 13f. Footer
+### 14g. Footer
 
 ```
 github.com/spsk-dev/tasteful-design
