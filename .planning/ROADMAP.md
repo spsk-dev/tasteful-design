@@ -89,7 +89,7 @@ Plans:
 **Plans:** 3 plans
 
 Plans:
-- [ ] 04-01-PLAN.md -- Foundation: flow config, navigation reference, plugin registration, router update
+- [x] 04-01-PLAN.md -- Foundation: flow config, navigation reference, plugin registration, router update
 - [ ] 04-02-PLAN.md -- Core design-audit.md command with intent and deterministic navigation modes
 - [ ] 04-03-PLAN.md -- Test fixtures and end-to-end verification of auth flow and graceful stop
 
