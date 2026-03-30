@@ -1,11 +1,11 @@
 ---
 name: Design Review
-description: Multi-agent visual design review with 8 specialist agents. Activates when discussing UI quality, visual review, design critique, or frontend evaluation.
+description: Multi-agent visual design review with 7 specialist agents. Activates when discussing UI quality, visual review, design critique, or frontend evaluation.
 ---
 
 # Design Review Skill
 
-AI-powered design review using 8 independent specialist agents and a boss synthesizer. Each specialist evaluates one domain (typography, color, layout, icons, motion, intent/originality, copy, code/a11y) against curated reference knowledge.
+AI-powered design review using 7 independent specialist agents and a boss synthesizer. Each specialist evaluates one domain (typography, color, layout, icons, motion, intent/originality/UX/copy, code/a11y) against curated reference knowledge.
 
 ## When This Activates
 

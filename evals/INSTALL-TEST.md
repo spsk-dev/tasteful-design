@@ -38,7 +38,7 @@ Create a test HTML file or use any local HTML, then:
 ```
 
 **Expected:**
-- 8 specialist scores appear in output (Font, Color, Layout, Icon, Motion, Intent/Originality/UX, Copy, Code/A11y)
+- 7 specialist scores appear in output (Font, Color, Layout, Icon, Motion, Intent/Originality/UX, Code/A11y)
 - Weighted overall score is calculated
 - SHIP, CONDITIONAL, or BLOCK verdict is displayed
 - Prioritized fix list with severity tags

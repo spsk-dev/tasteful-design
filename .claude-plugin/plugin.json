@@ -1,7 +1,7 @@
 {
   "name": "tasteful-design",
   "version": "1.1.0",
-  "description": "AI-powered design review and flow audit -- 8 specialist agents score visual quality across 10 dimensions with multi-screen SPA analysis, cross-screen consistency detection, and HTML diagnostic reports",
+  "description": "AI-powered design review and flow audit -- 7 specialist agents score visual quality across 9 dimensions with multi-screen SPA analysis, cross-screen consistency detection, and HTML diagnostic reports",
   "author": "SpSk",
   "homepage": "https://github.com/spsk-dev/tasteful-design",
   "license": "MIT",

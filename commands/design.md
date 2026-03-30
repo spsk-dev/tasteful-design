@@ -21,7 +21,7 @@ Parse `$ARGUMENTS` and route:
 | Command | Routes To | What It Does |
 |---------|-----------|-------------|
 | `/design init` | `/design-init` | Interactive setup wizard |
-| `/design review` | `/design-review` | Visual review (8 specialists) |
+| `/design review` | `/design-review` | Visual review (7 specialists) |
 | `/design review --quick` | `/design-review --quick` | Quick visual review (4 specialists) |
 | `/design validate` | `/design-validate` | Functional validation (click, test, verify) |
 | `/design improve "prompt"` | `/design-improve` | Build & iterate until SHIP |
@@ -48,7 +48,7 @@ Phase 2: Improve Loop (/design-improve --validate)
   → Runs up to --max iterations (default 3)
   → Each iteration: visual review + functional validation
 
-Phase 3: Final Review (/design-review — full 8 specialists)
+Phase 3: Final Review (/design-review — full 7 specialists)
   → Even if improve loop reached SHIP, run a clean final review
   → This is the review of record
 
@@ -81,7 +81,7 @@ This will:
 Lighter than `ship` — just reviews and validates the current page without building or iterating:
 
 ```
-Phase 1: /design-review (full 8 specialists)
+Phase 1: /design-review (full 7 specialists)
 Phase 2: /design-validate (functional check)
 Phase 3: Combined report
 ```
@@ -99,7 +99,7 @@ If the user runs `/design` with no arguments, show this:
 Design Plugin — Frontend Quality Framework
 
 Commands:
-  /design review       Visual review (8 specialists, weighted scoring)
+  /design review       Visual review (7 specialists, weighted scoring)
   /design review --quick  Quick review (4 specialists)
   /design validate     Functional validation (buttons, links, forms, errors)
   /design improve      Build & iterate until SHIP

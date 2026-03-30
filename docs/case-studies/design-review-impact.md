@@ -24,7 +24,7 @@ The goal: get it to SHIP quality using `/design-review` and `/design-improve` wi
 ## Setup
 
 - **Tool:** SpSk design-review v1.0.0
-- **Mode:** Full review (8 specialists), Tier 1 (Gemini + Playwright)
+- **Mode:** Full review (7 specialists), Tier 1 (Gemini + Playwright)
 - **Page type:** Dashboard (SHIP threshold: 2.8/4.0)
 - **Style preset:** serious-dashboard
 
