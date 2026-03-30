@@ -1,14 +1,70 @@
 #!/usr/bin/env bash
-# SpSk Output Parser -- extracts scores and verdicts from design-review terminal output
+# SpSk Output Parser -- extracts scores and verdicts from design-review output
+# Supports structured JSON (v1.2.0+) with regex fallback for pre-v1.2.0 output.
 # Sourced by run-quality-evals.sh. Not run directly.
 
+# ---------------------------------------------------------------------------
+# JSON extraction helpers (v1.2.0+)
+# Try structured JSON from <boss_output> tags first; callers fall back to regex.
+# ---------------------------------------------------------------------------
+
+# Extract raw JSON between <tag> and </tag> XML wrappers.
+extract_json_block() {
+  local output="$1"
+  local tag="$2"
+  echo "$output" | sed -n "/<${tag}>/,/<\/${tag}>/p" | sed '1d;$d'
+}
+
+# Extract verdict from <boss_output> JSON via jq.
+extract_verdict_json() {
+  local output="$1"
+  local json
+  json=$(extract_json_block "$output" "boss_output")
+  if [ -n "$json" ] && echo "$json" | jq -e '.verdict' &>/dev/null; then
+    echo "$json" | jq -r '.verdict' | sed 's/CONDITIONAL SHIP/CONDITIONAL/'
+  fi
+}
+
+# Extract weighted_score from <boss_output> JSON via jq.
+extract_overall_json() {
+  local output="$1"
+  local json
+  json=$(extract_json_block "$output" "boss_output")
+  if [ -n "$json" ] && echo "$json" | jq -e '.weighted_score' &>/dev/null; then
+    echo "$json" | jq -r '.weighted_score'
+  fi
+}
+
+# Extract per-specialist score from <boss_output> JSON via jq.
+extract_score_json() {
+  local dimension="$1"
+  local output="$2"
+  local json
+  json=$(extract_json_block "$output" "boss_output")
+  if [ -n "$json" ] && echo "$json" | jq -e ".scores.${dimension}" &>/dev/null; then
+    echo "$json" | jq -r ".scores.${dimension}"
+  fi
+}
+
+# ---------------------------------------------------------------------------
+# Public API (JSON-first with regex fallback)
+# ---------------------------------------------------------------------------
+
 # Extract verdict from boss output.
-# Matches "**Verdict: SHIP", "**Verdict: CONDITIONAL SHIP", "**Verdict: BLOCK"
-# Also handles "Verdict: CONDITIONAL" without "SHIP" suffix.
+# Tries JSON extraction first; falls back to regex for pre-v1.2.0 output.
 extract_verdict() {
   local output="$1"
+
+  # JSON-first: try structured <boss_output> extraction
+  local result
+  result=$(extract_verdict_json "$output")
+  if [ -n "$result" ]; then
+    echo "$result"
+    return
+  fi
+
+  # Regex fallback: anchor to **Verdict: prefix
   local raw
-  # Anchor to the **Verdict: prefix to avoid matching stray words in review text
   raw=$(echo "$output" | grep -oE '\*\*Verdict: (SHIP|CONDITIONAL SHIP|CONDITIONAL|BLOCK)' | head -1 | sed 's/\*\*Verdict: //')
 
   # Normalize: "CONDITIONAL SHIP" -> "CONDITIONAL"
@@ -20,20 +76,39 @@ extract_verdict() {
 }
 
 # Extract overall weighted score from boss output header.
-# Matches "**Score: X.XX/4.0**" or "Score: X.XX/4.0"
+# Tries JSON extraction first; falls back to regex for pre-v1.2.0 output.
 extract_overall() {
   local output="$1"
+
+  # JSON-first: try structured <boss_output> extraction
+  local result
+  result=$(extract_overall_json "$output")
+  if [ -n "$result" ]; then
+    echo "$result"
+    return
+  fi
+
+  # Regex fallback: matches "**Score: X.XX/4.0**" or "Score: X.XX/4.0"
   echo "$output" | grep -oE '\*?\*?Score: [0-9]+\.[0-9]+/4\.0' | head -1 | grep -oE '[0-9]+\.[0-9]+' | head -1
 }
 
 # Extract per-specialist score from the scores table.
-# Maps dimension keys (snake_case from assertions.json) to boss output table labels.
+# Tries JSON extraction first; falls back to regex table scraping for pre-v1.2.0.
 # Example: extract_score "intent_match" "$output" -> "3"
 extract_score() {
   local dimension="$1"
   local output="$2"
-  local label
 
+  # JSON-first: try structured <boss_output> extraction
+  local result
+  result=$(extract_score_json "$dimension" "$output")
+  if [ -n "$result" ]; then
+    echo "$result"
+    return
+  fi
+
+  # Regex fallback: map dimension key to table label
+  local label
   case "$dimension" in
     intent_match)  label="Intent Match" ;;
     originality)   label="Originality" ;;
