@@ -20,50 +20,35 @@ fi
 
 echo ""
 
-# Layer 2: Quality Evals (requires Claude Code session)
+# Layer 2: Quality Evals
 echo "--- Layer 2: Quality Evals ---"
-if [ -z "${CLAUDE_SESSION:-}" ] && ! command -v claude &>/dev/null; then
-  echo "[SKIP] Layer 2: Claude Code not available"
-  echo "       Quality evals require an active Claude Code session."
-  echo "       Run this script from within Claude Code to execute quality evals."
-  echo ""
-  echo "=== Results: Layer 1 PASSED, Layer 2 SKIPPED ==="
-  exit 0
-fi
+echo ""
 
 # Layer 2a: Design-Review Quality Evals
 echo "--- Layer 2a: Design-Review Quality Evals ---"
-DR_ASSERTIONS=$(jq '.assertions | length' "$REPO_ROOT/evals/assertions.json" 2>/dev/null || echo 0)
-echo "[INFO] Assertions defined in: evals/assertions.json ($DR_ASSERTIONS assertions)"
-echo "[INFO] Fixtures in: evals/fixtures/*.html"
-echo ""
-
-# Layer 2b: Code-Review Quality Evals
-echo "--- Layer 2b: Code-Review Quality Evals ---"
-CR_ASSERTIONS=$(jq '.assertions | length' "$REPO_ROOT/evals/assertions-code-review.json" 2>/dev/null || echo 0)
-echo "[INFO] Assertions defined in: evals/assertions-code-review.json ($CR_ASSERTIONS assertions)"
-echo "[INFO] Fixtures in: evals/fixtures/sample-pr.diff"
-echo ""
-
-if [ -z "${CLAUDE_SESSION:-}" ] && ! command -v claude &>/dev/null; then
-  echo "[SKIP] Layer 2: Claude Code not available"
-  echo "       Quality evals require an active Claude Code session."
-  echo "       Run this script from within Claude Code to execute quality evals."
+if "$SCRIPT_DIR/run-quality-evals.sh" "$@"; then
   echo ""
-  echo "=== Summary ==="
-  echo "  Layer 1 (structural):           PASSED"
-  echo "  Layer 2a (design-review):        SKIPPED ($DR_ASSERTIONS assertions defined)"
-  echo "  Layer 2b (code-review):          SKIPPED ($CR_ASSERTIONS assertions defined)"
-  exit 0
+  echo "[PASS] Layer 2a: Design-review quality evals passed"
+  L2A_STATUS="PASSED"
+else
+  echo ""
+  echo "[FAIL] Layer 2a: Design-review quality evals had failures"
+  L2A_STATUS="FAILED"
 fi
 
-echo "[TODO] Quality eval execution will be implemented when plugins"
-echo "       can be invoked programmatically. For now, Layer 1 validates"
-echo "       structural correctness. Quality benchmarks are documented"
-echo "       in evals/results/."
+echo ""
+
+# Layer 2b: Code-Review Quality Evals (not yet implemented)
+echo "--- Layer 2b: Code-Review Quality Evals ---"
+CR_ASSERTIONS=$(jq '.assertions | length' "$REPO_ROOT/evals/assertions-code-review.json" 2>/dev/null || echo 0)
+echo "[SKIP] Layer 2b: Code-review quality evals not yet implemented ($CR_ASSERTIONS assertions defined)"
+L2B_STATUS="SKIPPED"
+
 echo ""
 echo "=== Summary ==="
 echo "  Layer 1 (structural):           PASSED"
-echo "  Layer 2a (design-review):        PENDING ($DR_ASSERTIONS assertions defined)"
-echo "  Layer 2b (code-review):          PENDING ($CR_ASSERTIONS assertions defined)"
-exit 0
+echo "  Layer 2a (design-review):        $L2A_STATUS"
+echo "  Layer 2b (code-review):          $L2B_STATUS"
+
+# Exit with failure if Layer 2a failed
+[ "$L2A_STATUS" = "PASSED" ] || [ "$L2A_STATUS" = "SKIPPED" ]

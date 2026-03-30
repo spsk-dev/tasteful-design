@@ -1,6 +1,6 @@
 {
-  "version": "1.0.0",
-  "description": "Range-based assertions for design-review quality evals. Scores are non-deterministic; ranges account for AI variance.",
+  "version": "1.1.0",
+  "description": "Range-based assertions for design-review quality evals. Scores are non-deterministic; ranges account for AI variance. Includes verdict gates, LLM-as-judge rubric assertions, and cross-fixture ranking.",
   "scale": {
     "min": 1.0,
     "max": 4.0
@@ -99,6 +99,58 @@
       "dimension": "verdict",
       "expected": "BLOCK",
       "notes": "Intentionally bad design must always be blocked"
+    },
+    {
+      "fixture": "fixtures/gray-area.html",
+      "name": "Gray-area page scores in CONDITIONAL range",
+      "dimension": "overall",
+      "min": 1.8,
+      "max": 2.8,
+      "notes": "Mediocre SaaS pricing page should score near but below the 3.0 landing threshold. Range is wide pre-calibration."
+    },
+    {
+      "fixture": "fixtures/gray-area.html",
+      "name": "Gray-area page gets CONDITIONAL or BLOCK",
+      "dimension": "verdict",
+      "expected": "CONDITIONAL",
+      "also_accept": ["BLOCK"],
+      "notes": "Below SaaS threshold (3.0) but not terrible. CONDITIONAL is ideal; BLOCK is acceptable."
+    },
+    {
+      "fixture": "fixtures/landing-page.html",
+      "name": "Landing page gets CONDITIONAL or SHIP",
+      "dimension": "verdict",
+      "expected": "CONDITIONAL",
+      "also_accept": ["SHIP", "CONDITIONAL SHIP"],
+      "notes": "Best fixture -- should score highest. SHIP ideal, CONDITIONAL acceptable."
+    },
+    {
+      "type": "ranking",
+      "name": "Fixtures rank correctly: emotional < admin < landing",
+      "order": ["emotional-page", "admin-panel", "landing-page"],
+      "dimension": "overall",
+      "notes": "Intentionally bad should always score lowest, polished landing page highest."
+    },
+    {
+      "type": "judge",
+      "fixture": "fixtures/landing-page.html",
+      "name": "Review identifies specific CSS selectors or file references",
+      "rubric": "Does this design review output mention at least one specific CSS property, selector, class name, or code reference (like a file path, line number, or HTML element)? If the review only makes general observations without any specific code references, it FAILS. Answer PASS or FAIL.",
+      "notes": "Evidence specificity -- reviews should point to concrete code, not just vague observations."
+    },
+    {
+      "type": "judge",
+      "fixture": "fixtures/admin-panel.html",
+      "name": "Review mentions page type and evaluates against appropriate standards",
+      "rubric": "Does this design review output identify the type of page being reviewed (admin panel, dashboard, settings page, or similar) and evaluate it against standards appropriate for that page type? A review that applies landing-page standards to an admin panel would FAIL. Answer PASS or FAIL.",
+      "notes": "Context awareness -- specialist reviews should recognize page type and apply appropriate bar."
+    },
+    {
+      "type": "judge",
+      "fixture": "fixtures/emotional-page.html",
+      "name": "Top fixes are actionable with concrete alternatives",
+      "rubric": "Does this design review output provide at least 3 specific, actionable fixes with concrete alternatives? For example, 'Replace Comic Sans with Inter or DM Sans' is actionable. 'Improve the fonts' is NOT actionable. If the fixes are vague or lack concrete alternatives, it FAILS. Answer PASS or FAIL.",
+      "notes": "Fix quality -- the review should provide implementable guidance, not just criticism."
     }
   ]
 }
