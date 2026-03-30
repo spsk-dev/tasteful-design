@@ -4,6 +4,42 @@ All notable changes to the SpSk design-review plugin.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
+## [1.2.0] - 2026-03-30
+
+### Added
+
+- Extracted specialist prompts to individual files (`skills/design-review/prompts/*.md`) for isolated testing and iteration
+- XML-structured prompts following Anthropic Claude 4.6 best practices (`<role>`, `<instructions>`, `<scoring_rubric>`, `<output_format>`)
+- 4-level scoring rubrics with concrete domain-specific anchors per specialist (replacing bare "Score 1-4")
+- Structured JSON output from all specialists (`<specialist_output>`) and boss (`<boss_output>`) with think-then-structure pattern
+- Dual-format output parser (JSON-first with regex fallback for backward compatibility)
+- Layer 2 quality eval runner (`run-quality-evals.sh`) executing assertions against real design-review output
+- LLM-as-judge binary rubric assertions via Claude Haiku (graceful skip without API key)
+- Eval result snapshots with timestamped JSON and regression detection (0.5 threshold)
+- Gray-area test fixture (mediocre SaaS pricing page) for CONDITIONAL verdict testing
+- Calibration helper script (`calibrate-baselines.sh`) for assertion range tuning
+- 2-3 curated few-shot examples per specialist showing ideal output at different score levels
+- Chain-of-thought `<thinking>` + `<answer>` separation for complex specialists (Intent, Layout, Boss)
+- `references/generation.md` from Anthropic's DISTILLED_AESTHETICS_PROMPT for `/design-improve` build guidance
+- Opt-in `--interact` flag for Playwright page interaction (hover, focus, scroll) before specialist scoring
+- Baseline-interact-reset pattern preventing DOM mutation during reviews
+- Weight-sum structural assertion in `validate-structure.sh` verifying scoring integrity
+
+### Changed
+
+- Specialist count reduced from 8 to 7: Copy merged into Intent/Originality/UX with 4 sub-scores (intent_match, originality, ux_flow, copy_quality)
+- Scoring formula updated: total_weight 17→16, Copy weight absorbed into Intent
+- Over-aggressive directives removed from all prompts (ALL-CAPS, "FLAG SPECIFICALLY", "NEVER", "Find at least N")
+- `/design-improve` now reads `top_fixes` array programmatically from structured boss output
+- `generate-report.sh` consumes structured JSON from flow-state.json
+- Playfair Display moved from flat-banned to context-conditional (editorial OK, SaaS flagged)
+- `design-review.md` reduced from 738 to ~500 lines via `@` includes to extracted prompt files
+- Structural validation expanded from 56 to 107+ checks
+
+### The Prompt Engineering Journey
+
+v1.0 specialist prompts were written ad-hoc — "Score 1-4, find issues, report them." They worked, but v1.2 rewrites them to Anthropic's 2026 best practices: XML structure, concrete rubrics, few-shot calibration, chain-of-thought reasoning. The eval runner proves the improvement is real, not just theoretical.
+
 ## [1.1.0] - 2026-03-30
 
 ### Added

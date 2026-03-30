@@ -24,7 +24,7 @@ The first line of every command output. Read version dynamically from `${CLAUDE_
 
 **Example:**
 ```
- SpSk  design-review  v1.0.0  ───  7 specialists  ·  tier 1
+ SpSk  design-review  v1.2.0  ───  7 specialists  ·  tier 1
 ```
 
 ---
@@ -144,7 +144,7 @@ Every SpSk command output follows this order:
 
 Minimal example:
 ```
- SpSk  design-review  v1.0.0  ───  7 specialists  ·  tier 1
+ SpSk  design-review  v1.2.0  ───  7 specialists  ·  tier 1
 
 ┌─ TYPOGRAPHY ─────────────────────────────────────────────────┐
 │  ████████░░ 8.0/10                                           │
