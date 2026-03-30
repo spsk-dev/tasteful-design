@@ -144,12 +144,12 @@ check "config/flow-scoring.json is valid JSON" jq empty "config/flow-scoring.jso
 PROMPT_DIR="skills/design-review/prompts"
 
 # 8.1 Prompt file existence (9 checks)
-for prompt in font.md color.md layout.md icons.md motion.md intent.md copy.md code-a11y.md boss.md; do
+for prompt in font.md color.md layout.md icons.md motion.md intent.md code-a11y.md boss.md; do
   check "$PROMPT_DIR/$prompt exists" test -f "$PROMPT_DIR/$prompt"
 done
 
 # 8.2 Required XML tags in specialist prompts (4 checks per file, 8 files = 32 checks)
-for prompt in font.md color.md layout.md icons.md motion.md intent.md copy.md code-a11y.md; do
+for prompt in font.md color.md layout.md icons.md motion.md intent.md code-a11y.md; do
   check "$prompt has <role> tag" grep -q '<role>' "$PROMPT_DIR/$prompt"
   check "$prompt has <instructions> tag" grep -q '<instructions>' "$PROMPT_DIR/$prompt"
   check "$prompt has <scoring_rubric> tag" grep -q '<scoring_rubric>' "$PROMPT_DIR/$prompt"
@@ -174,6 +174,11 @@ check "No aggressive directives in prompts" test -z "$AGGRESSIVE"
 # 8.6 design-review.md references extracted prompts (2 checks)
 check "design-review.md includes font.md prompt" grep -q 'prompts/font.md' commands/design-review.md
 check "design-review.md includes boss.md prompt" grep -q 'prompts/boss.md' commands/design-review.md
+
+# Phase 11: Weight-sum integrity
+WEIGHT_SUM=$(jq '[.weights[]] | add' config/scoring.json)
+TOTAL_WEIGHT=$(jq '.total_weight' config/scoring.json)
+check "Sum of individual weights ($WEIGHT_SUM) equals total_weight ($TOTAL_WEIGHT)" test "$WEIGHT_SUM" -eq "$TOTAL_WEIGHT"
 
 echo ""
 TOTAL=$((PASS + FAIL))

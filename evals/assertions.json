@@ -1,5 +1,5 @@
 {
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Range-based assertions for design-review quality evals. Scores are non-deterministic; ranges account for AI variance. Includes verdict gates, LLM-as-judge rubric assertions, and cross-fixture ranking.",
   "scale": {
     "min": 1.0,

@@ -118,7 +118,7 @@ extract_score() {
     layout)        label="Layout" ;;
     icons)         label="Icons" ;;
     motion)        label="Motion" ;;
-    copy)          label="Copy" ;;
+    copy_quality)  label="Copy Quality" ;;
     code_a11y)     label="Code" ;;
     *)             label="$dimension" ;;
   esac

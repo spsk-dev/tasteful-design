@@ -26,7 +26,7 @@
           "layout": 3.2,
           "icons": 2.8,
           "motion": 3.0,
-          "copy": 3.2,
+          "copy_quality": 3.2,
           "code_a11y": 3.1
         },
         "weighted_score": 3.2,
@@ -86,7 +86,7 @@
           "layout": 3.2,
           "icons": 2.6,
           "motion": 2.8,
-          "copy": 3.0,
+          "copy_quality": 3.0,
           "code_a11y": 3.0
         },
         "weighted_score": 3.0,
