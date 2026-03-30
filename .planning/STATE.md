@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v1.2.0
 milestone_name: Prompting Excellence + Eval Credibility
-status: Ready to plan
-stopped_at: Completed 09-02-PLAN.md (Layer 2 judge + snapshots + regression)
-last_updated: "2026-03-30T04:35:52.435Z"
+status: Ready to execute
+stopped_at: Completed 10-01-PLAN.md (structured JSON output format for all prompts)
+last_updated: "2026-03-30T04:57:45.914Z"
 progress:
   total_phases: 6
   completed_phases: 2
-  total_plans: 4
-  completed_plans: 4
+  total_plans: 6
+  completed_plans: 5
 ---
 
 # Project State
@@ -19,12 +19,12 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-29)
 
 **Core value:** Published skills must be immediately useful AND demonstrate architectural sophistication
-**Current focus:** Phase 09 — Layer 2 Eval Runner
+**Current focus:** Phase 10 — Structured JSON Output
 
 ## Current Position
 
-Phase: 10
-Plan: Not started
+Phase: 10 (Structured JSON Output) — EXECUTING
+Plan: 2 of 2
 
 ## Performance Metrics
 
@@ -43,6 +43,7 @@ Plan: Not started
 | Phase 08 P02 | 4min | 2 tasks | 2 files |
 | Phase 09 P01 | 3min | 2 tasks | 3 files |
 | Phase 09 P02 | 4min | 2 tasks | 4 files |
+| Phase 10 P01 | 2min | 2 tasks | 9 files |
 
 ## Accumulated Context
 
@@ -64,6 +65,9 @@ Plan: Not started
 - [Phase 09]: LLM-as-judge uses claude-haiku-4-5 with graceful SKIP when API key absent
 - [Phase 09]: Verdict assertions support also_accept array for flexible matching (CONDITIONAL also accepts BLOCK/SHIP)
 - [Phase 09]: Regression threshold at 0.5 score drop -- balances sensitivity with LLM stochasticity tolerance
+- [Phase 10]: Minimal JSON schema -- documentation for the LLM, not API validation
+- [Phase 10]: Boss dual-output: human-readable markdown + trailing boss_output JSON block
+- [Phase 10]: Intent specialist uses scores object with 3 named keys (intent_match, originality, ux_flow)
 
 ### Pending Todos
 
@@ -76,6 +80,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-30T04:25:36.188Z
-Stopped at: Completed 09-02-PLAN.md (Layer 2 judge + snapshots + regression)
+Last session: 2026-03-30T04:57:45.912Z
+Stopped at: Completed 10-01-PLAN.md (structured JSON output format for all prompts)
 Resume file: None

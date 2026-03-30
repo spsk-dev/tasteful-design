@@ -191,10 +191,10 @@ Plans:
   3. `/design-improve` reads the `top_fixes` array from structured boss output programmatically instead of scraping fix text from terminal output
   4. `generate-report.sh` reads structured JSON from `flow-state.json` for deterministic report generation without regex parsing
   5. Running `run-quality-evals.sh` passes with structured JSON output (no regression from the migration)
-**Plans:** 2 plans
+**Plans:** 1/2 plans executed
 
 Plans:
-- [ ] 10-01-PLAN.md -- Migrate all 9 specialist prompts + boss to structured JSON output with think-then-structure pattern
+- [x] 10-01-PLAN.md -- Migrate all 9 specialist prompts + boss to structured JSON output with think-then-structure pattern
 - [ ] 10-02-PLAN.md -- Upgrade parser to JSON-first with regex fallback, wire structured JSON into design-improve, design-audit, and report generator
 
 ### Phase 11: Specialist Consolidation
@@ -246,7 +246,7 @@ Phases execute in numeric order: 8 -> 9 -> 10 -> 11 -> 12 -> 13
 | 7. Release Polish | v1.1.0 | 2/2 | Complete | 2026-03-29 |
 | 8. Prompt Extraction + Restructuring | v1.2.0 | 2/2 | Complete | 2026-03-30 |
 | 9. Layer 2 Eval Runner | v1.2.0 | 2/2 | Complete | 2026-03-30 |
-| 10. Structured JSON Output | v1.2.0 | 0/2 | Planned | - |
+| 10. Structured JSON Output | v1.2.0 | 1/2 | In Progress|  |
 | 11. Specialist Consolidation | v1.2.0 | 0/? | Not started | - |
 | 12. Playwright Interaction | v1.2.0 | 0/? | Not started | - |
 | 13. Few-Shot Examples + Polish | v1.2.0 | 0/? | Not started | - |
