@@ -1,101 +1,79 @@
-# Requirements: SpSk v1.1.0 — Flow Audit + Polish
+# Requirements: SpSk v1.2.0 — Prompting Excellence + Eval Credibility
 
 **Defined:** 2026-03-29
 **Core Value:** Published skills must be immediately useful AND demonstrate architectural sophistication
 
-## v1.1.0 Requirements
+## v1.2.0 Requirements
 
-### Flow Navigation
+### Prompt Engineering
 
-- [x] **FLOW-01**: `/design-audit <url> --flow "description"` command navigates a SPA guided by user's intent description
-- [x] **FLOW-02**: Agent uses Playwright MCP snapshots to identify and click CTAs matching the flow intent
-- [x] **FLOW-03**: Screenshot captured at each detected screen state change
-- [x] **FLOW-04**: Screen detection — agent knows when a new "screen" has loaded (DOM stability, not networkidle)
-- [x] **FLOW-05**: Max screen limit (default 10) prevents runaway navigation
-- [x] **FLOW-06**: URL sequence fallback via `--steps url1,url2,url3` for deterministic paths
-- [x] **FLOW-07**: Authenticated flow support — can login first, then audit the protected flow
-- [x] **FLOW-08**: Flow stops gracefully at completion/success state or dead end
+- [ ] **PRMT-01**: All specialist prompts use XML-structured sections (`<role>`, `<context>`, `<instructions>`, `<output_format>`, `<examples>`)
+- [ ] **PRMT-02**: Every specialist has a 4-level scoring rubric with concrete anchors per level (not bare "Score 1-4")
+- [ ] **PRMT-03**: Over-aggressive directives removed (ALL-CAPS emphasis, "FLAG SPECIFICALLY", "NEVER", "Find at least N")
+- [ ] **PRMT-04**: 2-3 curated few-shot examples per specialist showing ideal output format and scoring calibration
+- [ ] **PRMT-05**: Chain-of-thought `<thinking>` + `<answer>` separation in complex specialists (Intent, Layout, Boss)
+- [ ] **PRMT-06**: Specialist prompts extracted to individual files (`skills/design-review/prompts/*.md`) with `@` includes from commands
+- [ ] **PRMT-07**: Boss synthesizer prompt restructured with XML tags, explicit output schema, and cross-specialist reasoning instructions
 
-### Per-Screen Review
+### Eval Credibility
 
-- [x] **REVW-01**: Each captured screen is reviewed by the existing 8-specialist system
-- [x] **REVW-02**: Smart weighting — full 8-specialist review on first and last screens, quick mode (4 specialists) on middle screens
-- [x] **REVW-03**: Cross-screen consistency analysis — flag when button styles, colors, spacing, or typography drift between screens
-- [x] **REVW-04**: Per-screen scores aggregated into overall flow score
+- [ ] **EVAL-01**: Layer 2 eval runner (`run-quality-evals.sh`) executes all assertions against real design-review output
+- [ ] **EVAL-02**: Assertion ranges calibrated from 3 baseline runs per fixture with observed spread + buffer
+- [ ] **EVAL-03**: Verdict-level assertions (binary: bad page gets BLOCK, good page gets SHIP) as primary gate
+- [ ] **EVAL-04**: At least one gray-area fixture added (mediocre page that should get CONDITIONAL)
+- [ ] **EVAL-05**: LLM-as-judge binary rubric assertions using Claude Haiku for quality checks (requires ANTHROPIC_API_KEY)
+- [ ] **EVAL-06**: Eval result snapshots with per-specialist scores stored for regression detection across runs
 
-### HTML Report
+### Structured Output
 
-- [x] **REPT-01**: Self-contained HTML file with base64-embedded JPEG screenshots (no external dependencies)
-- [x] **REPT-02**: Flow map showing screen progression (screen 1 → 2 → 3 → ...)
-- [x] **REPT-03**: Per-screen section with screenshot, 8-specialist scores, specific issues, and fix recommendations
-- [x] **REPT-04**: Overall flow score and summary with top 5 priority fixes
-- [x] **REPT-05**: Expandable specialist details (collapsed by default, expand on click)
-- [x] **REPT-06**: Print-to-PDF support via `@media print` styles
-- [x] **REPT-07**: Report file size under 5MB (JPEG compression, max 1200px width screenshots)
+- [ ] **JSON-01**: All specialists emit structured JSON wrapped in `<specialist_output>` tags
+- [ ] **JSON-02**: Boss synthesizer emits structured JSON wrapped in `<boss_output>` tags
+- [ ] **JSON-03**: Output parser supports dual-format (JSON-first with regex fallback for backward compatibility)
+- [ ] **JSON-04**: `/design-improve` consumes `top_fixes` array programmatically from structured JSON
+- [ ] **JSON-05**: `generate-report.sh` reads structured JSON from flow-state.json for deterministic report generation
 
-### Animation Detection
+### Specialist Architecture
 
-- [x] **ANIM-01**: CSS transition/animation property detection between screen states
-- [x] **ANIM-02**: `prefers-reduced-motion` compliance check
-- [x] **ANIM-03**: Animation findings included in per-screen specialist output
+- [ ] **SPEC-01**: Copy specialist folded into Intent/Originality/UX with 4 sub-scores (intent, originality, ux_flow, copy_quality)
+- [ ] **SPEC-02**: `scoring.json` updated atomically: total_weight 17→16, quick_mode recalculated
+- [ ] **SPEC-03**: Structural assertion in `validate-structure.sh` verifying sum of weights equals total_weight
 
-### Polish
+### Generation & Interaction
 
-- [x] **PLSH-01**: Demo GIF recorded via VHS tape file (deferred from v1.0.0)
-- [x] **PLSH-02**: README updated with /design-audit documentation, flow examples, report screenshots
-- [x] **PLSH-03**: ARCHITECTURE.md updated with flow audit component diagram
-- [x] **PLSH-04**: CHANGELOG.md updated with v1.1.0 release notes
-- [x] **PLSH-05**: All repo references use spsk-dev org consistently
-- [x] **PLSH-06**: VERSION bumped to 1.1.0, git tag v1.1.0
+- [ ] **GNRT-01**: `references/generation.md` created from Anthropic's DISTILLED_AESTHETICS_PROMPT adapted for /design-improve build phase
+- [ ] **INTR-01**: Opt-in `--interact` flag for Playwright page interaction (hover, focus, scroll) before specialist scoring
+- [ ] **INTR-02**: Baseline-interact-reset pattern: screenshot clean state, interact, reload, then review
+- [ ] **INTR-03**: Interaction budget capped at 8 interactions per review
+- [ ] **TEST-01**: Full flow audit validated on start.fusefinance.com with real SPA navigation
+
+## Future Requirements (v1.3+)
+
+- Eval fixtures covering Figma reference mode, style preset mode, dark mode
+- Auto-tuning prompts based on eval results
+- Vision-mode Playwright coordinate-based clicking
+- Real-time eval dashboard
+- Context-aware specialist dispatch (skip Motion on static pages)
 
 ## Out of Scope
 
-| Feature | Reason |
-|---------|--------|
-| Video recording of flows | Massive complexity, screenshots + CSS analysis cover 90% of value |
-| Runtime animation frame analysis | Web Animations API source analysis is sufficient for v1.1 |
-| Multi-browser testing | Chromium-only via Playwright is sufficient |
-| Automatic fix application | Report recommends fixes, user/agent applies them separately |
-| Real-time collaboration on reports | Static HTML file is the output format |
+- **Anthropic Structured Outputs API** — not exposed in Claude Code plugin context; prompt-enforced JSON is the path
+- **LLM-as-judge for scoring** (replacing specialists) — specialists ARE the judges; Haiku is for eval validation only
+- **Temperature tuning** — Claude Code does not expose temperature controls to plugins
+- **Pixel-diff screenshot comparison** — ImageMagick dependency violates zero-dependency constraint
+- **Per-specialist JSON schemas** — one shared schema with specialist-specific fields is sufficient
 
 ## Traceability
 
-| Requirement | Phase | Status |
-|-------------|-------|--------|
-| FLOW-01 | Phase 4 | Complete |
-| FLOW-02 | Phase 4 | Complete |
-| FLOW-03 | Phase 4 | Complete |
-| FLOW-04 | Phase 4 | Complete |
-| FLOW-05 | Phase 4 | Complete |
-| FLOW-06 | Phase 4 | Complete |
-| FLOW-07 | Phase 4 | Complete |
-| FLOW-08 | Phase 4 | Complete |
-| REVW-01 | Phase 5 | Complete |
-| REVW-02 | Phase 5 | Complete |
-| REVW-03 | Phase 5 | Complete |
-| REVW-04 | Phase 5 | Complete |
-| REPT-01 | Phase 6 | Complete |
-| REPT-02 | Phase 6 | Complete |
-| REPT-03 | Phase 6 | Complete |
-| REPT-04 | Phase 6 | Complete |
-| REPT-05 | Phase 6 | Complete |
-| REPT-06 | Phase 6 | Complete |
-| REPT-07 | Phase 6 | Complete |
-| ANIM-01 | Phase 5 | Complete |
-| ANIM-02 | Phase 5 | Complete |
-| ANIM-03 | Phase 5 | Complete |
-| PLSH-01 | Phase 7 | Complete |
-| PLSH-02 | Phase 7 | Complete |
-| PLSH-03 | Phase 7 | Complete |
-| PLSH-04 | Phase 7 | Complete |
-| PLSH-05 | Phase 7 | Complete |
-| PLSH-06 | Phase 7 | Complete |
-
-**Coverage:**
-- v1.1.0 requirements: 28 total
-- Mapped to phases: 28
-- Unmapped: 0
+| Requirement | Phase | Plan |
+|-------------|-------|------|
+| PRMT-01..07 | TBD | TBD |
+| EVAL-01..06 | TBD | TBD |
+| JSON-01..05 | TBD | TBD |
+| SPEC-01..03 | TBD | TBD |
+| GNRT-01 | TBD | TBD |
+| INTR-01..03 | TBD | TBD |
+| TEST-01 | TBD | TBD |
 
 ---
-*Requirements defined: 2026-03-29*
-*Last updated: 2026-03-28 after roadmap creation*
+*Defined: 2026-03-29*
+*Previous milestone requirements (v1.1.0): archived — all 28 requirements completed*
