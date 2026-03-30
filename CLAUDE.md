@@ -18,11 +18,11 @@ Routes to the right sub-command based on arguments.
 /design ship "prompt"      # Full pipeline: improve -> review -> validate
 ```
 
-All flags pass through to sub-commands: `--ref`, `--figma`, `--direction`, `--palette`, `--fonts`, `--quick`, `--max N`, `--validate`, `--style`.
+All flags pass through to sub-commands: `--ref`, `--figma`, `--direction`, `--palette`, `--fonts`, `--quick`, `--max N`, `--validate`, `--style`, `--interact`.
 
 ### `/design-review` -- Visual Design Review
 
-Full 7-specialist review with weighted scoring and SHIP/CONDITIONAL/BLOCK verdict.
+Full 7-specialist review with weighted scoring and SHIP/CONDITIONAL/BLOCK verdict. Supports `--interact` for hover/focus/scroll state capture.
 
 ```bash
 /design-review                              # Review current page (auto-detects dev server)
@@ -36,6 +36,8 @@ Full 7-specialist review with weighted scoring and SHIP/CONDITIONAL/BLOCK verdic
 /design-review --palette "#1a1a2e,#f5f0eb"  # Enforce specific color palette
 /design-review --fonts "DM Sans,Instrument Serif"  # Enforce specific fonts
 /design-review --style serious-dashboard    # Apply a style preset
+/design-review --interact                  # Capture hover/focus/scroll states before review
+/design-review --interact --quick           # Quick review with interaction capture
 ```
 
 **Flags:**
@@ -49,6 +51,7 @@ Full 7-specialist review with weighted scoring and SHIP/CONDITIONAL/BLOCK verdic
 | `--palette "<colors>"` | Override color evaluation with specific palette |
 | `--fonts "<fonts>"` | Override font evaluation with specific fonts |
 | `--style <preset>` | Apply a style preset (see Configuration) |
+| `--interact` | Capture hover/focus/scroll states via Playwright MCP before specialist review. Opt-in. |
 
 **Output:** Scores per specialist, cross-specialist consensus findings, weighted verdict, prioritized fix list with file:line references.
 
