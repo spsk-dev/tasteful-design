@@ -7,12 +7,12 @@
 
 ### Flow Navigation
 
-- [ ] **FLOW-01**: `/design-audit <url> --flow "description"` command navigates a SPA guided by user's intent description
-- [ ] **FLOW-02**: Agent uses Playwright MCP snapshots to identify and click CTAs matching the flow intent
-- [ ] **FLOW-03**: Screenshot captured at each detected screen state change
+- [x] **FLOW-01**: `/design-audit <url> --flow "description"` command navigates a SPA guided by user's intent description
+- [x] **FLOW-02**: Agent uses Playwright MCP snapshots to identify and click CTAs matching the flow intent
+- [x] **FLOW-03**: Screenshot captured at each detected screen state change
 - [x] **FLOW-04**: Screen detection — agent knows when a new "screen" has loaded (DOM stability, not networkidle)
 - [x] **FLOW-05**: Max screen limit (default 10) prevents runaway navigation
-- [ ] **FLOW-06**: URL sequence fallback via `--steps url1,url2,url3` for deterministic paths
+- [x] **FLOW-06**: URL sequence fallback via `--steps url1,url2,url3` for deterministic paths
 - [ ] **FLOW-07**: Authenticated flow support — can login first, then audit the protected flow
 - [ ] **FLOW-08**: Flow stops gracefully at completion/success state or dead end
 
@@ -62,12 +62,12 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| FLOW-01 | Phase 4 | Pending |
-| FLOW-02 | Phase 4 | Pending |
-| FLOW-03 | Phase 4 | Pending |
+| FLOW-01 | Phase 4 | Complete |
+| FLOW-02 | Phase 4 | Complete |
+| FLOW-03 | Phase 4 | Complete |
 | FLOW-04 | Phase 4 | Complete |
 | FLOW-05 | Phase 4 | Complete |
-| FLOW-06 | Phase 4 | Pending |
+| FLOW-06 | Phase 4 | Complete |
 | FLOW-07 | Phase 4 | Pending |
 | FLOW-08 | Phase 4 | Pending |
 | REVW-01 | Phase 5 | Pending |

@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.1.0
 milestone_name: Flow Audit + Polish
 status: Ready to execute
-stopped_at: Completed 04-01-PLAN.md
-last_updated: "2026-03-30T00:25:42.025Z"
+stopped_at: Completed 04-02-PLAN.md
+last_updated: "2026-03-30T00:30:38.682Z"
 progress:
   total_phases: 4
   completed_phases: 0
   total_plans: 3
-  completed_plans: 1
+  completed_plans: 2
 ---
 
 # Project State
@@ -24,7 +24,7 @@ See: .planning/PROJECT.md (updated 2026-03-29)
 ## Current Position
 
 Phase: 04 (flow-navigation-engine) — EXECUTING
-Plan: 2 of 3
+Plan: 3 of 3
 
 ## Performance Metrics
 
@@ -48,6 +48,8 @@ Plan: 2 of 3
 - [Phase 04]: 800ms mutation quiet period for DOM stability detection
 - [Phase 04]: Viewport-only screenshots (1440x900) for flow audit, matching design-review standard
 - [Phase 04]: Slug generation priority: h1 > h2 > URL path > screen-N fallback
+- [Phase 04]: Snapshot-before-click pattern enforced as critical constraint for stale ref protection
+- [Phase 04]: Click retry with fresh snapshot then graceful termination, preserving partial flow-state
 
 ### Pending Todos
 
@@ -61,6 +63,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-30T00:25:42.023Z
-Stopped at: Completed 04-01-PLAN.md
+Last session: 2026-03-30T00:30:38.680Z
+Stopped at: Completed 04-02-PLAN.md
 Resume file: None
