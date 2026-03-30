@@ -220,7 +220,11 @@ Plans:
   2. The baseline-interact-reset pattern is followed: screenshot clean state first, perform interactions, reload page, then run the standard review -- specialists never see interaction-mutated DOM as the baseline
   3. No more than 8 interactions are performed per review (budget cap enforced)
   4. Running `/design-audit` on start.fusefinance.com completes a full flow audit with real SPA navigation, validating the complete pipeline end-to-end
-**Plans**: TBD
+**Plans:** 2 plans
+
+Plans:
+- [ ] 12-01-PLAN.md -- Add --interact flag with Phase 0.5i interaction protocol (baseline-interact-reset), router passthrough, structural validation
+- [ ] 12-02-PLAN.md -- CLAUDE.md documentation update, end-to-end validation on start.fusefinance.com
 
 ### Phase 13: Few-Shot Examples + Polish
 **Goal**: Specialists produce better-calibrated scores through curated examples and chain-of-thought reasoning, and the build phase benefits from Anthropic's proven aesthetics guidance
@@ -252,5 +256,5 @@ Phases execute in numeric order: 8 -> 9 -> 10 -> 11 -> 12 -> 13
 | 9. Layer 2 Eval Runner | v1.2.0 | 2/2 | Complete | 2026-03-30 |
 | 10. Structured JSON Output | v1.2.0 | 2/2 | Complete    | 2026-03-30 |
 | 11. Specialist Consolidation | v1.2.0 | 2/2 | Complete    | 2026-03-30 |
-| 12. Playwright Interaction | v1.2.0 | 0/? | Not started | - |
+| 12. Playwright Interaction | v1.2.0 | 0/2 | In progress | - |
 | 13. Few-Shot Examples + Polish | v1.2.0 | 0/? | Not started | - |
