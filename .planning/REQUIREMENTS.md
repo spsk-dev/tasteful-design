@@ -41,12 +41,12 @@
 
 ### Polish
 
-- [ ] **PLSH-01**: Demo GIF recorded via VHS tape file (deferred from v1.0.0)
+- [x] **PLSH-01**: Demo GIF recorded via VHS tape file (deferred from v1.0.0)
 - [x] **PLSH-02**: README updated with /design-audit documentation, flow examples, report screenshots
 - [x] **PLSH-03**: ARCHITECTURE.md updated with flow audit component diagram
 - [x] **PLSH-04**: CHANGELOG.md updated with v1.1.0 release notes
 - [x] **PLSH-05**: All repo references use spsk-dev org consistently
-- [ ] **PLSH-06**: VERSION bumped to 1.1.0, git tag v1.1.0
+- [x] **PLSH-06**: VERSION bumped to 1.1.0, git tag v1.1.0
 
 ## Out of Scope
 
@@ -84,12 +84,12 @@
 | ANIM-01 | Phase 5 | Complete |
 | ANIM-02 | Phase 5 | Complete |
 | ANIM-03 | Phase 5 | Complete |
-| PLSH-01 | Phase 7 | Pending |
+| PLSH-01 | Phase 7 | Complete |
 | PLSH-02 | Phase 7 | Complete |
 | PLSH-03 | Phase 7 | Complete |
 | PLSH-04 | Phase 7 | Complete |
 | PLSH-05 | Phase 7 | Complete |
-| PLSH-06 | Phase 7 | Pending |
+| PLSH-06 | Phase 7 | Complete |
 
 **Coverage:**
 - v1.1.0 requirements: 28 total
