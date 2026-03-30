@@ -131,6 +131,15 @@ check "install.sh is executable" test -x install.sh
 # CHANGELOG.md contains 1.0.0
 check "CHANGELOG.md contains 1.0.0" grep -q "1.0.0" "CHANGELOG.md"
 
+# Phase 6: HTML diagnostic report
+check "scripts/generate-report.sh exists" test -f "scripts/generate-report.sh"
+check "scripts/generate-report.sh is executable" test -x "scripts/generate-report.sh"
+check "report test fixture exists" test -f "evals/fixtures/report-test/flow-state.json"
+check "report fixture has 3 screens" bash -c "jq '.screens | length' evals/fixtures/report-test/flow-state.json | grep -q '^3$'"
+
+# flow-scoring.json (required by report)
+check "config/flow-scoring.json is valid JSON" jq empty "config/flow-scoring.json"
+
 echo ""
 TOTAL=$((PASS + FAIL))
 echo "$PASS/$TOTAL checks passed"

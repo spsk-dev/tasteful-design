@@ -1,0 +1,161 @@
+{
+  "version": "1.0",
+  "status": "complete",
+  "flow_intent": "User logs in, views dashboard metrics, adjusts notification settings",
+  "url": "https://app.example.com/login",
+  "mode": "intent",
+  "max_screens": 10,
+  "started_at": "2026-03-28T14:00:00Z",
+  "completed_at": "2026-03-28T14:12:34Z",
+  "screens": [
+    {
+      "number": 1,
+      "name": "Login",
+      "slug": "login",
+      "url": "https://app.example.com/login",
+      "screenshot_path": "/Users/felipemachado/Sites/spsk/evals/fixtures/report-test/screen-1-login.png",
+      "review": {
+        "mode": "full",
+        "specialist_count": 8,
+        "scores": {
+          "intent_match": 3.5,
+          "originality": 3.0,
+          "ux_flow": 3.2,
+          "typography": 3.4,
+          "color": 3.0,
+          "layout": 3.2,
+          "icons": 2.8,
+          "motion": 3.0,
+          "copy": 3.2,
+          "code_a11y": 3.1
+        },
+        "weighted_score": 3.2,
+        "verdict": "SHIP",
+        "findings": [
+          "Password field lacks visible strength indicator",
+          "Social login buttons use inconsistent icon sizes (24px vs 20px)"
+        ],
+        "cross_specialist_findings": [
+          "Form labels use 12px font but body text is 16px -- hierarchy gap too large"
+        ]
+      }
+    },
+    {
+      "number": 2,
+      "name": "Dashboard",
+      "slug": "dashboard",
+      "url": "https://app.example.com/dashboard",
+      "screenshot_path": "/Users/felipemachado/Sites/spsk/evals/fixtures/report-test/screen-2-dashboard.png",
+      "review": {
+        "mode": "quick",
+        "specialist_count": 4,
+        "scores": {
+          "intent_match": 2.8,
+          "originality": 2.4,
+          "ux_flow": 2.6,
+          "typography": 2.6
+        },
+        "weighted_score": 2.6,
+        "verdict": "CONDITIONAL",
+        "findings": [
+          "Body text at 14px is below minimum 16px for readability",
+          "Primary CTA lacks sufficient contrast (ratio 3.8:1, needs 4.5:1)",
+          "Metric cards use 5 different font sizes without clear hierarchy",
+          "No empty state for the activity feed section"
+        ],
+        "cross_specialist_findings": [
+          "Navigation sidebar font weight (300) feels disconnected from bold header treatment (700)"
+        ]
+      }
+    },
+    {
+      "number": 3,
+      "name": "Settings",
+      "slug": "settings",
+      "url": "https://app.example.com/settings/notifications",
+      "screenshot_path": "/Users/felipemachado/Sites/spsk/evals/fixtures/report-test/screen-3-settings.png",
+      "review": {
+        "mode": "full",
+        "specialist_count": 8,
+        "scores": {
+          "intent_match": 3.2,
+          "originality": 2.8,
+          "ux_flow": 3.0,
+          "typography": 3.0,
+          "color": 2.8,
+          "layout": 3.2,
+          "icons": 2.6,
+          "motion": 2.8,
+          "copy": 3.0,
+          "code_a11y": 3.0
+        },
+        "weighted_score": 3.0,
+        "verdict": "SHIP",
+        "findings": [
+          "Toggle switches lack aria-label for screen readers",
+          "Section dividers use inconsistent spacing (16px vs 24px)"
+        ],
+        "cross_specialist_findings": [
+          "Save button positioning differs from login CTA placement -- inconsistent action zone"
+        ]
+      }
+    }
+  ],
+  "flow_score": {
+    "weighted_score": 2.92,
+    "display_score": 7.3,
+    "verdict": "CONDITIONAL",
+    "consistency_penalty": 0.04,
+    "pre_penalty_score": 2.96
+  },
+  "consistency": {
+    "findings": [
+      {
+        "check": "typography",
+        "severity": "mismatch",
+        "description": "Body text size varies: 16px on Login, 14px on Dashboard, 16px on Settings. Dashboard deviates from established baseline.",
+        "screens_affected": "Dashboard",
+        "screens_reference": "Login, Settings"
+      },
+      {
+        "check": "color_palette",
+        "severity": "drift",
+        "description": "Primary blue shifts from #3b82f6 on Login to #2563eb on Settings. Delta E of 12 exceeds threshold of 10.",
+        "screens_affected": "Settings",
+        "screens_reference": "Login"
+      }
+    ],
+    "summary": {
+      "total_findings": 2,
+      "by_severity": {
+        "mismatch": 1,
+        "drift": 1
+      },
+      "penalty_points": 4,
+      "penalty_factor": 0.04,
+      "score_adjustment": -0.04
+    }
+  },
+  "animation_summary": {
+    "total_transitions_detected": 5,
+    "total_animation_events": 8,
+    "screens_with_animations": ["Login", "Dashboard"],
+    "screens_without_transitions": ["Settings"],
+    "duration_findings": [
+      "Dashboard metric card entrance at 800ms exceeds sluggish threshold (500ms)",
+      "Login form fade-in at 200ms is within micro-interaction range"
+    ],
+    "easing_findings": [
+      "Settings page uses 'linear' easing for toggle switches -- consider ease-in-out for more natural feel"
+    ],
+    "prefers_reduced_motion": {
+      "compliant_screens": ["Login"],
+      "non_compliant_screens": ["Dashboard"],
+      "overall": "PARTIAL"
+    },
+    "findings": [
+      "Dashboard card animations do not respect prefers-reduced-motion media query",
+      "Settings page has no transitions -- feels static compared to Login and Dashboard"
+    ]
+  }
+}
