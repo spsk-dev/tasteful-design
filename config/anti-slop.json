@@ -1,7 +1,6 @@
 {
   "banned_fonts": [
     "Dancing Script",
-    "Playfair Display",
     "Poppins",
     "Montserrat",
     "Inter",
@@ -11,11 +10,16 @@
     "Satisfy",
     "Sacramento"
   ],
+  "context_banned_fonts": {
+    "Playfair Display": "Banned for SaaS, landing, dashboard, admin pages. Acceptable for editorial (long-form articles, magazine layouts).",
+    "Space Grotesk": "Banned for non-code contexts (becoming AI-overused). Acceptable for code/technical documentation."
+  },
   "recommended_fonts": {
     "sans": ["DM Sans", "Plus Jakarta Sans", "Figtree", "General Sans", "Satoshi", "Outfit"],
     "serif": ["Instrument Serif", "Fraunces", "Newsreader", "Literata", "Lora"],
     "mono": ["JetBrains Mono", "Fira Code", "IBM Plex Mono", "Source Code Pro"],
-    "display": ["Cabinet Grotesk", "Clash Display", "Switzer"]
+    "display": ["Cabinet Grotesk", "Clash Display", "Switzer", "Satoshi"],
+    "distinctive": ["Bricolage Grotesque", "Obviously"]
   },
   "banned_palettes": {
     "dark_gold": "Dark background + gold/amber accents — crypto exchange cliche",
