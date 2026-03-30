@@ -75,7 +75,7 @@ Final verdict: **SHIP** at 3.36/4.0 (8.4/10), above the 2.8 dashboard threshold.
 
 ## Key Takeaways
 
-**Multi-specialist review catches what single-model review misses.** A single Claude review of the original dashboard said "clean layout, good use of whitespace." The 8-specialist system found 14 actionable issues including WCAG failures, banned fonts, and missing accessibility attributes.
+**Multi-specialist review catches what single-model review misses.** A single Claude review of the original dashboard said "clean layout, good use of whitespace." The 7-specialist system found 14 actionable issues including WCAG failures, banned fonts, and missing accessibility attributes.
 
 **Cross-specialist agreement is the strongest signal.** When Font, Color, and Intent all flag the same root cause (poor visual hierarchy), you know it is a real problem -- not a specialist being overly critical in isolation.
 

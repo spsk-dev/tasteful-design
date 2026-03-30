@@ -72,7 +72,7 @@ Phase 5: Ship Report
 This will:
 1. Build the page using Stripe billing as reference, avoiding anti-slop patterns
 2. Run 3 iterations of review→fix→validate
-3. Final 8-specialist review
+3. Final 7-specialist review
 4. Final functional validation
 5. Ship report with score progression
 

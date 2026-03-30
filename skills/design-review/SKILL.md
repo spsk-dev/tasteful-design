@@ -32,11 +32,11 @@ AI-powered design review using 7 independent specialist agents and a boss synthe
 
 Weighted formula using `config/scoring.json`. Scale: 1.0-4.0.
 
-Quick mode (`--quick`) uses 4 specialists with reduced weights (/13 instead of /17).
+Quick mode (`--quick`) uses 4 specialists with reduced weights (/13 instead of /16).
 
 ## Commands
 
-- `/design-review` — Full 8-specialist review
+- `/design-review` — Full 7-specialist review
 - `/design-improve` — Build and iterate until SHIP verdict
 - `/design-validate` — Functional validation via Playwright
 - `/design` — Orchestrator routing to sub-commands

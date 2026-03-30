@@ -1,11 +1,8 @@
-# SpSk -- Simple Skill
+# SpSk -- Tasteful Design
 
-AI-powered design review and multi-model code review for Claude Code. Two skills, one plugin:
+AI-powered design review for Claude Code. 7 specialist agents evaluate your UI across typography, color, layout, icons, motion, intent/originality/UX, and accessibility. A boss synthesizer delivers a weighted SHIP/BLOCK verdict.
 
-- **`/design-review`** -- 7 specialist agents evaluate your UI across typography, color, layout, icons, motion, intent/originality/UX, and accessibility. A boss synthesizer delivers a weighted SHIP/BLOCK verdict.
-- **`/code-review`** -- 3 models (Claude, Codex, Gemini) review your PR in parallel with confidence-scored findings and cross-model agreement detection.
-
-Built because AI models are terrible self-critics. They "reliably skew positive" on visual output and miss concurrency bugs in code. These skills fix that with independent specialist critique and multi-model consensus.
+Built because AI models are terrible self-critics. They "reliably skew positive" on visual output. This plugin fixes that with independent specialist critique — each agent has domain expertise, curated reference knowledge, and few-shot calibrated scoring.
 
 <p align="center">
   <img src="assets/demo.gif" alt="SpSk design-review demo -- 7 specialists scoring a landing page" width="720">
@@ -56,34 +53,6 @@ A full review takes ~8 minutes and produces a structured verdict with scores per
 | `/design-validate` | Functional validation (Playwright) | URL or auto-detect |
 | `/design` | Orchestrator -- routes to sub-commands | `review`, `improve`, `validate`, `check`, `ship` |
 | `/design-audit` | Flow-level SPA design audit | `--flow "desc"`, `--steps url1,url2`, `--auth`, `--max N` |
-| `/code-review` | Multi-model PR review with confidence scoring | `--model <name>`, PR number or URL |
-
-## Code Review
-
-Multi-model PR review with confidence scoring. Dispatches your PR to up to 3 models (Claude, Codex, Gemini) in parallel, merges findings, and highlights cross-model agreement as the highest-confidence signal.
-
-```bash
-# Review a PR by number
-/code-review 123
-
-# Review by URL
-/code-review https://github.com/owner/repo/pull/123
-
-# Single-model mode (faster, lower cost)
-/code-review 123 --model claude
-```
-
-**How it works:**
-1. Fetches the PR diff and metadata
-2. Dispatches to available models in parallel
-3. Each model reviews independently with structured output
-4. Findings are merged, deduplicated, and confidence-scored
-5. Cross-model agreement (2+ models flag the same issue) gets the highest confidence
-
-**3-tier degradation:** All 3 models available (best), 2 models (good), single model (baseline). The system adapts to whatever models are accessible.
-
-See the [code-review case study](docs/case-studies/code-review-bugs-caught.md) for a real-world example where 3-model consensus caught a race condition that single-model review missed.
-
 ## Flow Audit
 
 Multi-screen SPA design audit. Navigates through your app screen-by-screen, runs 7-specialist review on each screen, checks cross-screen consistency, and generates a self-contained HTML diagnostic report.
@@ -113,7 +82,6 @@ For the technical architecture, see [ARCHITECTURE.md](ARCHITECTURE.md#flow-audit
 ## Case Studies
 
 - [Design Review Impact: Dashboard Redesign](docs/case-studies/design-review-impact.md) -- From 5.2/10 to 8.4/10 in 3 iterations, ~20 minutes
-- [Code Review: Multi-Model Bug Detection](docs/case-studies/code-review-bugs-caught.md) -- 3 models caught 5 high-confidence issues; single-model caught 2
 
 ## Architecture
 
@@ -223,6 +191,16 @@ Quality assertion definitions: [`evals/assertions.json`](evals/assertions.json)
 Benchmark results: [`evals/results/`](evals/results/) (populated after quality eval runs)
 
 Structural evals run on any machine with `bash` and `jq`. Quality evals require an active Claude Code session with the plugin installed.
+
+## Part of SpSk
+
+SpSk publishes polished AI agent skills as open-source Claude Code plugins.
+
+| Plugin | What it does | Install |
+|--------|-------------|---------|
+| **tasteful-design** | 7-specialist design review + SPA flow audit | `claude /install-plugin tasteful-design@spsk-dev/tasteful-design` |
+| [code-review](https://github.com/spsk-dev/code-review) | 7-agent multi-model PR review | `claude /install-plugin code-review@spsk-dev/code-review` |
+| [consensus](https://github.com/spsk-dev/consensus) | 3-model conclusion validation (1-10 confidence) | `claude /install-plugin consensus@spsk-dev/consensus` |
 
 ## License
 
