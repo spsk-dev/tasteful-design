@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v1.2.0
 milestone_name: Prompting Excellence + Eval Credibility
-status: Ready to execute
-stopped_at: Completed 08-01-PLAN.md (prompt extraction)
-last_updated: "2026-03-30T03:45:51.557Z"
+status: Phase complete — ready for verification
+stopped_at: Completed 08-02-PLAN.md (prompt wiring + structural validation)
+last_updated: "2026-03-30T03:52:18.857Z"
 progress:
   total_phases: 6
-  completed_phases: 0
+  completed_phases: 1
   total_plans: 2
-  completed_plans: 1
+  completed_plans: 2
 ---
 
 # Project State
@@ -40,6 +40,7 @@ Plan: 2 of 2
 | 4-7 (v1.1.0) | 10 | -- | -- |
 | 8-13 (v1.2.0) | 0 | -- | -- |
 | Phase 08 P01 | 4min | 2 tasks | 9 files |
+| Phase 08 P02 | 4min | 2 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -53,6 +54,8 @@ Plan: 2 of 2
 - [Phase 08]: Gemini specialists reference workspace copies (.color-reference.md, .layout-reference.md) not plugin paths
 - [Phase 08]: Boss synthesizer uses scoring_formula/verdict_rules XML tags (orchestrator protocol, not specialist rubric)
 - [Phase 08]: Copy and code-a11y prompts omit reference_knowledge tag (no reference files exist for these specialists)
+- [Phase 08]: Gemini specialists use read-and-construct pattern for prompt loading (@ includes are Claude Code-only)
+- [Phase 08]: Boss synthesis replaced entirely with @ include -- no inline remnants to prevent double-application
 
 ### Pending Todos
 
@@ -65,6 +68,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-30T03:45:51.554Z
-Stopped at: Completed 08-01-PLAN.md (prompt extraction)
+Last session: 2026-03-30T03:52:18.854Z
+Stopped at: Completed 08-02-PLAN.md (prompt wiring + structural validation)
 Resume file: None
