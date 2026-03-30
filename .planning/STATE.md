@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v1.2.0
 milestone_name: Prompting Excellence + Eval Credibility
-status: Ready to plan
-stopped_at: Completed 11-02-PLAN.md (ecosystem update for 7 specialists)
-last_updated: "2026-03-30T05:37:42.774Z"
+status: Ready to execute
+stopped_at: Completed 12-01-PLAN.md (--interact flag and Phase 0.5i interaction protocol)
+last_updated: "2026-03-30T05:50:14.078Z"
 progress:
   total_phases: 6
   completed_phases: 4
-  total_plans: 8
-  completed_plans: 8
+  total_plans: 10
+  completed_plans: 9
 ---
 
 # Project State
@@ -19,12 +19,12 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-29)
 
 **Core value:** Published skills must be immediately useful AND demonstrate architectural sophistication
-**Current focus:** Phase 11 — Specialist Consolidation
+**Current focus:** Phase 12 — Playwright Interaction
 
 ## Current Position
 
-Phase: 12
-Plan: Not started
+Phase: 12 (Playwright Interaction) — EXECUTING
+Plan: 2 of 2
 
 ## Performance Metrics
 
@@ -47,6 +47,7 @@ Plan: Not started
 | Phase 10 P02 | 3min | 2 tasks | 4 files |
 | Phase 11 P01 | 4min | 2 tasks | 5 files |
 | Phase 11 P02 | 7min | 2 tasks | 15 files |
+| Phase 12 P01 | 2min | 2 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -78,6 +79,8 @@ Plan: Not started
 - [Phase 11]: Boss JSON includes copy_quality in scores object for data completeness but formula excludes it from weighted calculation
 - [Phase 11]: CHANGELOG.md v1.0.0 entry preserved as historical record of original 8-specialist architecture
 - [Phase 11]: assertions.json score ranges unchanged -- /16 vs /17 shift absorbed by existing wide ranges
+- [Phase 12]: Interaction screenshots go to 4 of 7 specialists (Motion, Code/A11y, Color, Layout) -- Font, Icon, Intent excluded
+- [Phase 12]: Phase 0.5i uses baseline-interact-reset pattern with browser_close after interactions to release MCP session
 
 ### Pending Todos
 
@@ -90,6 +93,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-30T05:32:33.047Z
-Stopped at: Completed 11-02-PLAN.md (ecosystem update for 7 specialists)
+Last session: 2026-03-30T05:50:14.076Z
+Stopped at: Completed 12-01-PLAN.md (--interact flag and Phase 0.5i interaction protocol)
 Resume file: None
