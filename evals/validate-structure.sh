@@ -120,7 +120,11 @@ if [ -f assets/demo.gif ]; then
 else
   echo "[SKIP] assets/demo.gif (created by demo recording)"
 fi
-check "README.md embeds demo GIF" grep -q "demo.gif" "README.md"
+if [ -f assets/demo.gif ]; then
+  check "README.md embeds demo GIF" grep -q "demo.gif" "README.md"
+else
+  echo "[SKIP] README.md demo GIF embed (demo.gif not yet generated)"
+fi
 
 # Router includes init
 check "design.md routes to design-init" grep -q "design-init" "commands/design.md"

@@ -4,10 +4,6 @@ AI-powered design review for Claude Code. 7 specialist agents evaluate your UI a
 
 Built because AI models are terrible self-critics. They "reliably skew positive" on visual output. This plugin fixes that with independent specialist critique — each agent has domain expertise, curated reference knowledge, and few-shot calibrated scoring.
 
-<p align="center">
-  <img src="assets/demo.gif" alt="SpSk design-review demo -- 7 specialists scoring a landing page" width="720">
-</p>
-
 ## Install
 
 **Plugin registry (recommended):**
@@ -20,7 +16,7 @@ claude /install-plugin tasteful-design@spsk-dev/tasteful-design
 
 ```bash
 git clone https://github.com/spsk-dev/tasteful-design.git
-cd spsk && bash install.sh
+cd tasteful-design && bash install.sh
 ```
 
 ## Quick Start

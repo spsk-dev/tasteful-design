@@ -2,8 +2,10 @@
   "name": "tasteful-design",
   "version": "1.2.0",
   "description": "AI-powered design review and flow audit -- 7 specialist agents with structured JSON output, curated few-shot calibration, and opt-in Playwright interaction capture. Includes multi-screen SPA analysis, cross-screen consistency detection, and HTML diagnostic reports",
-  "author": "SpSk",
+  "author": {
+    "name": "SpSk",
+    "url": "https://github.com/spsk-dev"
+  },
   "homepage": "https://github.com/spsk-dev/tasteful-design",
-  "license": "MIT",
-  "commands": ["design", "design-review", "design-improve", "design-validate", "design-init", "design-audit"]
+  "license": "MIT"
 }

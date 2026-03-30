@@ -5,7 +5,7 @@ set -euo pipefail
 
 REPO_URL="https://github.com/spsk-dev/tasteful-design.git"
 PLUGIN_DIR="${HOME}/.claude/plugins"
-PLUGIN_NAME="spsk"
+PLUGIN_NAME="tasteful-design"
 
 echo "SpSk Installer"
 echo "=============="
@@ -57,4 +57,4 @@ ln -s "${SOURCE_DIR}" "${PLUGIN_DIR}/${PLUGIN_NAME}"
 echo ""
 echo "Installed SpSk to ${PLUGIN_DIR}/${PLUGIN_NAME}"
 echo ""
-echo "Run /code-review or /design-review to get started."
+echo "Run /design-review to get started."
