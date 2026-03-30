@@ -1,8 +1,8 @@
 ---
 name: design-review
 description: >
-  Multi-agent visual design review — 8 specialist agents + boss synthesizer evaluate UI quality
-  across font, color, layout, icon, motion, intent, copy, and code dimensions. Use this skill
+  Multi-agent visual design review — 7 specialist agents + boss synthesizer evaluate UI quality
+  across font, color, layout, icon, motion, intent/copy, and code dimensions. Use this skill
   whenever you've built or modified frontend UI and want honest design feedback. Also use when:
   the user says "review the design", "how does this look", "check the UI", "design review",
   "evaluate the visuals", "is this good enough to ship", or after completing any frontend task
@@ -16,11 +16,11 @@ allowed-tools: Bash(gemini *), Bash(which *), Bash(npx *), Bash(python3 *), Bash
 
 Use the branded output format from shared/output.md for all review output. Start with the signature line, use single-line Unicode boxes for sections, end with the footer. Display each specialist score using the score bar format: ████████░░ 8.0/10. Wrap each specialist section in a single-line Unicode box with the specialist name as header. Use the symbol vocabulary for status indicators (✓ pass, ✗ fail, ⚠ warning).
 
-# Design Review v4 — 8-Specialist Agent Swarm
+# Design Review v4 — 7-Specialist Agent Swarm
 
 ## Why This Exists
 
-AI models are terrible self-critics of visual output. They "reliably skew positive" and "confidently praise the work — even when the quality is obviously mediocre." This skill fixes it by dispatching 8 specialist agents in parallel, each focused on one design dimension with domain expertise from reference files. A boss synthesizer merges findings with cross-specialist confidence scoring.
+AI models are terrible self-critics of visual output. They "reliably skew positive" and "confidently praise the work — even when the quality is obviously mediocre." This skill fixes it by dispatching 7 specialist agents in parallel, each focused on one design dimension with domain expertise from reference files. A boss synthesizer merges findings with cross-specialist confidence scoring.
 
 ## Pre-flight: Environment & Mode
 
@@ -46,11 +46,11 @@ If Tier 3: warn that visual review is impossible, recommend `npx playwright inst
 ### Mode (parse `$ARGUMENTS`)
 
 - **`--quick`**: 4 core specialists (Font, Color, Layout, Intent/Originality). For iterative fix cycles.
-- **Default (full)**: All 8 specialists. For final review before shipping.
+- **Default (full)**: All 7 specialists. For final review before shipping.
 
 Quick mode formula: `(Intent*3 + Originality*3 + UX_Flow*2 + Typography*2 + Color*2 + Layout) / 13`
 Quick mode runs: Font (#1), Color (#2), Layout (#3), Intent/Originality/UX (#6) — 4 agents, 6 scored dimensions.
-Quick mode skips: Icon (#4), Motion (#5), Copy (#7), Code (#8). Saves ~40-50% tokens.
+Quick mode skips: Icon (#4), Motion (#5), Code (#7). Saves ~40-50% tokens.
 If `--quick` AND Tier 3: run Intent + Code only (minimal useful review). Warn user.
 
 ### Style preset (parse `$ARGUMENTS` or config)
@@ -250,7 +250,7 @@ Save the output as `PAGE_BRIEF`. It includes: `PAGE_TYPE`, `INTENT`, `AUDIENCE`,
 
 ```
 I can't confidently determine the page's intent from the source code.
-Before I run the 8 specialists, I need to know:
+Before I run the 7 specialists, I need to know:
 1. What is this page trying to achieve?
 2. Who is the target audience?
 3. What's the primary action a user should take?
@@ -258,13 +258,13 @@ Before I run the 8 specialists, I need to know:
 This matters because a "settings page" and a "landing page" are held to completely different standards.
 ```
 
-Do NOT guess and proceed — a wrong intent classification poisons all 8 specialist evaluations. Better to ask than to review against the wrong standard.
+Do NOT guess and proceed — a wrong intent classification poisons all 7 specialist evaluations. Better to ask than to review against the wrong standard.
 
 ---
 
-## Phase 2: Specialist Dispatch (8 Agents in Parallel)
+## Phase 2: Specialist Dispatch (7 Agents in Parallel)
 
-Launch ALL 8 in the SAME turn. Each specialist:
+Launch ALL 7 in the SAME turn. Each specialist:
 - Gets screenshots + source files + the **full `PAGE_BRIEF`** (intent, audience, primary action, next step)
 - Reads their reference file from `${CLAUDE_PLUGIN_ROOT}/skills/design-review/references/`
 - **Evaluates their domain IN SERVICE OF the page intent** — not in a vacuum
@@ -313,7 +313,7 @@ cp ${CLAUDE_PLUGIN_ROOT}/skills/design-review/references/layout.md ./.layout-ref
 
 **Gemini retry protocol** (Specialists 2 & 3): Run `gemini -y -p "..."`. If output contains "exhausted your capacity" or "rate limit", wait 10s and retry once. If still failing, dispatch a Claude Sonnet agent with the same prompt reading the screenshot PNGs + reference file instead. Note the fallback in the final review: "Color/Layout reviewed by Claude Sonnet (Gemini unavailable)."
 
-**Quick mode**: If `--quick`, dispatch only Specialists 1, 2, 3, 6. Skip 4, 5, 7, 8.
+**Quick mode**: If `--quick`, dispatch only Specialists 1, 2, 3, 6. Skip 4, 5, 7.
 
 ### Specialist 1: Font (Claude Sonnet Agent)
 
@@ -374,15 +374,7 @@ Reads: screenshots + source + PAGE_BRIEF + reference knowledge. This is the most
 Read these screenshots visually: {REVIEW_DIR}/desktop.png, {REVIEW_DIR}/mobile.png, {REVIEW_DIR}/fold.png
 Read the source files: {file list}
 
-### Specialist 7: Copy & Language (Claude Haiku Agent)
-
-Reads: source code (extracts visible text)
-
-@${CLAUDE_PLUGIN_ROOT}/skills/design-review/prompts/copy.md
-
-Read the source files: {file list}
-
-### Specialist 8: Code & Accessibility (Claude Sonnet Agent)
+### Specialist 7: Code & Accessibility (Claude Sonnet Agent)
 
 Reads: source code only
 
@@ -451,7 +443,7 @@ When user says "re-review", "check again", or runs `/design-review` again on the
 2. Re-run ONLY specialists that scored ≤2 or flagged critical issues in the previous review
 3. Keep scores from passing specialists (≥3) — don't re-run what already passed
 4. Recompute weighted score mixing kept (old) and fresh (new) scores
-5. Label output: "Re-review iteration N — re-ran {list} ({n} of 8)"
+5. Label output: "Re-review iteration N — re-ran {list} ({n} of 7)"
 6. Use numbered dirs: `/tmp/design-review-iter-1/`, `-iter-2/`, etc.
 
 ### 5c. Score comparison table
@@ -475,7 +467,7 @@ Include in every re-review output:
 - **User provides Figma reference**: Pass to Intent specialist as gold standard. Highest-quality review mode.
 - **User provides URL in `$ARGUMENTS`**: Use that URL directly, skip server detection.
 - **User disagrees with verdict**: User's judgment overrides. Skill surfaces issues; user decides.
-- **`--quick` mode**: Dispatch Specialists 1, 2, 3, 6 only. Report "Quick review (4/8 specialists)."
+- **`--quick` mode**: Dispatch Specialists 1, 2, 3, 6 only. Report "Quick review (4/7 specialists)."
 
 ## Reference Files
 

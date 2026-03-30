@@ -27,8 +27,8 @@ After all specialists return their findings, synthesize following this protocol:
 </instructions>
 
 <scoring_formula>
-Full mode (8 specialists, 10 scored dimensions):
-(Intent*3 + Originality*3 + UX_Flow*2 + Typography*2 + Color*2 + Layout + Icons + Motion + Copy + Code) / 17
+Full mode (7 specialists, 9 scored dimensions):
+(Intent*3 + Originality*3 + UX_Flow*2 + Typography*2 + Color*2 + Layout + Icons + Motion + Code) / 16
 
 Quick mode (4 specialists, 6 scored dimensions):
 (Intent*3 + Originality*3 + UX_Flow*2 + Typography*2 + Color*2 + Layout) / 13
@@ -36,8 +36,9 @@ Quick mode (4 specialists, 6 scored dimensions):
 Read weights from ${CLAUDE_PLUGIN_ROOT}/config/scoring.json if available.
 Scale: 1.0 to 4.0
 
-Note: Specialist 6 (Intent/Originality/UX) returns three separate scores.
-Each gets its own weight in the formula. Do not merge UX Flow into Intent.
+Note: Specialist 6 (Intent/Originality/UX/Copy) returns four sub-scores (Intent, Originality, UX Flow, Copy Quality).
+Intent, Originality, and UX Flow are weighted in the formula. Copy Quality (CpQ) is reported but not weighted.
+Each weighted sub-score gets its own weight. Do not merge UX Flow into Intent.
 </scoring_formula>
 
 <verdict_rules>
@@ -65,7 +66,7 @@ Present the full human-readable review first. This is what the user sees in the 
 **Verdict: SHIP / CONDITIONAL SHIP / BLOCK**
 **Score: {weighted}/4.0**
 **Page Type: {type} -- Creativity {required/appropriate/template-ok}**
-**Mode: {Full (8/8) | Quick (4/8)} -- Tier {1|2|3}**
+**Mode: {Full (7/7) | Quick (4/7)} -- Tier {1|2|3}**
 
 ### Scores
 | Specialist | Score | Weight | Key Finding |
@@ -78,13 +79,12 @@ Present the full human-readable review first. This is what the user sees in the 
 | Layout | {n}/4 | 1x | {one-line} |
 | Icons | {n}/4 | 1x | {one-line} |
 | Motion | {n}/4 | 1x | {one-line} |
-| Copy & Language | {n}/4 | 1x | {one-line} |
 | Code & A11y | {n}/4 | 1x | {one-line} |
 
-Specialist 6 returns three scores (Intent, Originality, UX Flow). Each gets its own row in the table. The formula divides by 17, not 15.
+Specialist 6 returns four sub-scores (Intent, Originality, UX Flow, Copy Quality). Intent, Originality, and UX Flow are weighted. Copy Quality is reported but not weighted.
 
 Show the calculation explicitly:
-(I*3 + O*3 + UX*2 + T*2 + C*2 + L + Ic + M + Cp + Co) / 17 = N/17 = X.XX/4.0
+(I*3 + O*3 + UX*2 + T*2 + C*2 + L + Ic + M + Co) / 16 = N/16 = X.XX/4.0
 
 The score in the header must equal the calculated weighted score exactly. Do not round or approximate differently.
 
@@ -120,10 +120,10 @@ Then, at the end, output structured data for programmatic consumption:
     "layout": 3,
     "icons": 2,
     "motion": 3,
-    "copy": 3,
-    "code_a11y": 2
+    "code_a11y": 2,
+    "copy_quality": 3
   },
-  "weighted_score": 2.65,
+  "weighted_score": 2.69,
   "verdict": "CONDITIONAL",
   "consensus_findings": [
     {
@@ -148,7 +148,7 @@ Then, at the end, output structured data for programmatic consumption:
 </boss_output>
 
 Requirements:
-- scores: all 10 dimensions (6 in quick mode, null for skipped)
+- scores: all 9 weighted dimensions plus copy_quality (6 in quick mode, null for skipped)
 - weighted_score: float matching the explicit calculation
 - verdict: exactly SHIP, CONDITIONAL, or BLOCK
 - top_fixes: array of up to 5, ordered by priority
