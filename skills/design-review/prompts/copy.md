@@ -38,5 +38,27 @@ Each score must be justified by specific evidence from the page.
 </scoring_rubric>
 
 <output_format>
-Return: issues list with exact text quotes + score + one-line summary.
+First, analyze the copy in <thinking> tags -- examine grammar, tone, CTAs, terminology.
+
+Then output your structured findings:
+
+<specialist_output>
+{
+  "specialist": "copy",
+  "score": 3,
+  "findings": [
+    {
+      "element": "selector or description",
+      "issue": "what is wrong",
+      "recommendation": "what to do instead"
+    }
+  ],
+  "summary": "one-line summary of your evaluation"
+}
+</specialist_output>
+
+Requirements:
+- score: integer 1-4, must match your rubric justification
+- findings: array of 2-5 objects, each with element/issue/recommendation
+- summary: one sentence
 </output_format>

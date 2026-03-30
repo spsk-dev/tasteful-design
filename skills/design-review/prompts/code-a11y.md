@@ -37,5 +37,27 @@ Each score must be justified by specific evidence from the page.
 </scoring_rubric>
 
 <output_format>
-Return: issues list with file:line references + score + one-line summary.
+First, analyze the code and accessibility in <thinking> tags -- examine HTML semantics, WCAG compliance, responsive patterns.
+
+Then output your structured findings:
+
+<specialist_output>
+{
+  "specialist": "code_a11y",
+  "score": 3,
+  "findings": [
+    {
+      "element": "selector or description",
+      "issue": "what is wrong",
+      "recommendation": "what to do instead"
+    }
+  ],
+  "summary": "one-line summary of your evaluation"
+}
+</specialist_output>
+
+Requirements:
+- score: integer 1-4, must match your rubric justification
+- findings: array of 2-5 objects, each with element/issue/recommendation
+- summary: one sentence
 </output_format>
