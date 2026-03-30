@@ -140,6 +140,41 @@ check "report fixture has 3 screens" bash -c "jq '.screens | length' evals/fixtu
 # flow-scoring.json (required by report)
 check "config/flow-scoring.json is valid JSON" jq empty "config/flow-scoring.json"
 
+# Phase 8: Extracted specialist prompts
+PROMPT_DIR="skills/design-review/prompts"
+
+# 8.1 Prompt file existence (9 checks)
+for prompt in font.md color.md layout.md icons.md motion.md intent.md copy.md code-a11y.md boss.md; do
+  check "$PROMPT_DIR/$prompt exists" test -f "$PROMPT_DIR/$prompt"
+done
+
+# 8.2 Required XML tags in specialist prompts (4 checks per file, 8 files = 32 checks)
+for prompt in font.md color.md layout.md icons.md motion.md intent.md copy.md code-a11y.md; do
+  check "$prompt has <role> tag" grep -q '<role>' "$PROMPT_DIR/$prompt"
+  check "$prompt has <instructions> tag" grep -q '<instructions>' "$PROMPT_DIR/$prompt"
+  check "$prompt has <scoring_rubric> tag" grep -q '<scoring_rubric>' "$PROMPT_DIR/$prompt"
+  check "$prompt has <output_format> tag" grep -q '<output_format>' "$PROMPT_DIR/$prompt"
+done
+
+# 8.3 Boss synthesizer has different required tags (5 checks)
+check "boss.md has <role> tag" grep -q '<role>' "$PROMPT_DIR/boss.md"
+check "boss.md has <instructions> tag" grep -q '<instructions>' "$PROMPT_DIR/boss.md"
+check "boss.md has <scoring_formula> tag" grep -q '<scoring_formula>' "$PROMPT_DIR/boss.md"
+check "boss.md has <verdict_rules> tag" grep -q '<verdict_rules>' "$PROMPT_DIR/boss.md"
+check "boss.md has <output_format> tag" grep -q '<output_format>' "$PROMPT_DIR/boss.md"
+
+# 8.4 Scoring rubrics have concrete anchors -- spot-check (2 checks)
+check "Specialist prompts have 4-level rubrics" bash -c "grep -l '1 (Poor)' $PROMPT_DIR/font.md $PROMPT_DIR/color.md $PROMPT_DIR/intent.md | wc -l | tr -d ' ' | grep -q '^3$'"
+check "Rubrics have Excellent level" bash -c "grep -l '4 (Excellent)' $PROMPT_DIR/font.md $PROMPT_DIR/color.md $PROMPT_DIR/intent.md | wc -l | tr -d ' ' | grep -q '^3$'"
+
+# 8.5 No aggressive directives in prompt files (1 check)
+AGGRESSIVE=$(grep -rn 'FLAG SPECIFICALLY\|Find at least [0-9]' "$PROMPT_DIR/" 2>/dev/null || true)
+check "No aggressive directives in prompts" test -z "$AGGRESSIVE"
+
+# 8.6 design-review.md references extracted prompts (2 checks)
+check "design-review.md includes font.md prompt" grep -q 'prompts/font.md' commands/design-review.md
+check "design-review.md includes boss.md prompt" grep -q 'prompts/boss.md' commands/design-review.md
+
 echo ""
 TOTAL=$((PASS + FAIL))
 echo "$PASS/$TOTAL checks passed"
