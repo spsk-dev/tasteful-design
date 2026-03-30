@@ -40,7 +40,7 @@
 
 ### Generation & Interaction
 
-- [ ] **GNRT-01**: `references/generation.md` created from Anthropic's DISTILLED_AESTHETICS_PROMPT adapted for /design-improve build phase
+- [x] **GNRT-01**: `references/generation.md` created from Anthropic's DISTILLED_AESTHETICS_PROMPT adapted for /design-improve build phase
 - [x] **INTR-01**: Opt-in `--interact` flag for Playwright page interaction (hover, focus, scroll) before specialist scoring
 - [x] **INTR-02**: Baseline-interact-reset pattern: screenshot clean state, interact, reload, then review
 - [x] **INTR-03**: Interaction budget capped at 8 interactions per review
@@ -87,7 +87,7 @@
 | SPEC-01 | Phase 11 | Complete |
 | SPEC-02 | Phase 11 | Complete |
 | SPEC-03 | Phase 11 | Complete |
-| GNRT-01 | Phase 13 | Pending |
+| GNRT-01 | Phase 13 | Complete |
 | INTR-01 | Phase 12 | Complete |
 | INTR-02 | Phase 12 | Complete |
 | INTR-03 | Phase 12 | Complete |
