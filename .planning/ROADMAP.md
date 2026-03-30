@@ -122,7 +122,7 @@ Plans:
 
 Plans:
 - [x] 06-01-PLAN.md -- Report generator script with HTML template, screenshot embedding, flow map, and test fixture
-- [ ] 06-02-PLAN.md -- Wire report generation into design-audit.md Section 15, visual checkpoint
+- [x] 06-02-PLAN.md -- Wire report generation into design-audit.md Section 15, visual checkpoint
 
 ### Phase 7: Release Polish
 **Goal**: v1.1.0 is documented, demoed, and tagged -- the README sells the flow audit feature, all repo references are consistent, and the release is installable
