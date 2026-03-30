@@ -25,7 +25,7 @@ Enter
 Sleep 1.5s
 
 # Scene 2: Signature line (1s)
-Type " SpSk  design-review  v1.0.0  ───  8 specialists  ·  tier 1"
+Type " SpSk  design-review  v1.1.0  ───  8 specialists  ·  tier 1"
 Enter
 Sleep 1s
 
@@ -116,6 +116,6 @@ Sleep 1.5s
 
 # Scene 6: Footer (1s)
 Enter
-Type "github.com/felipemachado/spsk"
+Type "github.com/spsk-dev/tasteful-design"
 Enter
 Sleep 2s

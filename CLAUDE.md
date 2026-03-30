@@ -166,7 +166,7 @@ A GitHub portfolio project that publishes Felipe Machado's most polished AI agen
 
 ### Constraints
 
-- **Distribution**: Claude Code plugin registry as primary (`claude /install-plugin design-review@felipemachado/spsk`) + install.sh for manual
+- **Distribution**: Claude Code plugin registry as primary (`claude /install-plugin tasteful-design@spsk-dev/tasteful-design`) + install.sh for manual
 - **Branding**: Clean and compact, NOT big ASCII art. Signature line format: ` SpSk  design-review  v1.2.0  ---  8 specialists  ·  tier 1`
 - **Init wizard**: Exactly 5 questions with opinionated defaults (page type, vibe preset, light/dark, brand colors, font preference)
 - **Quality bar**: Must show what DIDN'T work in CHANGELOG (v1 single-agent scored 40%) — transparency builds credibility

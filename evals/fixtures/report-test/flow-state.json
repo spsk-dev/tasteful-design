@@ -13,7 +13,7 @@
       "name": "Login",
       "slug": "login",
       "url": "https://app.example.com/login",
-      "screenshot_path": "/Users/felipemachado/Sites/spsk/evals/fixtures/report-test/screen-1-login.png",
+      "screenshot_path": "./evals/fixtures/report-test/screen-1-login.png",
       "review": {
         "mode": "full",
         "specialist_count": 8,
@@ -45,7 +45,7 @@
       "name": "Dashboard",
       "slug": "dashboard",
       "url": "https://app.example.com/dashboard",
-      "screenshot_path": "/Users/felipemachado/Sites/spsk/evals/fixtures/report-test/screen-2-dashboard.png",
+      "screenshot_path": "./evals/fixtures/report-test/screen-2-dashboard.png",
       "review": {
         "mode": "quick",
         "specialist_count": 4,
@@ -73,7 +73,7 @@
       "name": "Settings",
       "slug": "settings",
       "url": "https://app.example.com/settings/notifications",
-      "screenshot_path": "/Users/felipemachado/Sites/spsk/evals/fixtures/report-test/screen-3-settings.png",
+      "screenshot_path": "./evals/fixtures/report-test/screen-3-settings.png",
       "review": {
         "mode": "full",
         "specialist_count": 8,
