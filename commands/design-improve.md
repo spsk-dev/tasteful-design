@@ -42,7 +42,8 @@ Build → Review → BLOCK? → Apply fixes → Re-review → Still BLOCK? → F
 **Before building, read the style preset** at `${CLAUDE_PLUGIN_ROOT}/config/style-presets.json` (check `active_preset` or `--style` argument). If a preset is active, use its typography, colors, animations, and layout guidance as the starting point for the build — not generic defaults.
 
 **Then read the anti-slop config at `${CLAUDE_PLUGIN_ROOT}/config/anti-slop.json`** for banned fonts, palettes, and patterns. If the file doesn't exist, use these defaults:
-- Do NOT use: Dancing Script, Playfair Display, Poppins, Montserrat, or Inter
+- Do NOT use: Dancing Script, Poppins, Montserrat, or Inter
+- Playfair Display: only for editorial contexts (long-form articles, magazine layouts), not SaaS/landing pages
 - Do NOT use: dark+gold, purple gradient, synthwave palette
 - Do NOT use: emoji as icons — use Lucide SVGs or inline SVGs
 - DO use: at most 2 font families (check `${CLAUDE_PLUGIN_ROOT}/skills/design-review/references/typography.md` for good options)
@@ -50,6 +51,8 @@ Build → Review → BLOCK? → Apply fixes → Re-review → Still BLOCK? → F
 - DO add: proper Spanish accents if the content is in Spanish
 
 Users can customize `anti-slop.json` to add project-specific banned/recommended patterns.
+
+**Then read the generation aesthetics reference at `${CLAUDE_PLUGIN_ROOT}/skills/design-review/references/generation.md`** for positive design guidance. This covers typography choices, color strategy, motion principles, background depth, and variation enforcement. Use this as creative direction -- it tells you what to aspire to, while anti-slop tells you what to avoid.
 
 ## Phase B: First Review
 
