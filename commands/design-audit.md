@@ -700,16 +700,16 @@ If `browser_snapshot` returns an empty or minimal accessibility tree:
 
 ## Key Constraints
 
-- **Do NOT generate HTML reports.** That is Phase 6.
 - **Every browser interaction uses Playwright MCP tools.** Never write shell scripts for navigation.
 - **Always take a fresh `browser_snapshot` immediately before `browser_click`.** Stale element refs cause failures (Pitfall 5).
 - **Never use `networkidle`.** SPAs with analytics/WebSockets never reach idle (Pitfall 1).
 - **Progressive persistence.** Write flow-state.json after each screen capture, after each screen review, after consistency analysis, and after flow score computation. Mid-flow failures must preserve partial results.
-- **The flow-state.json is the contract** between navigation (Sections 1-9), review (Sections 10-11), consistency (Section 12), scoring (Section 13), and reporting (Phase 6). Match the schema exactly.
+- **The flow-state.json is the contract** between navigation (Sections 1-9), review (Sections 10-11), consistency (Section 12), scoring (Section 13), and reporting (Section 15). Match the schema exactly.
 - **Sections 10-14 run only after navigation completes.** If navigation errors with <2 screens, skip review and show error summary.
 - **Per-screen reviews run sequentially, not in parallel.** Each screen's review must complete before the next starts. This manages token budget (Pitfall 10 from PITFALLS.md).
 - **Consistency analysis runs AFTER all per-screen reviews.** It is a post-processing pass, not a 9th specialist (per D-84). It reads specialist findings from all screens and compares them.
 - **The animation detection hooks must NOT disrupt the navigation loop.** If browser_evaluate fails for animation injection, log the error and proceed without animation data for that screen.
+- **Section 15 runs after Section 14 even if some reviews had errors.** The report shows whatever data is available. Report generation failure is non-blocking -- the terminal summary from Section 14 already shows results.
 
 ---
 
@@ -1220,7 +1220,7 @@ Consistency findings with "conflict" severity should rank above single-screen is
 ### 14f. Next step hint
 
 ```
-Next: Run Phase 6 to generate the HTML diagnostic report
+Next: Generating HTML diagnostic report...
 ```
 
 ### 14g. Footer
@@ -1229,4 +1229,46 @@ Next: Run Phase 6 to generate the HTML diagnostic report
 github.com/spsk-dev/tasteful-design
 ```
 
-<!-- design-audit.md: 14 sections — navigation (1-9), review (10), animation (11), consistency (12), scoring (13), summary (14) -->
+---
+
+## 15. Generate HTML Diagnostic Report
+
+After the flow review summary (Section 14), generate the self-contained HTML report.
+
+### 15a. Call report generator
+
+Run the report generator script:
+
+```bash
+bash "${CLAUDE_PLUGIN_ROOT}/scripts/generate-report.sh" "${AUDIT_DIR}/flow-state.json" "${AUDIT_DIR}/report-$(date -u +%Y%m%dT%H%M%SZ).html"
+```
+
+Store the output path as `REPORT_PATH`.
+
+**If the script fails** (non-zero exit):
+- Show warning: `Warning: HTML report generation failed. Flow results are still available in flow-state.json.`
+- Do NOT fail the entire audit -- the terminal summary from Section 14 already shows results
+- Log the error to flow-state.json: `"report_error": "{error message}"`
+
+### 15b. Update flow-state.json
+
+Add the report path to flow-state.json:
+```json
+{
+  "report_path": "{REPORT_PATH}"
+}
+```
+
+### 15c. Display report path
+
+Show branded output:
+```
+┌─ REPORT ──────────────────────────────────────────────────┐
+│  ✓ HTML report generated                                   │
+│  Path: {REPORT_PATH}                                       │
+│                                                             │
+│  Open in browser to view full diagnostic with screenshots  │
+└────────────────────────────────────────────────────────────┘
+```
+
+<!-- design-audit.md: 15 sections — navigation (1-9), review (10), animation (11), consistency (12), scoring (13), summary (14), report (15) -->
