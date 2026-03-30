@@ -808,10 +808,22 @@ After each screen's review completes, update that screen's entry in flow-state.j
     "weighted_score": 2.85,
     "verdict": "CONDITIONAL",
     "findings": ["finding 1", "finding 2"],
-    "cross_specialist_findings": ["cross-finding 1"]
+    "cross_specialist_findings": ["cross-finding 1"],
+    "top_fixes": [
+      {
+        "priority": 1,
+        "severity": "CRITICAL",
+        "issue": "Replace Playfair Display with Instrument Serif",
+        "file": "index.html",
+        "line": 15,
+        "specialists": ["typography", "intent"]
+      }
+    ]
   }
 }
 ```
+
+When the boss produces `<boss_output>` JSON, extract the `top_fixes` array and store it in the screen review entry. This enables `generate-report.sh` to read fixes programmatically from flow-state.json. If no `<boss_output>` JSON is found, store an empty array for `top_fixes`.
 
 For quick mode screens, only the 4 specialist scores (mapped to the 6 scored dimensions from design-review.md quick mode) are present. Missing dimensions are null:
 ```json

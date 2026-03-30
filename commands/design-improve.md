@@ -69,6 +69,12 @@ Read the verdict and score.
 
 Read the fix list from the review. Apply fixes in priority order:
 
+When the review produces structured JSON output (v1.2.0+), extract fixes from the `<boss_output>` JSON block:
+- Parse the `top_fixes` array from the JSON: each entry has `priority`, `severity`, `issue`, `file`, `line`, and `specialists`
+- Apply fixes in array order (already sorted by priority)
+- Use the `file` and `line` fields for precise location of changes
+- If no `<boss_output>` JSON is found (no `top_fixes` array available), fall back to reading the human-readable "Top 5 Fixes" section as before
+
 1. All **[CRITICAL]** fixes (these block shipping no matter what)
 2. Top 2-3 **[HIGH]** fixes
 3. Stop — don't fix [MEDIUM] or [LOW] yet (diminishing returns per iteration)

@@ -301,49 +301,57 @@ generate_summary() {
   fi
   echo '  </div>'
 
-  # Top 5 priority fixes -- gather all findings sorted by screen importance
+  # Top 5 priority fixes -- JSON-first from top_fixes, fallback to findings
   echo '  <div class="priority-fixes">'
   echo '    <h3>Top Priority Fixes</h3>'
   echo '    <ol class="fix-list">'
 
-  # Collect findings across all screens with screen context
-  local fix_count=0
-  for i in $(seq 0 $((SCREEN_COUNT - 1))); do
-    local findings_count
-    findings_count=$(jq -r ".screens[$i].review.findings | length // 0" "$FLOW_STATE" 2>/dev/null)
-    if [[ "$findings_count" -gt 0 ]]; then
-      local sname
-      sname=$(jq -r ".screens[$i].name // \"Screen $((i+1))\"" "$FLOW_STATE")
-      for j in $(seq 0 $((findings_count - 1))); do
-        if [[ $fix_count -ge 5 ]]; then break 2; fi
-        local finding
-        finding=$(jq -r ".screens[$i].review.findings[$j]" "$FLOW_STATE")
-        echo "      <li><strong>${sname}:</strong> ${finding}</li>"
-        fix_count=$((fix_count + 1))
-      done
-    fi
-  done
+  # JSON-first: read top_fixes from flow-state.json if available (v1.2.0+)
+  local top_fixes_count
+  top_fixes_count=$(jq '[.screens[].review.top_fixes // [] | .[]] | length' "$FLOW_STATE" 2>/dev/null || echo "0")
+  if [[ "$top_fixes_count" -gt 0 ]]; then
+    # Read structured top_fixes across all screens, deduplicate by issue text, take top 5
+    jq -r '[.screens[].review.top_fixes // [] | .[]] | unique_by(.issue) | sort_by(.priority) | .[:5] | .[] | "      <li><strong>[\(.severity)]</strong> \(.issue) <span class=\"meta-item\">-- \(.file // "unknown"):\(.line // "?")</span></li>"' "$FLOW_STATE" 2>/dev/null
+  else
+    # Fallback: gather findings from screens (pre-v1.2.0 format)
+    local fix_count=0
+    for i in $(seq 0 $((SCREEN_COUNT - 1))); do
+      local findings_count
+      findings_count=$(jq -r ".screens[$i].review.findings | length // 0" "$FLOW_STATE" 2>/dev/null)
+      if [[ "$findings_count" -gt 0 ]]; then
+        local sname
+        sname=$(jq -r ".screens[$i].name // \"Screen $((i+1))\"" "$FLOW_STATE")
+        for j in $(seq 0 $((findings_count - 1))); do
+          if [[ $fix_count -ge 5 ]]; then break 2; fi
+          local finding
+          finding=$(jq -r ".screens[$i].review.findings[$j]" "$FLOW_STATE")
+          echo "      <li><strong>${sname}:</strong> ${finding}</li>"
+          fix_count=$((fix_count + 1))
+        done
+      fi
+    done
 
-  # Also pull cross-specialist findings
-  for i in $(seq 0 $((SCREEN_COUNT - 1))); do
-    if [[ $fix_count -ge 5 ]]; then break; fi
-    local cross_count
-    cross_count=$(jq -r ".screens[$i].review.cross_specialist_findings | length // 0" "$FLOW_STATE" 2>/dev/null)
-    if [[ "$cross_count" -gt 0 ]]; then
-      local sname
-      sname=$(jq -r ".screens[$i].name // \"Screen $((i+1))\"" "$FLOW_STATE")
-      for j in $(seq 0 $((cross_count - 1))); do
-        if [[ $fix_count -ge 5 ]]; then break 2; fi
-        local finding
-        finding=$(jq -r ".screens[$i].review.cross_specialist_findings[$j]" "$FLOW_STATE")
-        echo "      <li><strong>${sname}:</strong> ${finding}</li>"
-        fix_count=$((fix_count + 1))
-      done
-    fi
-  done
+    # Also pull cross-specialist findings
+    for i in $(seq 0 $((SCREEN_COUNT - 1))); do
+      if [[ $fix_count -ge 5 ]]; then break; fi
+      local cross_count
+      cross_count=$(jq -r ".screens[$i].review.cross_specialist_findings | length // 0" "$FLOW_STATE" 2>/dev/null)
+      if [[ "$cross_count" -gt 0 ]]; then
+        local sname
+        sname=$(jq -r ".screens[$i].name // \"Screen $((i+1))\"" "$FLOW_STATE")
+        for j in $(seq 0 $((cross_count - 1))); do
+          if [[ $fix_count -ge 5 ]]; then break 2; fi
+          local finding
+          finding=$(jq -r ".screens[$i].review.cross_specialist_findings[$j]" "$FLOW_STATE")
+          echo "      <li><strong>${sname}:</strong> ${finding}</li>"
+          fix_count=$((fix_count + 1))
+        done
+      fi
+    done
 
-  if [[ $fix_count -eq 0 ]]; then
-    echo '      <li class="text-muted">No issues found -- looking good!</li>'
+    if [[ $fix_count -eq 0 ]]; then
+      echo '      <li class="text-muted">No issues found -- looking good!</li>'
+    fi
   fi
 
   echo '    </ol>'
