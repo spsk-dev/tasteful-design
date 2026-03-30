@@ -118,8 +118,11 @@ Plans:
   2. Each screen section shows the screenshot, 8-specialist scores, specific issues found, and fix recommendations, with specialist details collapsed by default and expandable on click
   3. The report includes an overall flow score summary with the top 5 priority fixes across all screens
   4. The report prints cleanly to PDF via browser print dialog (`@media print` styles), and total file size stays under 5MB
-**Plans**: TBD
-**UI hint**: yes
+**Plans:** 2 plans
+
+Plans:
+- [ ] 06-01-PLAN.md -- Report generator script with HTML template, screenshot embedding, flow map, and test fixture
+- [ ] 06-02-PLAN.md -- Wire report generation into design-audit.md Section 15, visual checkpoint
 
 ### Phase 7: Release Polish
 **Goal**: v1.1.0 is documented, demoed, and tagged -- the README sells the flow audit feature, all repo references are consistent, and the release is installable
@@ -144,5 +147,5 @@ Phases execute in numeric order: 4 -> 5 -> 6 -> 7
 | 3. Second Skill + Release | v1.0.0 | 3/3 | Complete | 2026-03-29 |
 | 4. Flow Navigation Engine | v1.1.0 | 3/3 | Complete | 2026-03-30 |
 | 5. Per-Screen Review + Animation | v1.1.0 | 0/3 | Planned | - |
-| 6. HTML Diagnostic Report | v1.1.0 | 0/? | Not started | - |
+| 6. HTML Diagnostic Report | v1.1.0 | 0/2 | Planned | - |
 | 7. Release Polish | v1.1.0 | 0/? | Not started | - |
