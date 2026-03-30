@@ -1,0 +1,25 @@
+{
+  "max_screens": 10,
+  "dom_stability": {
+    "mutation_quiet_ms": 800,
+    "fallback_timeout_ms": 2000,
+    "observe_options": ["childList", "subtree", "attributes", "characterData"]
+  },
+  "font_readiness_timeout_ms": 5000,
+  "screenshot": {
+    "full_page": false,
+    "format": "png",
+    "viewport": { "width": 1440, "height": 900 }
+  },
+  "flow_state": {
+    "version": "1.0",
+    "output_dir_prefix": "/tmp/design-audit-",
+    "screenshot_naming": "screen-{N}-{slug}.png",
+    "state_file": "flow-state.json"
+  },
+  "navigation": {
+    "action_timeout_ms": 5000,
+    "navigation_timeout_ms": 60000,
+    "post_click_settle_ms": 300
+  }
+}
