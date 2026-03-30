@@ -145,7 +145,7 @@ Plans:
 - [ ] **Phase 8: Prompt Extraction + Restructuring** - Specialist prompts extracted to individual files, restructured with XML tags, aggressive directives removed, baselines recorded
 - [ ] **Phase 9: Layer 2 Eval Runner** - Quality eval runner executes real assertions against design-review output with calibrated ranges and verdict gates
 - [x] **Phase 10: Structured JSON Output** - All specialists and boss emit structured JSON for deterministic parsing by evals, improve loop, and report generator (completed 2026-03-30)
-- [ ] **Phase 11: Specialist Consolidation** - Copy folded into Intent/Originality/UX, scoring weights atomically updated, 8 to 7 specialists
+- [x] **Phase 11: Specialist Consolidation** - Copy folded into Intent/Originality/UX, scoring weights atomically updated, 8 to 7 specialists (completed 2026-03-30)
 - [ ] **Phase 12: Playwright Interaction** - Opt-in hover/focus/scroll capture before specialist scoring with baseline-interact-reset pattern
 - [ ] **Phase 13: Few-Shot Examples + Polish** - Curated examples per specialist, chain-of-thought separation, Anthropic aesthetics integration
 
@@ -205,11 +205,11 @@ Plans:
   1. Running `/design-review` dispatches 7 specialists (not 8), with Intent/Originality/UX producing 4 sub-scores: intent_match, originality, ux_flow, copy_quality
   2. `scoring.json` reads total_weight: 16 (not 17), quick_mode weights are recalculated, and `validate-structure.sh` includes an assertion verifying sum of individual weights equals total_weight
   3. Running `run-quality-evals.sh` passes with 7 specialists -- all assertion ranges recalibrated for the merged architecture
-**Plans:** 1/2 plans executed
+**Plans:** 2/2 plans complete
 
 Plans:
 - [x] 11-01-PLAN.md -- Core merge: Copy into Intent with 4 sub-scores, scoring.json to /16, boss formula, design-review dispatch 7 specialists
-- [ ] 11-02-PLAN.md -- Ecosystem updates: weight-sum assertion, eval tooling, docs, commands, branding for 7 specialists
+- [x] 11-02-PLAN.md -- Ecosystem updates: weight-sum assertion, eval tooling, docs, commands, branding for 7 specialists
 
 ### Phase 12: Playwright Interaction
 **Goal**: Users can opt into hover/focus/scroll interaction capture before specialist scoring, giving specialists richer state information without mutating the page they review
@@ -251,6 +251,6 @@ Phases execute in numeric order: 8 -> 9 -> 10 -> 11 -> 12 -> 13
 | 8. Prompt Extraction + Restructuring | v1.2.0 | 2/2 | Complete | 2026-03-30 |
 | 9. Layer 2 Eval Runner | v1.2.0 | 2/2 | Complete | 2026-03-30 |
 | 10. Structured JSON Output | v1.2.0 | 2/2 | Complete    | 2026-03-30 |
-| 11. Specialist Consolidation | v1.2.0 | 1/2 | In Progress|  |
+| 11. Specialist Consolidation | v1.2.0 | 2/2 | Complete   | 2026-03-30 |
 | 12. Playwright Interaction | v1.2.0 | 0/? | Not started | - |
 | 13. Few-Shot Examples + Polish | v1.2.0 | 0/? | Not started | - |

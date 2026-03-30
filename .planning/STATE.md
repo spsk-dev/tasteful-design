@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v1.2.0
 milestone_name: Prompting Excellence + Eval Credibility
-status: Ready to execute
-stopped_at: Completed 11-01-PLAN.md (copy specialist merge into intent)
-last_updated: "2026-03-30T05:22:33.215Z"
+status: Phase complete — ready for verification
+stopped_at: Completed 11-02-PLAN.md (ecosystem update for 7 specialists)
+last_updated: "2026-03-30T05:32:33.050Z"
 progress:
   total_phases: 6
-  completed_phases: 3
+  completed_phases: 4
   total_plans: 8
-  completed_plans: 7
+  completed_plans: 8
 ---
 
 # Project State
@@ -46,6 +46,7 @@ Plan: 2 of 2
 | Phase 10 P01 | 2min | 2 tasks | 9 files |
 | Phase 10 P02 | 3min | 2 tasks | 4 files |
 | Phase 11 P01 | 4min | 2 tasks | 5 files |
+| Phase 11 P02 | 7min | 2 tasks | 15 files |
 
 ## Accumulated Context
 
@@ -75,6 +76,8 @@ Plan: 2 of 2
 - [Phase 10]: generate-report.sh deduplicates top_fixes by issue text across screens via jq unique_by
 - [Phase 11]: copy_quality is informational (not weighted) -- Intent produces 4 sub-scores but only 3 are weighted, total_weight 17->16
 - [Phase 11]: Boss JSON includes copy_quality in scores object for data completeness but formula excludes it from weighted calculation
+- [Phase 11]: CHANGELOG.md v1.0.0 entry preserved as historical record of original 8-specialist architecture
+- [Phase 11]: assertions.json score ranges unchanged -- /16 vs /17 shift absorbed by existing wide ranges
 
 ### Pending Todos
 
@@ -87,6 +90,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-30T05:22:33.213Z
-Stopped at: Completed 11-01-PLAN.md (copy specialist merge into intent)
+Last session: 2026-03-30T05:32:33.047Z
+Stopped at: Completed 11-02-PLAN.md (ecosystem update for 7 specialists)
 Resume file: None
