@@ -5,5 +5,5 @@
   "author": "SpSk",
   "homepage": "https://github.com/spsk-dev/tasteful-design",
   "license": "MIT",
-  "commands": ["design", "design-review", "design-improve", "design-validate", "design-init"]
+  "commands": ["design", "design-review", "design-improve", "design-validate", "design-init", "design-audit"]
 }

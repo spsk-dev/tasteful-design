@@ -27,9 +27,12 @@ Parse `$ARGUMENTS` and route:
 | `/design improve "prompt"` | `/design-improve` | Build & iterate until SHIP |
 | `/design ship` | Full pipeline | improve → review → validate → done |
 | `/design check` | Review + validate | Visual review + functional validation |
+| `/design audit` | `/design-audit` | Flow audit (navigate + capture) |
+| `/design audit <url> --flow "desc"` | `/design-audit` | Intent-guided flow audit |
+| `/design audit <url> --steps u1,u2` | `/design-audit` | Deterministic flow audit |
 | `/design` (no args) | Ask user | Show available commands and ask what they want |
 
-All flags pass through: `--ref`, `--figma`, `--compare`, `--direction`, `--palette`, `--fonts`, `--quick`, `--max N`, `--validate`.
+All flags pass through: `--ref`, `--figma`, `--compare`, `--direction`, `--palette`, `--fonts`, `--quick`, `--max N`, `--validate`, `--flow`, `--steps`, `--auth`, `--max-screens`.
 
 ## `/design ship` — Full Production Pipeline
 
@@ -100,6 +103,7 @@ Commands:
   /design review --quick  Quick review (4 specialists)
   /design validate     Functional validation (buttons, links, forms, errors)
   /design improve      Build & iterate until SHIP
+  /design audit        Flow audit (navigate SPA + capture per screen)
   /design check        Review + validate (pre-merge check)
   /design ship         Full pipeline (improve → review → validate)
 
@@ -112,6 +116,10 @@ Flags (work with any command):
   --quick                  Use 4 specialists instead of 8
   --max N                  Max iterations for improve/ship (default 3)
   --validate               Run functional validation each iteration
+  --flow "description"     Flow intent for audit (what the user journey achieves)
+  --steps u1,u2,u3         Deterministic URL sequence for audit
+  --auth                   Authenticated flow (pause for manual login)
+  --max-screens N          Max screens to capture in audit (default 10)
 
 What would you like to do?
 ```
