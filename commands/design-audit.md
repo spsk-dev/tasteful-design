@@ -229,6 +229,55 @@ If dead end detected:
 - Report: `✗ Dead end at Screen {N}: {reason}`
 - Jump to Section 8 (Flow Completion)
 
+### Step B2: Inject animation listeners
+
+Before clicking, inject the animation event listener (from references/flow.md Section 9c) via `browser_evaluate` to capture transition/animation events triggered by the click:
+
+```javascript
+(function() {
+  window.__spsk_anim_events = [];
+  const handler = (e) => window.__spsk_anim_events.push({
+    type: e.type,
+    element: e.target.tagName + (e.target.className ? '.' + String(e.target.className).split(' ')[0] : ''),
+    animation: e.animationName || e.propertyName || '',
+    elapsed: e.elapsedTime,
+    timestamp: Date.now()
+  });
+  ['animationstart','animationend','transitionstart','transitionend','transitionrun'].forEach(
+    evt => document.addEventListener(evt, handler, true)
+  );
+  return { listening: true };
+})()
+```
+
+Also capture the pre-click animation state (from references/flow.md Section 9a) via `browser_evaluate`:
+
+```javascript
+(function() {
+  const animations = document.getAnimations().map(a => ({
+    element: a.effect?.target?.tagName + (a.effect?.target?.className ? '.' + a.effect.target.className.split(' ')[0] : ''),
+    name: a.animationName || 'transition',
+    duration: a.effect?.getTiming?.()?.duration || 0,
+    state: a.playState
+  }));
+  const transitions = Array.from(document.querySelectorAll('*')).slice(0, 200).reduce((acc, el) => {
+    const cs = getComputedStyle(el);
+    if (cs.transitionProperty !== 'all' && cs.transitionProperty !== 'none' && cs.transitionDuration !== '0s') {
+      acc.push({
+        element: el.tagName + (el.className ? '.' + String(el.className).split(' ')[0] : ''),
+        property: cs.transitionProperty,
+        duration: cs.transitionDuration,
+        timing: cs.transitionTimingFunction
+      });
+    }
+    return acc;
+  }, []);
+  return { animations, transitions, timestamp: Date.now() };
+})()
+```
+
+Store both results as `PRE_CLICK_ANIM_STATE` for this screen.
+
 ### Step C: Click the CTA
 
 Report the action:
@@ -291,6 +340,73 @@ This waits for all fonts to load with a 5s timeout (from config `font_readiness_
 
 **If font readiness times out:** Proceed with capture anyway. Note `"fonts_timeout": true` in the screen entry.
 
+### Step E2: Capture post-transition animation state
+
+After DOM stability and font readiness, capture the post-stable animation state (references/flow.md Section 9b) via `browser_evaluate`:
+
+```javascript
+(function() {
+  const animations = document.getAnimations().map(a => ({
+    element: a.effect?.target?.tagName + (a.effect?.target?.className ? '.' + a.effect.target.className.split(' ')[0] : ''),
+    name: a.animationName || 'transition',
+    duration: a.effect?.getTiming?.()?.duration || 0,
+    state: a.playState
+  }));
+  const transitions = Array.from(document.querySelectorAll('*')).slice(0, 200).reduce((acc, el) => {
+    const cs = getComputedStyle(el);
+    if (cs.transitionProperty !== 'all' && cs.transitionProperty !== 'none' && cs.transitionDuration !== '0s') {
+      acc.push({
+        element: el.tagName + (el.className ? '.' + String(el.className).split(' ')[0] : ''),
+        property: cs.transitionProperty,
+        duration: cs.transitionDuration,
+        timing: cs.transitionTimingFunction
+      });
+    }
+    return acc;
+  }, []);
+  return { animations, transitions, timestamp: Date.now() };
+})()
+```
+
+Also collect the animation events that fired during the transition via `browser_evaluate`:
+
+```javascript
+(function() { return window.__spsk_anim_events || []; })()
+```
+
+Run the prefers-reduced-motion compliance check (references/flow.md Section 10) via `browser_evaluate`:
+
+```javascript
+(function() {
+  const sheets = Array.from(document.styleSheets);
+  let hasReducedMotion = false;
+  let animationCount = 0;
+  sheets.forEach(sheet => {
+    try {
+      Array.from(sheet.cssRules || []).forEach(rule => {
+        if (rule.type === CSSRule.MEDIA_RULE && rule.conditionText?.includes('prefers-reduced-motion')) {
+          hasReducedMotion = true;
+        }
+        if (rule.style) {
+          if (rule.style.animationName && rule.style.animationName !== 'none') animationCount++;
+          if (rule.style.transitionProperty && rule.style.transitionProperty !== 'none') animationCount++;
+        }
+      });
+    } catch(e) { /* cross-origin stylesheet, skip */ }
+  });
+  const docAnimations = document.getAnimations().length;
+  return {
+    has_prefers_reduced_motion: hasReducedMotion,
+    css_animation_count: animationCount,
+    active_animations: docAnimations,
+    compliant: hasReducedMotion || (animationCount === 0 && docAnimations === 0),
+    verdict: hasReducedMotion ? 'PASS' : (animationCount > 0 || docAnimations > 0) ? 'FAIL -- animations without reduced-motion support' : 'PASS -- no animations detected'
+  };
+})()
+```
+
+Store all results as `POST_STABLE_ANIM_STATE`, `ANIM_EVENTS`, and `PRM_CHECK` for this screen.
+
 ### Step F: Confirm new screen
 
 Call `browser_snapshot` to get the post-navigation accessibility tree.
@@ -338,7 +454,25 @@ Append a screen entry to the `screens` array and overwrite the file (progressive
   "screenshot_path": "{AUDIT_DIR}/screen-{N}-{slug}.png",
   "timestamp": "{ISO 8601}",
   "cta_clicked": "{CTA text}",
-  "cta_ref": "{element_ref}"
+  "cta_ref": "{element_ref}",
+  "animation": {
+    "pre_click": {
+      "animations": [PRE_CLICK_ANIM_STATE.animations],
+      "transitions": [PRE_CLICK_ANIM_STATE.transitions]
+    },
+    "post_stable": {
+      "animations": [POST_STABLE_ANIM_STATE.animations],
+      "transitions": [POST_STABLE_ANIM_STATE.transitions]
+    },
+    "events": [ANIM_EVENTS],
+    "prefers_reduced_motion": {
+      "has_support": PRM_CHECK.has_prefers_reduced_motion,
+      "css_animation_count": PRM_CHECK.css_animation_count,
+      "active_animations": PRM_CHECK.active_animations,
+      "compliant": PRM_CHECK.compliant,
+      "verdict": PRM_CHECK.verdict
+    }
+  }
 }
 ```
 
@@ -383,6 +517,69 @@ Run the same DOM stability check as Intent Mode Step D via `browser_evaluate`.
 
 Run the same font readiness check as Intent Mode Step E via `browser_evaluate`.
 
+### Step C2: Capture animation state
+
+In deterministic mode there is no CTA click, so only capture the current animation state and prefers-reduced-motion compliance -- no pre/post diff needed.
+
+Capture the current animation state (references/flow.md Section 9a) via `browser_evaluate`:
+
+```javascript
+(function() {
+  const animations = document.getAnimations().map(a => ({
+    element: a.effect?.target?.tagName + (a.effect?.target?.className ? '.' + a.effect.target.className.split(' ')[0] : ''),
+    name: a.animationName || 'transition',
+    duration: a.effect?.getTiming?.()?.duration || 0,
+    state: a.playState
+  }));
+  const transitions = Array.from(document.querySelectorAll('*')).slice(0, 200).reduce((acc, el) => {
+    const cs = getComputedStyle(el);
+    if (cs.transitionProperty !== 'all' && cs.transitionProperty !== 'none' && cs.transitionDuration !== '0s') {
+      acc.push({
+        element: el.tagName + (el.className ? '.' + String(el.className).split(' ')[0] : ''),
+        property: cs.transitionProperty,
+        duration: cs.transitionDuration,
+        timing: cs.transitionTimingFunction
+      });
+    }
+    return acc;
+  }, []);
+  return { animations, transitions, timestamp: Date.now() };
+})()
+```
+
+Run the prefers-reduced-motion compliance check (references/flow.md Section 10) via `browser_evaluate`:
+
+```javascript
+(function() {
+  const sheets = Array.from(document.styleSheets);
+  let hasReducedMotion = false;
+  let animationCount = 0;
+  sheets.forEach(sheet => {
+    try {
+      Array.from(sheet.cssRules || []).forEach(rule => {
+        if (rule.type === CSSRule.MEDIA_RULE && rule.conditionText?.includes('prefers-reduced-motion')) {
+          hasReducedMotion = true;
+        }
+        if (rule.style) {
+          if (rule.style.animationName && rule.style.animationName !== 'none') animationCount++;
+          if (rule.style.transitionProperty && rule.style.transitionProperty !== 'none') animationCount++;
+        }
+      });
+    } catch(e) { /* cross-origin stylesheet, skip */ }
+  });
+  const docAnimations = document.getAnimations().length;
+  return {
+    has_prefers_reduced_motion: hasReducedMotion,
+    css_animation_count: animationCount,
+    active_animations: docAnimations,
+    compliant: hasReducedMotion || (animationCount === 0 && docAnimations === 0),
+    verdict: hasReducedMotion ? 'PASS' : (animationCount > 0 || docAnimations > 0) ? 'FAIL -- animations without reduced-motion support' : 'PASS -- no animations detected'
+  };
+})()
+```
+
+Store as `SCREEN_ANIM_STATE` and `PRM_CHECK`.
+
 ### Step D: Capture screenshot
 
 Generate slug from the page heading or URL path (same logic as Intent Mode Step G).
@@ -394,7 +591,7 @@ Call `browser_take_screenshot`:
 
 ### Step E: Update flow-state.json
 
-Append screen entry (same format as Intent Mode Step H, but with `"cta_clicked": null` and `"cta_ref": null` since no CTA clicking occurs):
+Append screen entry (same format as Intent Mode Step H, but with `"cta_clicked": null` and `"cta_ref": null` since no CTA clicking occurs, and `"pre_click": null` and `"events": []` since no click animation diff is captured):
 
 ```json
 {
@@ -405,7 +602,22 @@ Append screen entry (same format as Intent Mode Step H, but with `"cta_clicked":
   "screenshot_path": "{AUDIT_DIR}/screen-{N}-{slug}.png",
   "timestamp": "{ISO 8601}",
   "cta_clicked": null,
-  "cta_ref": null
+  "cta_ref": null,
+  "animation": {
+    "pre_click": null,
+    "post_stable": {
+      "animations": [SCREEN_ANIM_STATE.animations],
+      "transitions": [SCREEN_ANIM_STATE.transitions]
+    },
+    "events": [],
+    "prefers_reduced_motion": {
+      "has_support": PRM_CHECK.has_prefers_reduced_motion,
+      "css_animation_count": PRM_CHECK.css_animation_count,
+      "active_animations": PRM_CHECK.active_animations,
+      "compliant": PRM_CHECK.compliant,
+      "verdict": PRM_CHECK.verdict
+    }
+  }
 }
 ```
 
