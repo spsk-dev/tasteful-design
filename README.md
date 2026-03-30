@@ -55,6 +55,7 @@ A full review takes ~8 minutes and produces a structured verdict with scores per
 | `/design-improve` | Build and iterate until SHIP | `--max N`, `--ref <url>`, `--validate`, `--style <preset>` |
 | `/design-validate` | Functional validation (Playwright) | URL or auto-detect |
 | `/design` | Orchestrator -- routes to sub-commands | `review`, `improve`, `validate`, `check`, `ship` |
+| `/design-audit` | Flow-level SPA design audit | `--flow "desc"`, `--steps url1,url2`, `--auth`, `--max N` |
 | `/code-review` | Multi-model PR review with confidence scoring | `--model <name>`, PR number or URL |
 
 ## Code Review
@@ -83,6 +84,32 @@ Multi-model PR review with confidence scoring. Dispatches your PR to up to 3 mod
 
 See the [code-review case study](docs/case-studies/code-review-bugs-caught.md) for a real-world example where 3-model consensus caught a race condition that single-model review missed.
 
+## Flow Audit
+
+Multi-screen SPA design audit. Navigates through your app screen-by-screen, runs 8-specialist review on each screen, checks cross-screen consistency, and generates a self-contained HTML diagnostic report.
+
+```bash
+# Audit a checkout flow (intent-guided navigation)
+/design-audit http://localhost:3000 --flow "complete the checkout"
+
+# Audit with explicit URL steps (deterministic)
+/design-audit http://localhost:3000 --steps /login,/dashboard,/settings
+
+# Audit a protected flow (authenticates first)
+/design-audit http://localhost:3000 --flow "onboarding" --auth
+```
+
+**How it works:**
+1. Navigates SPA screens by clicking CTAs that match your flow description (or follows --steps URLs)
+2. Captures a screenshot at each screen state change (DOM stability detection)
+3. First and last screens get full 8-specialist review; middle screens get quick 4-specialist review
+4. Cross-screen consistency analysis flags visual drift (color, spacing, typography, button styles)
+5. Generates a self-contained HTML report with embedded screenshots, scores, and fix recommendations
+
+**Smart weighting:** The flow score uses position-weighted averaging -- first and last screens count 1.5x because they're the user's first impression and final experience.
+
+For the technical architecture, see [ARCHITECTURE.md](ARCHITECTURE.md#flow-audit).
+
 ## Case Studies
 
 - [Design Review Impact: Dashboard Redesign](docs/case-studies/design-review-impact.md) -- From 5.2/10 to 8.4/10 in 3 iterations, ~20 minutes
@@ -107,6 +134,8 @@ The review pipeline runs in 5 phases:
 5. **Fix List** -- Prioritized fixes with `[CRITICAL]`/`[HIGH]`/`[MEDIUM]` tags and file:line references
 
 Intent and Originality carry 3x weight. Typography and Color carry 2x. The formula: `(Intent*3 + Originality*3 + UX*2 + Typography*2 + Color*2 + Layout + Icons + Motion + Copy + Code) / 17`
+
+The flow audit pipeline (`/design-audit`) extends this to multi-screen flows -- navigating SPAs, running per-screen reviews with smart weighting, detecting cross-screen consistency drift, and generating HTML diagnostic reports.
 
 For the full technical breakdown, see [ARCHITECTURE.md](ARCHITECTURE.md).
 
@@ -163,6 +192,7 @@ Evals run on a clean clone. No external dependencies beyond Claude Code.
 
 - **Claude Code** -- plugin host
 - **Playwright** -- for screenshots (`npx playwright install chromium`)
+- **Playwright MCP** -- for flow audit navigation (`npx @anthropic/mcp-server-playwright`)
 - **Gemini CLI** (optional) -- for Tier 1 cross-model review. Falls back gracefully if unavailable.
 
 ## Benchmarks

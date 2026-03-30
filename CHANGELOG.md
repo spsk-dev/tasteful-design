@@ -4,6 +4,28 @@ All notable changes to the SpSk design-review plugin.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
+## [1.1.0] - 2026-03-30
+
+### Added
+
+- Flow-level SPA design audit (`/design-audit` command) with intent-guided and deterministic navigation modes
+- Playwright MCP integration for stateful browser navigation with DOM stability detection
+- Per-screen 8-specialist review with smart weighting (full review on first/last, quick on middle screens)
+- Cross-screen consistency analysis detecting visual drift in colors, spacing, typography, buttons, and components
+- Animation detection with CSS transition/property analysis and `prefers-reduced-motion` compliance checking
+- Self-contained HTML diagnostic report with base64-embedded JPEG screenshots, flow map, expandable specialist details, and print-to-PDF support
+- Flow score aggregation with position-weighted averaging (1.5x for first and last screens)
+- Consistency penalty system (up to 15% score reduction for cross-screen drift)
+- Authentication gate for auditing protected flows (`--auth` flag)
+- Static HTML test fixtures for flow navigation smoke testing
+- Report generation test fixtures with mock flow state
+
+### Changed
+
+- Plugin manifest updated with `design-audit` command
+- Score bars in HTML report use CSS percentage-width divs (not Unicode blocks)
+- Report generation is non-blocking -- terminal summary is the primary output, HTML report is a bonus
+
 ## [1.0.0] - 2026-03-29
 
 ### Added

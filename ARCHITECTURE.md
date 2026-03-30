@@ -190,11 +190,13 @@ spsk/
 |   +-- design-review.md     # /design-review -- core 8-specialist review
 |   +-- design-improve.md    # /design-improve -- iterative build-fix loop
 |   +-- design-validate.md   # /design-validate -- functional testing
+|   +-- design-audit.md      # /design-audit -- flow-level SPA audit
 +-- config/
 |   +-- scoring.json         # Specialist weights, thresholds, verdict rules
 |   +-- anti-slop.json       # Banned fonts, palettes, patterns
 |   +-- style-presets.json   # 5 built-in style presets
 |   +-- design-system.example.json  # Template for .design/ system file
+|   +-- flow-scoring.json    # Flow navigation and scoring config
 +-- skills/
 |   +-- design-review/
 |       +-- SKILL.md          # Skill activation and description
@@ -206,10 +208,18 @@ spsk/
 |           +-- motion.md     # Motion specialist reference
 |           +-- intent.md     # Intent/Originality/UX reference
 |           +-- visual-design-rules.md  # Cross-cutting visual rules
+|           +-- flow.md       # Flow navigation reference
+|           +-- animation.md  # Animation detection reference
+|           +-- consistency.md # Cross-screen consistency reference
 +-- hooks/
 |   +-- hooks.json            # PostToolUse hook definitions
 +-- scripts/
 |   +-- suggest-review.sh     # Suggests /design-review after 3+ frontend edits
+|   +-- generate-report.sh    # HTML diagnostic report generator
++-- evals/
+|   +-- fixtures/
+|       +-- flow-test/        # 3-page static HTML fixture for flow smoke tests
+|       +-- report-test/      # Mock flow-state.json for report generation tests
 +-- ARCHITECTURE.md           # This file
 +-- CHANGELOG.md              # Version history with failure transparency
 +-- README.md                 # Install, usage, quick start
@@ -217,3 +227,77 @@ spsk/
 +-- LICENSE                   # MIT
 +-- VERSION                   # Semver (1.0.0)
 ```
+
+## Flow Audit Architecture
+
+The `/design-audit` command extends the single-page review to multi-screen SPA flows. It adds four components on top of the existing specialist system:
+
+```
+User: /design-audit <url> --flow "checkout"
+                 |
+          +--------------+
+          |  Navigation  |  Intent-guided or deterministic (--steps)
+          |  Engine      |  Playwright MCP: snapshot -> reason -> click -> confirm
+          +--------------+
+                 |
+         screen 1, screen 2, screen 3, ...
+                 |
+     +-----------+-----------+
+     |                       |
++----------+           +----------+
+| Full     |           | Quick    |  Smart weighting:
+| Review   |           | Review   |  first/last = 8 specialists
+| (8 spec) |           | (4 spec) |  middle = 4 specialists
++----------+           +----------+
+     |                       |
+     +-----------+-----------+
+                 |
+          +--------------+
+          |  Consistency |  Cross-screen drift detection:
+          |  Analysis    |  colors, spacing, typography,
+          +--------------+  buttons, components
+                 |
+          +--------------+
+          |  Report      |  Self-contained HTML with
+          |  Generator   |  embedded JPEG screenshots,
+          +--------------+  scores, fix recommendations
+                 |
+           flow-report.html
+```
+
+### Navigation Engine
+
+Two navigation modes:
+- **Intent mode** (`--flow "description"`): Agent reads Playwright MCP snapshots, identifies CTAs matching the flow intent, clicks them, and confirms screen transitions via DOM stability detection (800ms mutation quiet period).
+- **Deterministic mode** (`--steps url1,url2`): Visits URLs in order with no CTA clicking. Continues to next URL on navigation failure.
+
+Screen detection uses DOM mutation observation (not networkidle) with a configurable quiet period. Screenshots are captured at 1440x900 viewport after font readiness confirmation.
+
+### Smart Weighting
+
+Not all screens in a flow deserve equal review depth:
+- **First screen** (entry point): Full 8-specialist review (1.5x score weight)
+- **Last screen** (completion): Full 8-specialist review (1.5x score weight)
+- **Middle screens**: Quick 4-specialist review (1.0x score weight)
+
+This balances token budget against review thoroughness -- the user's first impression and final experience get the most scrutiny.
+
+### Cross-Screen Consistency
+
+After all screens are reviewed, a consistency pass compares five dimensions across the flow:
+- **Color palette** (Delta E >= 10 flags drift)
+- **Spacing** (4px tolerance)
+- **Typography** (2px font size tolerance)
+- **Button styles** (shape, color, sizing)
+- **Component variants** (card styles, input patterns)
+
+Findings are severity-graded (drift/mismatch/conflict) and apply a penalty of up to 15% to the flow score.
+
+### HTML Diagnostic Report
+
+The report generator (`scripts/generate-report.sh`) produces a self-contained HTML file:
+- Flow map showing screen progression (1 -> 2 -> 3 -> ...)
+- Base64-embedded JPEG screenshots (auto-recompressed to stay under 4MB)
+- Per-screen specialist scores with expandable detail sections
+- Overall flow score with top 5 priority fixes
+- Print-to-PDF support via `@media print` styles
