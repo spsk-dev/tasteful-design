@@ -146,7 +146,7 @@ Plans:
 - [ ] **Phase 9: Layer 2 Eval Runner** - Quality eval runner executes real assertions against design-review output with calibrated ranges and verdict gates
 - [x] **Phase 10: Structured JSON Output** - All specialists and boss emit structured JSON for deterministic parsing by evals, improve loop, and report generator (completed 2026-03-30)
 - [x] **Phase 11: Specialist Consolidation** - Copy folded into Intent/Originality/UX, scoring weights atomically updated, 8 to 7 specialists (completed 2026-03-30)
-- [ ] **Phase 12: Playwright Interaction** - Opt-in hover/focus/scroll capture before specialist scoring with baseline-interact-reset pattern
+- [x] **Phase 12: Playwright Interaction** - Opt-in hover/focus/scroll capture before specialist scoring with baseline-interact-reset pattern (completed 2026-03-30)
 - [ ] **Phase 13: Few-Shot Examples + Polish** - Curated examples per specialist, chain-of-thought separation, Anthropic aesthetics integration
 
 ## Phase Details
@@ -220,11 +220,11 @@ Plans:
   2. The baseline-interact-reset pattern is followed: screenshot clean state first, perform interactions, reload page, then run the standard review -- specialists never see interaction-mutated DOM as the baseline
   3. No more than 8 interactions are performed per review (budget cap enforced)
   4. Running `/design-audit` on start.fusefinance.com completes a full flow audit with real SPA navigation, validating the complete pipeline end-to-end
-**Plans:** 1/2 plans executed
+**Plans:** 2/2 plans complete
 
 Plans:
 - [x] 12-01-PLAN.md -- Add --interact flag with Phase 0.5i interaction protocol (baseline-interact-reset), router passthrough, structural validation
-- [ ] 12-02-PLAN.md -- CLAUDE.md documentation update, end-to-end validation on start.fusefinance.com
+- [x] 12-02-PLAN.md -- CLAUDE.md documentation update, end-to-end validation on start.fusefinance.com
 
 ### Phase 13: Few-Shot Examples + Polish
 **Goal**: Specialists produce better-calibrated scores through curated examples and chain-of-thought reasoning, and the build phase benefits from Anthropic's proven aesthetics guidance
@@ -256,5 +256,5 @@ Phases execute in numeric order: 8 -> 9 -> 10 -> 11 -> 12 -> 13
 | 9. Layer 2 Eval Runner | v1.2.0 | 2/2 | Complete | 2026-03-30 |
 | 10. Structured JSON Output | v1.2.0 | 2/2 | Complete    | 2026-03-30 |
 | 11. Specialist Consolidation | v1.2.0 | 2/2 | Complete    | 2026-03-30 |
-| 12. Playwright Interaction | v1.2.0 | 1/2 | In Progress|  |
+| 12. Playwright Interaction | v1.2.0 | 2/2 | Complete   | 2026-03-30 |
 | 13. Few-Shot Examples + Polish | v1.2.0 | 0/? | Not started | - |

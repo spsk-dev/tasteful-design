@@ -44,7 +44,7 @@
 - [x] **INTR-01**: Opt-in `--interact` flag for Playwright page interaction (hover, focus, scroll) before specialist scoring
 - [x] **INTR-02**: Baseline-interact-reset pattern: screenshot clean state, interact, reload, then review
 - [x] **INTR-03**: Interaction budget capped at 8 interactions per review
-- [ ] **TEST-01**: Full flow audit validated on start.fusefinance.com with real SPA navigation
+- [x] **TEST-01**: Full flow audit validated on start.fusefinance.com with real SPA navigation
 
 ## Future Requirements (v1.3+)
 
@@ -91,7 +91,7 @@
 | INTR-01 | Phase 12 | Complete |
 | INTR-02 | Phase 12 | Complete |
 | INTR-03 | Phase 12 | Complete |
-| TEST-01 | Phase 12 | Pending |
+| TEST-01 | Phase 12 | Complete |
 
 ---
 *Defined: 2026-03-29*
