@@ -323,7 +323,7 @@ done
 echo "--- Score & Verdict Assertions ---"
 
 # Filter to only score/verdict assertions (skip judge and ranking types -- handled in Section 5b/5c)
-SCORE_ASSERTION_INDICES=$(jq '[range(.assertions | length)] | map(select(. as $i | (.assertions[$i].type // "score") | IN("judge","ranking") | not))' "$ASSERTIONS_FILE")
+SCORE_ASSERTION_INDICES=$(jq '[.assertions | to_entries[] | select(.value.type // "score" | IN("judge","ranking") | not) | .key]' "$ASSERTIONS_FILE")
 SCORE_ASSERTION_COUNT=$(echo "$SCORE_ASSERTION_INDICES" | jq 'length')
 
 for idx in $(echo "$SCORE_ASSERTION_INDICES" | jq -r '.[]'); do
