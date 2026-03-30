@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Details - Flow Test</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #fafafa;
+      color: #1a1a1a;
+    }
+    .container {
+      max-width: 480px;
+      padding: 48px 32px;
+    }
+    h1 {
+      font-size: 2rem;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+    .step-indicator {
+      font-size: 0.875rem;
+      color: #888;
+      margin-bottom: 24px;
+    }
+    .form-group {
+      margin-bottom: 20px;
+      text-align: left;
+    }
+    label {
+      display: block;
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: #555;
+      margin-bottom: 6px;
+    }
+    input {
+      width: 100%;
+      padding: 12px 14px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-size: 1rem;
+      background: #fff;
+      color: #1a1a1a;
+    }
+    input:focus {
+      outline: none;
+      border-color: #1a1a1a;
+    }
+    .cta {
+      display: inline-block;
+      padding: 14px 36px;
+      background: #1a1a1a;
+      color: #fff;
+      text-decoration: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 500;
+      transition: background 0.15s;
+      margin-top: 12px;
+    }
+    .cta:hover { background: #333; }
+    .actions { text-align: center; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Step 2: Details</h1>
+    <p class="step-indicator">Step 2 of 3</p>
+    <div class="form-group">
+      <label for="name">Your Name</label>
+      <input type="text" id="name" placeholder="Jane Doe">
+    </div>
+    <div class="form-group">
+      <label for="email">Email Address</label>
+      <input type="email" id="email" placeholder="jane@example.com">
+    </div>
+    <div class="actions">
+      <a href="done.html" class="cta">Continue</a>
+    </div>
+  </div>
+</body>
+</html>
