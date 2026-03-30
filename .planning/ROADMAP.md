@@ -205,10 +205,10 @@ Plans:
   1. Running `/design-review` dispatches 7 specialists (not 8), with Intent/Originality/UX producing 4 sub-scores: intent_match, originality, ux_flow, copy_quality
   2. `scoring.json` reads total_weight: 16 (not 17), quick_mode weights are recalculated, and `validate-structure.sh` includes an assertion verifying sum of individual weights equals total_weight
   3. Running `run-quality-evals.sh` passes with 7 specialists -- all assertion ranges recalibrated for the merged architecture
-**Plans:** 2 plans
+**Plans:** 1/2 plans executed
 
 Plans:
-- [ ] 11-01-PLAN.md -- Core merge: Copy into Intent with 4 sub-scores, scoring.json to /16, boss formula, design-review dispatch 7 specialists
+- [x] 11-01-PLAN.md -- Core merge: Copy into Intent with 4 sub-scores, scoring.json to /16, boss formula, design-review dispatch 7 specialists
 - [ ] 11-02-PLAN.md -- Ecosystem updates: weight-sum assertion, eval tooling, docs, commands, branding for 7 specialists
 
 ### Phase 12: Playwright Interaction
@@ -251,6 +251,6 @@ Phases execute in numeric order: 8 -> 9 -> 10 -> 11 -> 12 -> 13
 | 8. Prompt Extraction + Restructuring | v1.2.0 | 2/2 | Complete | 2026-03-30 |
 | 9. Layer 2 Eval Runner | v1.2.0 | 2/2 | Complete | 2026-03-30 |
 | 10. Structured JSON Output | v1.2.0 | 2/2 | Complete    | 2026-03-30 |
-| 11. Specialist Consolidation | v1.2.0 | 0/2 | Not started | - |
+| 11. Specialist Consolidation | v1.2.0 | 1/2 | In Progress|  |
 | 12. Playwright Interaction | v1.2.0 | 0/? | Not started | - |
 | 13. Few-Shot Examples + Polish | v1.2.0 | 0/? | Not started | - |

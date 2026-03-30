@@ -34,8 +34,8 @@
 
 ### Specialist Architecture
 
-- [ ] **SPEC-01**: Copy specialist folded into Intent/Originality/UX with 4 sub-scores (intent, originality, ux_flow, copy_quality)
-- [ ] **SPEC-02**: `scoring.json` updated atomically: total_weight 17→16, quick_mode recalculated
+- [x] **SPEC-01**: Copy specialist folded into Intent/Originality/UX with 4 sub-scores (intent, originality, ux_flow, copy_quality)
+- [x] **SPEC-02**: `scoring.json` updated atomically: total_weight 17→16, quick_mode recalculated
 - [ ] **SPEC-03**: Structural assertion in `validate-structure.sh` verifying sum of weights equals total_weight
 
 ### Generation & Interaction
@@ -84,8 +84,8 @@
 | JSON-03 | Phase 10 | Complete |
 | JSON-04 | Phase 10 | Complete |
 | JSON-05 | Phase 10 | Complete |
-| SPEC-01 | Phase 11 | Pending |
-| SPEC-02 | Phase 11 | Pending |
+| SPEC-01 | Phase 11 | Complete |
+| SPEC-02 | Phase 11 | Complete |
 | SPEC-03 | Phase 11 | Pending |
 | GNRT-01 | Phase 13 | Pending |
 | INTR-01 | Phase 12 | Pending |

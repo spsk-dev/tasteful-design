@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v1.2.0
 milestone_name: Prompting Excellence + Eval Credibility
-status: Ready to plan
-stopped_at: Completed 10-02-PLAN.md (consumer JSON wiring)
-last_updated: "2026-03-30T05:07:32.503Z"
+status: Ready to execute
+stopped_at: Completed 11-01-PLAN.md (copy specialist merge into intent)
+last_updated: "2026-03-30T05:22:33.215Z"
 progress:
   total_phases: 6
   completed_phases: 3
-  total_plans: 6
-  completed_plans: 6
+  total_plans: 8
+  completed_plans: 7
 ---
 
 # Project State
@@ -19,12 +19,12 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-29)
 
 **Core value:** Published skills must be immediately useful AND demonstrate architectural sophistication
-**Current focus:** Phase 10 — Structured JSON Output
+**Current focus:** Phase 11 — Specialist Consolidation
 
 ## Current Position
 
-Phase: 11
-Plan: Not started
+Phase: 11 (Specialist Consolidation) — EXECUTING
+Plan: 2 of 2
 
 ## Performance Metrics
 
@@ -45,6 +45,7 @@ Plan: Not started
 | Phase 09 P02 | 4min | 2 tasks | 4 files |
 | Phase 10 P01 | 2min | 2 tasks | 9 files |
 | Phase 10 P02 | 3min | 2 tasks | 4 files |
+| Phase 11 P01 | 4min | 2 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -72,6 +73,8 @@ Plan: Not started
 - [Phase 10]: Parser uses sed for XML tag extraction + jq for JSON querying -- no new dependencies
 - [Phase 10]: Fallback preserves exact regex logic from Phase 09 -- zero regression risk
 - [Phase 10]: generate-report.sh deduplicates top_fixes by issue text across screens via jq unique_by
+- [Phase 11]: copy_quality is informational (not weighted) -- Intent produces 4 sub-scores but only 3 are weighted, total_weight 17->16
+- [Phase 11]: Boss JSON includes copy_quality in scores object for data completeness but formula excludes it from weighted calculation
 
 ### Pending Todos
 
@@ -84,6 +87,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-30T05:03:14.156Z
-Stopped at: Completed 10-02-PLAN.md (consumer JSON wiring)
+Last session: 2026-03-30T05:22:33.213Z
+Stopped at: Completed 11-01-PLAN.md (copy specialist merge into intent)
 Resume file: None
