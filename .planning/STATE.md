@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v1.1.0
 milestone_name: Flow Audit + Polish
-status: Ready to execute
-stopped_at: Completed 05-02-PLAN.md
-last_updated: "2026-03-30T00:58:13.903Z"
+status: Phase complete — ready for verification
+stopped_at: Completed 05-03-PLAN.md
+last_updated: "2026-03-30T01:07:40.177Z"
 progress:
   total_phases: 4
-  completed_phases: 1
+  completed_phases: 2
   total_plans: 6
-  completed_plans: 5
+  completed_plans: 6
 ---
 
 # Project State
@@ -57,6 +57,8 @@ Plan: 3 of 3
 - [Phase 05]: Per-screen reviews sequential (not parallel) to manage token budget
 - [Phase 05]: Motion specialist receives runtime animation data from navigation alongside source analysis
 - [Phase 05]: Flow score uses position-weighted average (1.5x first/last), consistency penalty deferred to Plan 03
+- [Phase 05]: Consistency check labels match config keys exactly (button_style, color_palette, etc.) for traceability
+- [Phase 05]: Penalty formula uses point-based scoring (critical*3, issue*2, warning*1) normalized over 20 points, matching flow.md reference
 
 ### Pending Todos
 
@@ -70,6 +72,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-30T00:58:13.901Z
-Stopped at: Completed 05-02-PLAN.md
+Last session: 2026-03-30T01:07:40.175Z
+Stopped at: Completed 05-03-PLAN.md
 Resume file: None

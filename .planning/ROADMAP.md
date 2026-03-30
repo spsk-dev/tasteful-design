@@ -107,7 +107,7 @@ Plans:
 Plans:
 - [x] 05-01-PLAN.md -- Config and reference contracts: smart weighting, flow scoring, animation patterns, consistency heuristics
 - [x] 05-02-PLAN.md -- Per-screen review dispatch with animation detection hooks and flow score aggregation
-- [ ] 05-03-PLAN.md -- Cross-screen consistency analysis with visual drift detection and score penalty
+- [x] 05-03-PLAN.md -- Cross-screen consistency analysis with visual drift detection and score penalty
 
 ### Phase 6: HTML Diagnostic Report
 **Goal**: The flow audit produces a self-contained HTML file that a developer can open in any browser to see the full flow map, per-screen screenshots with specialist scores, and actionable fix recommendations -- shareable without any external dependencies

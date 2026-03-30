@@ -20,7 +20,7 @@
 
 - [x] **REVW-01**: Each captured screen is reviewed by the existing 8-specialist system
 - [x] **REVW-02**: Smart weighting — full 8-specialist review on first and last screens, quick mode (4 specialists) on middle screens
-- [ ] **REVW-03**: Cross-screen consistency analysis — flag when button styles, colors, spacing, or typography drift between screens
+- [x] **REVW-03**: Cross-screen consistency analysis — flag when button styles, colors, spacing, or typography drift between screens
 - [x] **REVW-04**: Per-screen scores aggregated into overall flow score
 
 ### HTML Report
@@ -72,7 +72,7 @@
 | FLOW-08 | Phase 4 | Complete |
 | REVW-01 | Phase 5 | Complete |
 | REVW-02 | Phase 5 | Complete |
-| REVW-03 | Phase 5 | Pending |
+| REVW-03 | Phase 5 | Complete |
 | REVW-04 | Phase 5 | Complete |
 | REPT-01 | Phase 6 | Pending |
 | REPT-02 | Phase 6 | Pending |
