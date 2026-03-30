@@ -18,7 +18,7 @@
 
 ### Per-Screen Review
 
-- [ ] **REVW-01**: Each captured screen is reviewed by the existing 8-specialist system
+- [x] **REVW-01**: Each captured screen is reviewed by the existing 8-specialist system
 - [x] **REVW-02**: Smart weighting — full 8-specialist review on first and last screens, quick mode (4 specialists) on middle screens
 - [ ] **REVW-03**: Cross-screen consistency analysis — flag when button styles, colors, spacing, or typography drift between screens
 - [x] **REVW-04**: Per-screen scores aggregated into overall flow score
@@ -37,7 +37,7 @@
 
 - [x] **ANIM-01**: CSS transition/animation property detection between screen states
 - [x] **ANIM-02**: `prefers-reduced-motion` compliance check
-- [ ] **ANIM-03**: Animation findings included in per-screen specialist output
+- [x] **ANIM-03**: Animation findings included in per-screen specialist output
 
 ### Polish
 
@@ -70,7 +70,7 @@
 | FLOW-06 | Phase 4 | Complete |
 | FLOW-07 | Phase 4 | Complete |
 | FLOW-08 | Phase 4 | Complete |
-| REVW-01 | Phase 5 | Pending |
+| REVW-01 | Phase 5 | Complete |
 | REVW-02 | Phase 5 | Complete |
 | REVW-03 | Phase 5 | Pending |
 | REVW-04 | Phase 5 | Complete |
@@ -83,7 +83,7 @@
 | REPT-07 | Phase 6 | Pending |
 | ANIM-01 | Phase 5 | Complete |
 | ANIM-02 | Phase 5 | Complete |
-| ANIM-03 | Phase 5 | Pending |
+| ANIM-03 | Phase 5 | Complete |
 | PLSH-01 | Phase 7 | Pending |
 | PLSH-02 | Phase 7 | Pending |
 | PLSH-03 | Phase 7 | Pending |

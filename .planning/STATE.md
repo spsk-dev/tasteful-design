@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v1.1.0
 milestone_name: Flow Audit + Polish
-status: Executing
-stopped_at: Completed 05-01-PLAN.md
-last_updated: "2026-03-30T00:50:37.202Z"
+status: Ready to execute
+stopped_at: Completed 05-02-PLAN.md
+last_updated: "2026-03-30T00:58:13.903Z"
 progress:
   total_phases: 4
   completed_phases: 1
   total_plans: 6
-  completed_plans: 4
+  completed_plans: 5
 ---
 
 # Project State
@@ -24,7 +24,7 @@ See: .planning/PROJECT.md (updated 2026-03-29)
 ## Current Position
 
 Phase: 5
-Plan: 2 of 3
+Plan: 3 of 3
 
 ## Performance Metrics
 
@@ -54,6 +54,9 @@ Plan: 2 of 3
 - [Phase 05]: Delta E threshold 10 for color drift, 4px spacing tolerance, 2px font size tolerance
 - [Phase 05]: Hybrid animation detection: pre/post snapshots + event listeners per PITFALLS.md Pitfall 6
 - [Phase 05]: Consistency is post-processing pass reading specialist findings, not a 9th specialist
+- [Phase 05]: Per-screen reviews sequential (not parallel) to manage token budget
+- [Phase 05]: Motion specialist receives runtime animation data from navigation alongside source analysis
+- [Phase 05]: Flow score uses position-weighted average (1.5x first/last), consistency penalty deferred to Plan 03
 
 ### Pending Todos
 
@@ -67,6 +70,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-30T00:50:37.200Z
-Stopped at: Completed 05-01-PLAN.md
+Last session: 2026-03-30T00:58:13.901Z
+Stopped at: Completed 05-02-PLAN.md
 Resume file: None

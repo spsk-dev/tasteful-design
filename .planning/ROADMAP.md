@@ -106,7 +106,7 @@ Plans:
 
 Plans:
 - [x] 05-01-PLAN.md -- Config and reference contracts: smart weighting, flow scoring, animation patterns, consistency heuristics
-- [ ] 05-02-PLAN.md -- Per-screen review dispatch with animation detection hooks and flow score aggregation
+- [x] 05-02-PLAN.md -- Per-screen review dispatch with animation detection hooks and flow score aggregation
 - [ ] 05-03-PLAN.md -- Cross-screen consistency analysis with visual drift detection and score penalty
 
 ### Phase 6: HTML Diagnostic Report
