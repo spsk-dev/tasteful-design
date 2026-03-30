@@ -704,10 +704,12 @@ If `browser_snapshot` returns an empty or minimal accessibility tree:
 - **Every browser interaction uses Playwright MCP tools.** Never write shell scripts for navigation.
 - **Always take a fresh `browser_snapshot` immediately before `browser_click`.** Stale element refs cause failures (Pitfall 5).
 - **Never use `networkidle`.** SPAs with analytics/WebSockets never reach idle (Pitfall 1).
-- **Progressive persistence.** Write flow-state.json after every screen capture and after every screen review. Mid-flow failures must preserve partial results.
+- **Progressive persistence.** Write flow-state.json after each screen capture, after each screen review, after consistency analysis, and after flow score computation. Mid-flow failures must preserve partial results.
 - **The flow-state.json is the contract** between navigation (Sections 1-9), review (Sections 10-11), consistency (Section 12), scoring (Section 13), and reporting (Phase 6). Match the schema exactly.
 - **Sections 10-14 run only after navigation completes.** If navigation errors with <2 screens, skip review and show error summary.
-- **Per-screen reviews are sequential (not parallel) to manage token budget.** Each screen review completes fully before the next starts.
+- **Per-screen reviews run sequentially, not in parallel.** Each screen's review must complete before the next starts. This manages token budget (Pitfall 10 from PITFALLS.md).
+- **Consistency analysis runs AFTER all per-screen reviews.** It is a post-processing pass, not a 9th specialist (per D-84). It reads specialist findings from all screens and compares them.
+- **The animation detection hooks must NOT disrupt the navigation loop.** If browser_evaluate fails for animation injection, log the error and proceed without animation data for that screen.
 
 ---
 
@@ -1226,3 +1228,5 @@ Next: Run Phase 6 to generate the HTML diagnostic report
 ```
 github.com/spsk-dev/tasteful-design
 ```
+
+<!-- design-audit.md: 14 sections — navigation (1-9), review (10), animation (11), consistency (12), scoring (13), summary (14) -->
