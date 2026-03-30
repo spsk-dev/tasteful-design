@@ -132,8 +132,11 @@ Plans:
   1. A 30-second demo GIF in the README shows a real `/design-audit` flow run with the HTML report output
   2. README documents `/design-audit` usage with flow examples and report screenshots, ARCHITECTURE.md includes the flow audit component diagram
   3. All repo references use the spsk-dev org consistently, VERSION reads 1.1.0, and the repo has a v1.1.0 git tag
+**Plans:** 2 plans
 
-**Plans**: TBD
+Plans:
+- [ ] 07-01-PLAN.md -- Docs update (README, ARCHITECTURE, CHANGELOG) and stale reference cleanup
+- [ ] 07-02-PLAN.md -- Demo tape update, VERSION bump, plugin.json update, git tag v1.1.0
 
 ## Progress
 
@@ -148,4 +151,4 @@ Phases execute in numeric order: 4 -> 5 -> 6 -> 7
 | 4. Flow Navigation Engine | v1.1.0 | 3/3 | Complete | 2026-03-30 |
 | 5. Per-Screen Review + Animation | v1.1.0 | 0/3 | Planned | - |
 | 6. HTML Diagnostic Report | v1.1.0 | 0/2 | Planned | - |
-| 7. Release Polish | v1.1.0 | 0/? | Not started | - |
+| 7. Release Polish | v1.1.0 | 0/2 | Planned | - |
