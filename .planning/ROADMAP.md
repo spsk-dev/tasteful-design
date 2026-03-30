@@ -163,7 +163,7 @@ Plans:
 **Plans:** 2 plans
 
 Plans:
-- [ ] 08-01-PLAN.md -- Extract 8 specialist prompts + boss synthesizer to individual files with XML structure, rubrics, and directive cleanup
+- [x] 08-01-PLAN.md -- Extract 8 specialist prompts + boss synthesizer to individual files with XML structure, rubrics, and directive cleanup
 - [ ] 08-02-PLAN.md -- Wire design-review.md to @ includes, extend validate-structure.sh with 51 structural checks
 
 ### Phase 9: Layer 2 Eval Runner

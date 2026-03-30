@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v1.2.0
 milestone_name: Prompting Excellence + Eval Credibility
-status: Ready to plan
-stopped_at: null
-last_updated: "2026-03-29"
+status: Ready to execute
+stopped_at: Completed 08-01-PLAN.md (prompt extraction)
+last_updated: "2026-03-30T03:45:51.557Z"
 progress:
   total_phases: 6
   completed_phases: 0
-  total_plans: 0
-  completed_plans: 0
+  total_plans: 2
+  completed_plans: 1
 ---
 
 # Project State
@@ -19,20 +19,17 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-29)
 
 **Core value:** Published skills must be immediately useful AND demonstrate architectural sophistication
-**Current focus:** Phase 8 - Prompt Extraction + Restructuring
+**Current focus:** Phase 08 — Prompt Extraction + Restructuring
 
 ## Current Position
 
-Phase: 8 of 13 (Prompt Extraction + Restructuring)
-Plan: 0 of ? in current phase (not yet planned)
-Status: Ready to plan
-Last activity: 2026-03-29 -- Roadmap created for v1.2.0 milestone (Phases 8-13)
-
-Progress: [==============......] 70% (v1.0.0 + v1.1.0 complete, v1.2.0 starting)
+Phase: 08 (Prompt Extraction + Restructuring) — EXECUTING
+Plan: 2 of 2
 
 ## Performance Metrics
 
 **Velocity:**
+
 - Total plans completed: 19 (v1.0.0: 9, v1.1.0: 10)
 
 **By Phase:**
@@ -42,6 +39,7 @@ Progress: [==============......] 70% (v1.0.0 + v1.1.0 complete, v1.2.0 starting)
 | 1-3 (v1.0.0) | 9 | -- | -- |
 | 4-7 (v1.1.0) | 10 | -- | -- |
 | 8-13 (v1.2.0) | 0 | -- | -- |
+| Phase 08 P01 | 4min | 2 tasks | 9 files |
 
 ## Accumulated Context
 
@@ -52,6 +50,9 @@ Progress: [==============......] 70% (v1.0.0 + v1.1.0 complete, v1.2.0 starting)
 - [v1.2.0]: Structured JSON via prompt enforcement, not Anthropic Structured Outputs API (unavailable in plugin context)
 - [v1.2.0]: Copy specialist folded into Intent/Originality/UX with 4 sub-scores (not standalone)
 - [v1.2.0]: Playwright interaction is opt-in `--interact` flag with baseline-interact-reset pattern
+- [Phase 08]: Gemini specialists reference workspace copies (.color-reference.md, .layout-reference.md) not plugin paths
+- [Phase 08]: Boss synthesizer uses scoring_formula/verdict_rules XML tags (orchestrator protocol, not specialist rubric)
+- [Phase 08]: Copy and code-a11y prompts omit reference_knowledge tag (no reference files exist for these specialists)
 
 ### Pending Todos
 
@@ -64,6 +65,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-29
-Stopped at: Roadmap created for v1.2.0 milestone (Phases 8-13)
+Last session: 2026-03-30T03:45:51.554Z
+Stopped at: Completed 08-01-PLAN.md (prompt extraction)
 Resume file: None
