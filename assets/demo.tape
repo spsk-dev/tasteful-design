@@ -25,7 +25,7 @@ Enter
 Sleep 1.5s
 
 # Scene 2: Signature line (1s)
-Type " SpSk  design-review  v1.1.0  ───  8 specialists  ·  tier 1"
+Type " SpSk  design-review  v1.2.1  ───  7 specialists  ·  tier 1"
 Enter
 Sleep 1s
 
@@ -106,7 +106,7 @@ Type "│  ████████░░ 8.2/10  ·  SHIP                      
 Enter
 Type "│                                                               │"
 Enter
-Type "│  8 specialists  ·  6 passed  ·  2 conditional                │"
+Type "│  7 specialists  ·  6 passed  ·  2 conditional                │"
 Enter
 Type "│  Top fix: reduce secondary CTA prominence                    │"
 Enter

@@ -234,9 +234,7 @@ A GitHub portfolio project that publishes Felipe Machado's most polished AI agen
 |------|------|---------|
 | `commands/design-audit.md` | Command | `/design-audit` slash command -- flow navigation orchestrator |
 | `scripts/generate-report.sh` | Bash | HTML report generator (template + base64 embedding) |
-| `scripts/detect-animations.js` | JS snippet | Animation detection code (injected via browser_evaluate) |
-| `config/report-template.html` | HTML | Report template with CSS (referenced by generate-report.sh) |
-| `skills/design-review/references/flow-audit.md` | Reference | Flow audit domain knowledge for specialists |
+| `skills/design-review/references/flow.md` | Reference | Flow navigation domain knowledge for specialists |
 ### Existing Files Modified
 | File | Change |
 |------|--------|
