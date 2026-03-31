@@ -88,7 +88,7 @@ Write the initial flow state file at `{AUDIT_DIR}/flow-state.json`:
 
 Display the signature line using shared/output.md format:
 ```
- SpSk  design-audit  v1.2.0  ───  flow navigation engine
+ SpSk  design-audit  v1.3.0  ───  flow navigation engine
 ```
 
 Then show the configuration:

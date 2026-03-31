@@ -58,10 +58,20 @@ if ! jq empty "$FLOW_STATE" 2>/dev/null; then
   exit 1
 fi
 
-SCREEN_COUNT=$(jq '.screens | length' "$FLOW_STATE")
-if [[ "$SCREEN_COUNT" -lt 1 ]]; then
-  echo "ERROR: No screens found in $FLOW_STATE" >&2
-  exit 1
+# ---------------------------------------------------------------------------
+# Detect report mode: flow audit (flow-state.json) or single page (review-state.json)
+# ---------------------------------------------------------------------------
+REPORT_TYPE=$(jq -r '.type // "flow"' "$FLOW_STATE")
+if [[ "$REPORT_TYPE" == "single_page" ]]; then
+  REPORT_MODE="single"
+  SCREEN_COUNT=0
+else
+  REPORT_MODE="flow"
+  SCREEN_COUNT=$(jq '.screens | length' "$FLOW_STATE")
+  if [[ "$SCREEN_COUNT" -lt 1 ]]; then
+    echo "ERROR: No screens found in $FLOW_STATE" >&2
+    exit 1
+  fi
 fi
 
 # Output path
@@ -1143,41 +1153,292 @@ cat <<'STYLE_BLOCK'
       .score-bar-track { background: #e5e7eb !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
       .verdict-badge { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
     }
+
+    /* Single-page report styles */
+    .narrative-section blockquote.narrative {
+      font-size: 1.1rem;
+      line-height: 1.6;
+      border-left: 3px solid var(--accent, #3b82f6);
+      padding: 1rem 1.5rem;
+      margin: 1rem 0;
+      background: var(--card);
+      border-radius: 6px;
+      font-style: italic;
+      color: var(--text);
+    }
+    .screenshot-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1rem;
+      margin: 1rem 0;
+    }
+    .screenshot-fig { margin: 0; text-align: center; }
+    .screenshot-img { width: 100%; border-radius: 6px; border: 1px solid var(--border); }
+    .screenshot-fig figcaption { font-size: 0.85rem; color: var(--text-muted); margin-top: 0.5rem; text-transform: capitalize; }
+    .contract-section .badge {
+      font-size: 0.75rem;
+      padding: 2px 8px;
+      border-radius: 4px;
+      background: var(--border);
+      color: var(--text-muted);
+      margin-left: 0.5rem;
+    }
+    .contract-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 0.75rem;
+      margin: 1rem 0;
+    }
+    .contract-item {
+      padding: 0.75rem;
+      background: var(--card);
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      font-size: 0.9rem;
+    }
+    .specialist-detail { margin-bottom: 0.5rem; }
+    .specialist-detail summary {
+      padding: 0.75rem 1rem;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.95rem;
+      list-style: none;
+    }
+    .specialist-detail summary::-webkit-details-marker { display: none; }
+    .specialist-detail summary::before { content: "▸ "; }
+    .specialist-detail[open] summary::before { content: "▾ "; }
+    .specialist-detail .detail-body { padding: 0.75rem 1rem; font-size: 0.9rem; color: var(--text-muted); }
+    .score-bar { font-family: monospace; letter-spacing: 1px; }
+    .weight-tag { font-size: 0.75rem; color: var(--text-muted); opacity: 0.7; }
+    .score-low summary { border-left: 3px solid var(--bad, #dc2626); }
+    .score-mid summary { border-left: 3px solid var(--ok, #ca8a04); }
+    .score-high summary { border-left: 3px solid var(--good, #16a34a); }
+    .severity-tag { font-size: 0.75rem; font-weight: 600; padding: 1px 6px; border-radius: 3px; }
+    .severity-critical { background: #dc2626; color: #fff; }
+    .severity-high { background: #ea580c; color: #fff; }
+    .severity-major { background: #ea580c; color: #fff; }
+    .severity-medium { background: #ca8a04; color: #fff; }
+    .severity-minor { background: var(--border); color: var(--text-muted); }
+    .mismatches-section li { margin-bottom: 0.5rem; }
+    .consensus-section li { margin-bottom: 0.5rem; }
   </style>
 </head>
 <body>
 STYLE_BLOCK
 
-# Header
-echo '  <header class="report-header">'
-echo '    <div class="signature">SpSk  design-audit  v1.2.0  &#x2500;&#x2500;&#x2500;  flow diagnostic report</div>'
-echo "    <h1 class=\"report-title\">Flow Audit: ${TITLE}</h1>"
-echo '  </header>'
+if [[ "$REPORT_MODE" == "single" ]]; then
+  # ---------------------------------------------------------------------------
+  # SINGLE PAGE REPORT
+  # ---------------------------------------------------------------------------
+  PAGE_NAME=$(jq -r '.page_name // "Page Review"' "$FLOW_STATE")
+  PAGE_TYPE=$(jq -r '.page_type // "unknown"' "$FLOW_STATE")
+  VERDICT=$(jq -r '.verdict // "N/A"' "$FLOW_STATE")
+  W_SCORE=$(jq -r '.weighted_score // 0' "$FLOW_STATE")
+  DISPLAY_SCORE=$(echo "$W_SCORE" | awk '{printf "%.1f", $1 * 2.5}')
+  NARRATIVE=$(jq -r '.narrative // ""' "$FLOW_STATE")
+  MODE=$(jq -r '.mode // "full"' "$FLOW_STATE")
+  TIER=$(jq -r '.tier // 1' "$FLOW_STATE")
 
-# Expand/Collapse controls
-echo '  <div class="controls no-print">'
-echo '    <button id="toggle-all" onclick="toggleAll()">Expand all details</button>'
-echo '  </div>'
+  # Verdict class
+  case "$VERDICT" in
+    SHIP) V_CLASS="verdict-ship" ;;
+    CONDITIONAL*) V_CLASS="verdict-conditional" ;;
+    BLOCK) V_CLASS="verdict-block" ;;
+    *) V_CLASS="" ;;
+  esac
 
-# Flow map
-generate_flow_map
+  # Header
+  echo '  <header class="report-header">'
+  echo '    <div class="signature">SpSk  design-review  v1.3.0  &#x2500;&#x2500;&#x2500;  7 specialists</div>'
+  echo "    <h1 class=\"report-title\">${PAGE_NAME}</h1>"
+  echo "    <div class=\"verdict-badge ${V_CLASS}\">${VERDICT} &middot; ${DISPLAY_SCORE}/10 &middot; ${PAGE_TYPE} &middot; tier ${TIER}</div>"
+  echo '  </header>'
 
-# Summary
-generate_summary
+  # Narrative assessment
+  if [[ -n "$NARRATIVE" && "$NARRATIVE" != "null" ]]; then
+    echo '  <section class="narrative-section">'
+    echo '    <h2>Assessment</h2>'
+    echo "    <blockquote class=\"narrative\">${NARRATIVE}</blockquote>"
+    echo '  </section>'
+  fi
 
-# Per-screen sections
-generate_screen_sections
+  # Screenshots (side by side)
+  echo '  <section class="screenshots-section">'
+  echo '    <h2>Screenshots</h2>'
+  echo '    <div class="screenshot-grid">'
+  for view in desktop mobile fold; do
+    SPATH=$(jq -r ".screenshots.${view} // \"\"" "$FLOW_STATE")
+    if [[ -n "$SPATH" && -f "$SPATH" ]]; then
+      B64=$(base64_encode "$SPATH")
+      echo "      <figure class=\"screenshot-fig\">"
+      echo "        <img src=\"data:image/png;base64,${B64}\" alt=\"${view} view\" class=\"screenshot-img\" loading=\"lazy\">"
+      echo "        <figcaption>${view}</figcaption>"
+      echo "      </figure>"
+    fi
+  done
+  echo '    </div>'
+  echo '  </section>'
 
-# Consistency
-generate_consistency
+  # Design contract
+  HAS_CONTRACT=$(jq 'has("design_contract") and .design_contract != null' "$FLOW_STATE")
+  if [[ "$HAS_CONTRACT" == "true" ]]; then
+    CONTRACT_SOURCE=$(jq -r '.design_contract.source // "autodetect"' "$FLOW_STATE")
+    echo '  <section class="contract-section">'
+    echo "    <h2>Design Contract <span class=\"badge\">${CONTRACT_SOURCE}</span></h2>"
+    echo '    <div class="contract-grid">'
 
-# Animation
-generate_animation
+    # Buttons
+    BTN_RADIUS=$(jq -r '.design_contract.buttons.dominant_radius // "N/A"' "$FLOW_STATE")
+    BTN_COUNT=$(jq -r '.design_contract.buttons.count // 0' "$FLOW_STATE")
+    echo "      <div class=\"contract-item\"><strong>Buttons</strong><br>${BTN_RADIUS} radius, ${BTN_COUNT} found</div>"
 
-# Footer
-echo '  <footer class="report-footer">'
-echo '    <a href="https://github.com/spsk-dev/tasteful-design">github.com/spsk-dev/tasteful-design</a>'
-echo '  </footer>'
+    # Typography
+    H_FONT=$(jq -r '.design_contract.typography.heading_font // "N/A"' "$FLOW_STATE")
+    B_FONT=$(jq -r '.design_contract.typography.body_font // "N/A"' "$FLOW_STATE")
+    echo "      <div class=\"contract-item\"><strong>Typography</strong><br>${H_FONT} (headings), ${B_FONT} (body)</div>"
+
+    # Colors
+    BG_COLOR=$(jq -r '.design_contract.colors.background // "N/A"' "$FLOW_STATE")
+    echo "      <div class=\"contract-item\"><strong>Colors</strong><br>bg: ${BG_COLOR}</div>"
+
+    echo '    </div>'
+    echo '  </section>'
+  fi
+
+  # Specialist scores
+  echo '  <section class="specialists-section">'
+  echo '    <h2>Specialist Results</h2>'
+  echo '    <div class="controls no-print">'
+  echo '      <button id="toggle-all" onclick="toggleAll()">Expand all details</button>'
+  echo '    </div>'
+
+  # Score dimensions with weights
+  for dim in intent_match originality ux_flow typography color layout icons motion code_a11y; do
+    SCORE=$(jq -r ".scores.${dim} // \"null\"" "$FLOW_STATE")
+    if [[ "$SCORE" == "null" ]]; then continue; fi
+
+    case "$dim" in
+      intent_match) LABEL="Intent Match"; WEIGHT="3x" ;;
+      originality) LABEL="Originality"; WEIGHT="3x" ;;
+      ux_flow) LABEL="UX Flow"; WEIGHT="2x" ;;
+      typography) LABEL="Typography"; WEIGHT="2x" ;;
+      color) LABEL="Color"; WEIGHT="2x" ;;
+      layout) LABEL="Layout"; WEIGHT="1x" ;;
+      icons) LABEL="Icons"; WEIGHT="1x" ;;
+      motion) LABEL="Motion"; WEIGHT="1x" ;;
+      code_a11y) LABEL="Code & A11y"; WEIGHT="1x" ;;
+    esac
+
+    DISP=$(echo "$SCORE" | awk '{printf "%.1f", $1 * 2.5}')
+    FILLED=$(echo "$SCORE" | awk '{printf "%d", $1 * 2.5 + 0.5}')
+    BAR=""
+    for ((k=0; k<10; k++)); do
+      if [[ $k -lt $FILLED ]]; then BAR="${BAR}█"; else BAR="${BAR}░"; fi
+    done
+
+    if [[ "$SCORE" -le 2 ]]; then SC_CLASS="score-low"
+    elif [[ "$SCORE" -eq 3 ]]; then SC_CLASS="score-mid"
+    else SC_CLASS="score-high"; fi
+
+    echo "    <details class=\"specialist-detail\">"
+    echo "      <summary class=\"${SC_CLASS}\"><span class=\"score-bar\">${BAR}</span> <strong>${LABEL}</strong> ${DISP}/10 <span class=\"weight-tag\">${WEIGHT}</span></summary>"
+    echo "      <div class=\"detail-body\">Score: ${SCORE}/4</div>"
+    echo "    </details>"
+  done
+  echo '  </section>'
+
+  # Consensus findings
+  CF_COUNT=$(jq '.consensus_findings | length' "$FLOW_STATE")
+  if [[ "$CF_COUNT" -gt 0 ]]; then
+    echo '  <section class="consensus-section">'
+    echo '    <h2>Cross-Specialist Findings</h2>'
+    echo '    <ul>'
+    for ((i=0; i<CF_COUNT; i++)); do
+      ISSUE=$(jq -r ".consensus_findings[$i].issue" "$FLOW_STATE")
+      SPECS=$(jq -r ".consensus_findings[$i].specialists | join(\", \")" "$FLOW_STATE")
+      CONF=$(jq -r ".consensus_findings[$i].confidence" "$FLOW_STATE")
+      echo "      <li><strong>[${CONF}]</strong> ${ISSUE} <em>(${SPECS})</em></li>"
+    done
+    echo '    </ul>'
+    echo '  </section>'
+  fi
+
+  # Spec mismatches
+  SM_COUNT=$(jq '.spec_mismatches | length' "$FLOW_STATE" 2>/dev/null || echo 0)
+  if [[ "$SM_COUNT" -gt 0 ]]; then
+    echo '  <section class="mismatches-section">'
+    echo '    <h2>Design Contract Mismatches</h2>'
+    echo '    <ul>'
+    for ((i=0; i<SM_COUNT; i++)); do
+      EL=$(jq -r ".spec_mismatches[$i].element" "$FLOW_STATE")
+      EXP=$(jq -r ".spec_mismatches[$i].expected" "$FLOW_STATE")
+      ACT=$(jq -r ".spec_mismatches[$i].actual" "$FLOW_STATE")
+      echo "      <li><strong>${EL}</strong>: expected ${EXP}, found ${ACT}</li>"
+    done
+    echo '    </ul>'
+    echo '  </section>'
+  fi
+
+  # Top fixes
+  FIX_COUNT=$(jq '.top_fixes | length' "$FLOW_STATE")
+  if [[ "$FIX_COUNT" -gt 0 ]]; then
+    echo '  <section class="fixes-section">'
+    echo '    <h2>Top Fixes</h2>'
+    echo '    <ol>'
+    for ((i=0; i<FIX_COUNT; i++)); do
+      SEV=$(jq -r ".top_fixes[$i].severity" "$FLOW_STATE")
+      ISSUE=$(jq -r ".top_fixes[$i].issue" "$FLOW_STATE")
+      SPECS=$(jq -r ".top_fixes[$i].specialists | join(\", \")" "$FLOW_STATE")
+      echo "      <li><span class=\"severity-tag severity-${SEV,,}\">[${SEV}]</span> ${ISSUE} <em>(${SPECS})</em></li>"
+    done
+    echo '    </ol>'
+    echo '  </section>'
+  fi
+
+  # Footer
+  echo '  <footer class="report-footer">'
+  echo '    <a href="https://github.com/spsk-dev/tasteful-design">github.com/spsk-dev/tasteful-design</a>'
+  echo '  </footer>'
+
+else
+  # ---------------------------------------------------------------------------
+  # FLOW AUDIT REPORT (existing)
+  # ---------------------------------------------------------------------------
+
+  # Header
+  echo '  <header class="report-header">'
+  echo '    <div class="signature">SpSk  design-audit  v1.3.0  &#x2500;&#x2500;&#x2500;  flow diagnostic report</div>'
+  echo "    <h1 class=\"report-title\">Flow Audit: ${TITLE}</h1>"
+  echo '  </header>'
+
+  # Expand/Collapse controls
+  echo '  <div class="controls no-print">'
+  echo '    <button id="toggle-all" onclick="toggleAll()">Expand all details</button>'
+  echo '  </div>'
+
+  # Flow map
+  generate_flow_map
+
+  # Summary
+  generate_summary
+
+  # Per-screen sections
+  generate_screen_sections
+
+  # Consistency
+  generate_consistency
+
+  # Animation
+  generate_animation
+
+  # Footer
+  echo '  <footer class="report-footer">'
+  echo '    <a href="https://github.com/spsk-dev/tasteful-design">github.com/spsk-dev/tasteful-design</a>'
+  echo '  </footer>'
+
+fi
 
 # Inline JavaScript (minimal)
 cat <<'JS_BLOCK'
@@ -1218,9 +1479,13 @@ FILE_SIZE=$(wc -c < "$OUTPUT_HTML" | tr -d ' ')
 FILE_SIZE_KB=$((FILE_SIZE / 1024))
 
 echo ""
-echo "SpSk  generate-report  v1.2.0"
+echo "SpSk  generate-report  v1.3.0"
 echo "Report generated: ${OUTPUT_HTML}"
-echo "Size: ${FILE_SIZE_KB}KB (${SCREEN_COUNT} screens)"
+if [[ "$REPORT_MODE" == "single" ]]; then
+  echo "Size: ${FILE_SIZE_KB}KB (single page review)"
+else
+  echo "Size: ${FILE_SIZE_KB}KB (${SCREEN_COUNT} screens)"
+fi
 echo ""
 
 if [[ $FILE_SIZE -gt 5242880 ]]; then

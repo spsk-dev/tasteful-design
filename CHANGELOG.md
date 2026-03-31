@@ -4,6 +4,23 @@ All notable changes to the SpSk design-review plugin.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
+## [1.3.0] - 2026-03-31
+
+### Added
+
+- **Design contract autodetection** (Phase 0.6): Extracts buttons, typography, colors, and spacing from the live page via `browser_evaluate`. Creates a structured JSON design contract that specialists use to flag `[SPEC_MISMATCH]` deviations — catches inconsistent button radii, mixed fonts, and spacing drift within a single page.
+- **Narrative assessment**: Boss synthesizer now writes a 2-3 sentence human-readable verdict for non-designer stakeholders. Answers: what does this page look and feel like, what effect would it have, and what single fix matters most.
+- **Universal HTML report**: `generate-report.sh` now handles both single-page reviews (`review-state.json`) and flow audits (`flow-state.json`). Single-page reports include: narrative blockquote, side-by-side screenshots, design contract summary, expandable per-specialist results, consensus findings, and prioritized fix list. Self-contained, emailable, printable.
+- **Consistent output schema**: `<boss_output>` JSON now includes `narrative`, `spec_mismatches`, and `design_contract` fields. Every review produces the same structure regardless of mode.
+- **Phase 3.5 (Save Review State)**: Writes `review-state.json` after boss synthesis for report consumption.
+- **Phase 3.6 (Generate Report)**: Automatically generates HTML report after every review, not just flow audits.
+
+### Changed
+
+- Specialist context prefix now includes the design contract alongside PAGE_BRIEF — specialists compare actual page patterns against the autodetected spec.
+- `generate-report.sh` detects input type (`"type": "single_page"` vs flow) and renders the appropriate layout.
+- Phase 4 cleanup no longer deletes `$REVIEW_DIR` — preserves screenshots and report for the user.
+
 ## [1.2.1] - 2026-03-31
 
 ### Fixed

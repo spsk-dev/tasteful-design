@@ -326,6 +326,136 @@ Flag deviations as [CONSISTENCY] issues.
 
 ---
 
+## Phase 0.6: Design Contract Extraction (Autodetect)
+
+Extract the page's actual design patterns via `browser_evaluate` to create a structured **design contract**. This contract becomes the comparison baseline — specialists flag deviations from the page's OWN patterns, not just generic best practices.
+
+**Skip if:** Tier 3 (no Playwright) — set `DESIGN_CONTRACT = null` and proceed. Specialists will evaluate without a contract.
+
+**Override if:** `--palette`, `--fonts`, or `--direction` flags are provided, OR `.design/system.json` exists. Override values replace the corresponding autodetected values. The `source` field in the contract reflects this.
+
+### 0.6a. Extract design patterns
+
+Run this via `browser_evaluate` on the page (uses arrow function syntax for Playwright MCP compatibility):
+
+```javascript
+() => {
+  const contract = { buttons: [], typography: {}, colors: {}, spacing: {} };
+
+  // BUTTONS: sample all buttons and links styled as buttons
+  const btns = Array.from(document.querySelectorAll('button, a[role="button"], [class*="btn"], [class*="button"]')).slice(0, 20);
+  const btnStyles = btns.map(b => {
+    const cs = getComputedStyle(b);
+    return {
+      text: b.textContent?.trim().slice(0, 40),
+      radius: cs.borderRadius,
+      bg: cs.backgroundColor,
+      color: cs.color,
+      padding: cs.padding,
+      fontSize: cs.fontSize,
+      fontWeight: cs.fontWeight,
+      fontFamily: cs.fontFamily.split(',')[0].replace(/['"]/g, '').trim()
+    };
+  });
+  // Group by radius to find dominant pattern
+  const radiusCounts = {};
+  btnStyles.forEach(b => { radiusCounts[b.radius] = (radiusCounts[b.radius] || 0) + 1; });
+  const dominantRadius = Object.entries(radiusCounts).sort((a,b) => b[1]-a[1])[0]?.[0] || 'none';
+  contract.buttons = { samples: btnStyles.slice(0, 5), dominant_radius: dominantRadius, count: btns.length };
+
+  // TYPOGRAPHY: extract heading and body font families + sizes
+  const headings = Array.from(document.querySelectorAll('h1, h2, h3')).slice(0, 10);
+  const bodyEls = Array.from(document.querySelectorAll('p, li, span')).slice(0, 10);
+  const headingFonts = headings.map(h => {
+    const cs = getComputedStyle(h);
+    return { tag: h.tagName, text: h.textContent?.trim().slice(0, 50), font: cs.fontFamily.split(',')[0].replace(/['"]/g, '').trim(), size: cs.fontSize, weight: cs.fontWeight, lineHeight: cs.lineHeight, letterSpacing: cs.letterSpacing };
+  });
+  const bodyFonts = bodyEls.filter(e => e.textContent?.trim().length > 10).slice(0, 5).map(e => {
+    const cs = getComputedStyle(e);
+    return { font: cs.fontFamily.split(',')[0].replace(/['"]/g, '').trim(), size: cs.fontSize, weight: cs.fontWeight, lineHeight: cs.lineHeight };
+  });
+  const allFonts = [...new Set([...headingFonts.map(h => h.font), ...bodyFonts.map(b => b.font)])];
+  contract.typography = { fonts_used: allFonts, headings: headingFonts, body: bodyFonts[0] || null };
+
+  // COLORS: extract dominant colors from key elements
+  const bg = getComputedStyle(document.body).backgroundColor;
+  const html_bg = getComputedStyle(document.documentElement).backgroundColor;
+  const textColor = getComputedStyle(document.body).color;
+  const accentEls = Array.from(document.querySelectorAll('button, a, [class*="accent"], [class*="primary"]')).slice(0, 10);
+  const accents = [...new Set(accentEls.map(e => getComputedStyle(e).backgroundColor).filter(c => c !== 'rgba(0, 0, 0, 0)' && c !== 'transparent'))];
+  contract.colors = { background: bg !== 'rgba(0, 0, 0, 0)' ? bg : html_bg, text: textColor, accents: accents.slice(0, 3) };
+
+  // SPACING: sample gaps between sections and cards
+  const sections = Array.from(document.querySelectorAll('section, [class*="section"], main > div')).slice(0, 10);
+  const gaps = sections.map(s => {
+    const cs = getComputedStyle(s);
+    return { padding: cs.padding, margin: cs.margin, gap: cs.gap };
+  }).filter(g => g.padding !== '0px' || g.margin !== '0px');
+  contract.spacing = { section_samples: gaps.slice(0, 5) };
+
+  return contract;
+}
+```
+
+### 0.6b. Build the design contract JSON
+
+From the extracted data, construct the `DESIGN_CONTRACT`:
+
+```json
+{
+  "source": "autodetect",
+  "buttons": {
+    "dominant_radius": "{from extraction}",
+    "primary_bg": "{most common non-transparent button bg}",
+    "count": "{number of buttons found}",
+    "samples": ["{up to 5 button specs}"]
+  },
+  "typography": {
+    "heading_font": "{most common heading font}",
+    "body_font": "{body font}",
+    "fonts_used": ["font1", "font2"],
+    "heading_scale": ["56px", "32px", "24px"],
+    "body_size": "16px"
+  },
+  "colors": {
+    "background": "rgb(...)",
+    "text": "rgb(...)",
+    "accents": ["rgb(...)", "rgb(...)"]
+  },
+  "spacing": {
+    "section_samples": ["{padding/margin/gap values}"]
+  }
+}
+```
+
+**Apply overrides:** If `--palette` provided, replace `colors.accents` and note `source: "user_override"`. If `--fonts` provided, replace typography fonts. If `.design/system.json` exists, merge its values and note `source: "design_system"`.
+
+### 0.6c. Ambiguity check (ask only when needed)
+
+Check for ambiguity in the extracted data:
+- **Mixed button radii:** If 2+ distinct `borderRadius` values exist with similar frequency (no clear dominant), ask: "I found buttons with {radius1} and {radius2}. Is this intentional (e.g., primary vs secondary) or should they match?"
+- **3+ font families:** If `fonts_used` has 3+ entries, ask: "I found {N} font families: {list}. Which are intentional? (Usually max 2 + mono)"
+- **No buttons found:** Note `"buttons": null` — page may be content-only.
+
+**Only ask for genuinely ambiguous cases.** If one radius appears on 5 buttons and another on 1, the dominant is clear — no need to ask.
+
+### 0.6d. Store and display
+
+Store `DESIGN_CONTRACT` as a variable for Phase 2 specialist dispatch.
+
+Display briefly:
+```
+┌─ DESIGN CONTRACT (autodetected) ────────────────────────────┐
+│  Buttons:    {dominant_radius} radius, {count} found         │
+│  Fonts:      {heading_font} (headings), {body_font} (body)  │
+│  Colors:     {background} bg, {accent} accent                │
+│  Spacing:    {dominant section padding}                       │
+│  Source:     autodetect | user_override | design_system       │
+└──────────────────────────────────────────────────────────────┘
+```
+
+---
+
 ## Phase 1: Page Analysis + Intent Extraction (Haiku Agent — Quick)
 
 Spawn a Haiku agent to classify the page AND extract its intent. It reads the source files only (fast). The output drives every specialist — they evaluate their domain *in service of this intent*, not in isolation.
@@ -389,14 +519,28 @@ PAGE CONTEXT (evaluate your domain in service of this intent):
 - What comes next: {NEXT_STEP}
 - UX priorities: {UX_PRIORITIES}
 
-{IF DESIGN_SYSTEM exists:}
+{IF DESIGN_CONTRACT exists:}
+DESIGN CONTRACT (autodetected from the page):
+- Buttons: {dominant_radius} radius, primary bg {primary_bg}, {count} buttons found
+- Typography: {heading_font} (headings), {body_font} (body), sizes: {heading_scale}
+- Colors: bg {background}, text {text}, accents {accents}
+- Spacing: {section_samples summary}
+
+Check whether elements on this page are CONSISTENT with this contract.
+If a button has a different radius than the dominant, flag it as [SPEC_MISMATCH].
+If a heading uses a different font than the detected heading font, flag it.
+If colors deviate from the detected palette, flag it.
+Report deviations as: "Your page uses X. Your spec says Y. Deviation: Z."
+{END IF}
+
+{IF DESIGN_SYSTEM exists (.design/ directory):}
 PROJECT DESIGN SYSTEM: This project has established design patterns (see below).
 Check whether this page FOLLOWS these patterns. Flag deviations as consistency issues.
 Buttons should use border-radius: {buttons.border_radius}, colors: {tokens.colors.*}, fonts: {tokens.typography.*}, etc.
 {contents of .design/system.json + .design/components.json + .design/rules.md}
 {END IF}
 
-Given this context, evaluate {your domain}. A choice that's wrong for a dashboard might be right for a love letter. Score based on how well your domain SERVES this specific intent AND follows the established design system (if one exists).
+Given this context, evaluate {your domain}. A choice that's wrong for a dashboard might be right for a love letter. Score based on how well your domain SERVES this specific intent, matches the design contract, AND follows the established design system (if one exists).
 ```
 
 **If `INTERACT_MODE` is true**, append interaction context to the following specialists ONLY:
@@ -524,13 +668,70 @@ Read the scoring configuration from `${CLAUDE_PLUGIN_ROOT}/config/scoring.json` 
 
 ---
 
+## Phase 3.5: Save Review State
+
+After the boss synthesis completes, save the full review result as `review-state.json` in the review directory. This file is consumed by the HTML report generator.
+
+Write `{REVIEW_DIR}/review-state.json`:
+```json
+{
+  "version": "1.0",
+  "type": "single_page",
+  "url": "{DEV_URL}",
+  "page_name": "{from boss_output.page_name}",
+  "page_type": "{from boss_output.page_type}",
+  "mode": "{full|quick}",
+  "tier": "{1|2|3}",
+  "reviewed_at": "{ISO 8601 timestamp}",
+  "design_contract": {DESIGN_CONTRACT JSON or null},
+  "scores": {boss_output.scores},
+  "weighted_score": {boss_output.weighted_score},
+  "verdict": "{boss_output.verdict}",
+  "narrative": "{boss_output.narrative}",
+  "consensus_findings": [{boss_output.consensus_findings}],
+  "top_fixes": [{boss_output.top_fixes}],
+  "spec_mismatches": [{boss_output.spec_mismatches}],
+  "what_works": [{boss_output.what_works}],
+  "gold_standard_gap": "{boss_output.gold_standard_gap}",
+  "screenshots": {
+    "desktop": "{REVIEW_DIR}/desktop.png",
+    "mobile": "{REVIEW_DIR}/mobile.png",
+    "fold": "{REVIEW_DIR}/fold.png"
+  }
+}
+```
+
+---
+
+## Phase 3.6: Generate HTML Report
+
+Generate a self-contained HTML report from the review state:
+
+```bash
+bash "${CLAUDE_PLUGIN_ROOT}/scripts/generate-report.sh" "${REVIEW_DIR}/review-state.json" "${REVIEW_DIR}/report.html"
+```
+
+**If the script fails:** Show a warning but do NOT fail the review. The terminal output from Phase 3 already shows all results.
+
+Display the report path:
+```
+┌─ REPORT ────────────────────────────────────────────────────┐
+│  ✓ HTML report generated                                     │
+│  Path: {REVIEW_DIR}/report.html                              │
+│                                                               │
+│  Open in browser to view full diagnostic with screenshots    │
+└──────────────────────────────────────────────────────────────┘
+```
+
+---
+
 ## Phase 4: Cleanup
 
 ```bash
-# Remove all workspace files (screenshots + reference copies)
+# Remove workspace copies (NOT the review dir — keep screenshots + report)
 rm -f ./desktop-review.png ./mobile-review.png ./fold-review.png 2>/dev/null
 rm -f ./.color-reference.md ./.layout-reference.md 2>/dev/null
-rm -rf "$REVIEW_DIR" 2>/dev/null
+# NOTE: Do NOT rm -rf "$REVIEW_DIR" — it contains the report and review-state.json
 [ -n "$SERVER_PID" ] && kill $SERVER_PID 2>/dev/null
 ```
 

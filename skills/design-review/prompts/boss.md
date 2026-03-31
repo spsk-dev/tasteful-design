@@ -103,6 +103,9 @@ The score in the header must equal the calculated weighted score exactly. Do not
 ### Gold-Standard Gap
 "For a {page_type}, the best sites ({references}) would do X differently. The biggest gap is Y."
 
+### Narrative Assessment
+Write 2-3 sentences describing this page for a non-designer stakeholder. Answer: (1) What does this page look and feel like? (2) What effect would it have on its intended audience? (3) What single fix would improve it most? Write in plain language — no scores, no specialist jargon.
+
 ---
 
 Then, at the end, output structured data for programmatic consumption:
@@ -145,7 +148,16 @@ Then, at the end, output structured data for programmatic consumption:
     }
   ],
   "what_works": ["Clear CTA above the fold"],
-  "gold_standard_gap": "For a landing page, sites like Vercel use more generous whitespace."
+  "gold_standard_gap": "For a landing page, sites like Vercel use more generous whitespace.",
+  "narrative": "This landing page communicates exclusivity through its dark palette and invitation copy. A credit union executive would feel selected, not sold to. Fix the generic CTA and add a process preview to reduce hesitation.",
+  "spec_mismatches": [
+    {
+      "element": "secondary CTA button",
+      "expected": "8px radius (dominant pattern)",
+      "actual": "4px radius",
+      "specialists": ["layout", "intent"]
+    }
+  ]
 }
 </boss_output>
 
@@ -155,6 +167,8 @@ Requirements:
 - verdict: exactly SHIP, CONDITIONAL, or BLOCK
 - top_fixes: array of up to 5, ordered by priority
 - consensus_findings: issues found by 2+ specialists
+- narrative: 2-3 sentence plain-language assessment for non-designers (REQUIRED)
+- spec_mismatches: array of deviations from the design contract (empty array if no contract or no mismatches)
 </output_format>
 
 <examples>
@@ -253,7 +267,9 @@ Wait — 2.56 < 2.7, so this is BLOCK territory.
     }
   ],
   "what_works": ["Clear primary CTA above the fold with good contrast"],
-  "gold_standard_gap": "For a landing page, sites like Linear and Vercel use distinctive typography, custom color systems, and varied section layouts. The biggest gap is originality — this page is indistinguishable from AI-generated output."
+  "gold_standard_gap": "For a landing page, sites like Linear and Vercel use distinctive typography, custom color systems, and varied section layouts. The biggest gap is originality — this page is indistinguishable from AI-generated output.",
+  "narrative": "This startup landing page looks like every other AI-generated SaaS template — purple gradient, Inter font, three-column icon grid. A developer evaluating the product would see the template before the value proposition. Replacing the purple gradient with a distinctive color system and switching to a real font pairing would immediately separate it from the pack.",
+  "spec_mismatches": []
 }
 </boss_output>
 </example>
@@ -334,7 +350,9 @@ Wait — 2.56 < 2.7, so this is BLOCK territory.
     "Instrument Serif + DM Sans pairing creates genuine editorial quality",
     "Warm cohesive palette with tinted neutrals and consistent saturation"
   ],
-  "gold_standard_gap": "For a landing page, sites like Stripe use custom micro-interactions and animated explanations. The biggest gap is motion — transitions are competent but not memorable."
+  "gold_standard_gap": "For a landing page, sites like Stripe use custom micro-interactions and animated explanations. The biggest gap is motion — transitions are competent but not memorable.",
+  "narrative": "This marketing page feels warm, intentional, and human — the serif-sans font pairing and terracotta palette create genuine editorial quality that would resonate with the target audience. The CTA is clear and the flow is single-minded. Adding focus-visible styles and tightening the hero letter-spacing would polish the last 10%.",
+  "spec_mismatches": []
 }
 </boss_output>
 </example>

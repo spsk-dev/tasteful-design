@@ -1,7 +1,7 @@
 {
   "name": "tasteful-design",
-  "version": "1.2.1",
-  "description": "AI-powered design review and flow audit -- 7 specialist agents with structured JSON output, curated few-shot calibration, and opt-in Playwright interaction capture. Includes multi-screen SPA analysis, cross-screen consistency detection, and HTML diagnostic reports",
+  "version": "1.3.0",
+  "description": "AI-powered design review and flow audit -- 7 specialist agents with autodetected design contract, narrative assessment, and self-contained HTML reports. Includes multi-screen SPA analysis, cross-screen consistency detection, and per-specialist expandable diagnostics",
   "author": {
     "name": "SpSk",
     "url": "https://github.com/spsk-dev"
