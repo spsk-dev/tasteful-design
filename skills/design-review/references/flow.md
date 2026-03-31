@@ -6,17 +6,34 @@ Agent-consumable knowledge for navigating multi-screen SPA flows, detecting scre
 
 A "new screen" in a SPA means the user-visible content has meaningfully changed. Do NOT rely on `networkidle` -- SPAs with analytics, WebSockets, or chat widgets never reach network idle.
 
-**Primary signal: DOM stability via MutationObserver**
+**Primary signal: Simple timed wait + snapshot**
 
-After clicking a CTA or navigating, inject this via `browser_evaluate`:
+After clicking a CTA or navigating, the safest approach is a simple wait then verify:
+
+1. Wait 2 seconds via `browser_evaluate`:
+```javascript
+() => new Promise(resolve => setTimeout(() => resolve({ stable: true }), 2000))
+```
+
+2. Then call `browser_snapshot` — if it returns content, the page is usable.
+
+**CRITICAL: Never let any `browser_evaluate` call block longer than 10 seconds.** If it doesn't return, abandon it and proceed. Pages with continuous mutations, WebSockets, or SPA route changes can orphan JS Promises and block the entire audit forever.
+
+**Alternative: MutationObserver with hard cap (for pages that need more precision):**
 
 ```javascript
 (function() {
   return new Promise((resolve) => {
+    const HARD_TIMEOUT = 5000;
     let timer = null;
+    const hardTimer = setTimeout(() => {
+      if (observer) observer.disconnect();
+      resolve({ stable: true, waited: false, hardTimeout: true });
+    }, HARD_TIMEOUT);
     const observer = new MutationObserver(() => {
       clearTimeout(timer);
       timer = setTimeout(() => {
+        clearTimeout(hardTimer);
         observer.disconnect();
         resolve({ stable: true, waited: true });
       }, 800); // 800ms of no mutations = stable
@@ -24,14 +41,16 @@ After clicking a CTA or navigating, inject this via `browser_evaluate`:
     observer.observe(document.body, {
       childList: true, subtree: true, attributes: true, characterData: true
     });
-    // Fallback: if no mutations at all within 2s, page is already stable
     timer = setTimeout(() => {
+      clearTimeout(hardTimer);
       observer.disconnect();
       resolve({ stable: true, waited: false });
     }, 2000);
   });
 })()
 ```
+
+The `HARD_TIMEOUT` ensures the Promise always resolves even on pages with continuous mutations.
 
 **Secondary signal: Font readiness**
 

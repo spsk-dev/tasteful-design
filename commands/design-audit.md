@@ -229,7 +229,9 @@ If dead end detected:
 - Report: `✗ Dead end at Screen {N}: {reason}`
 - Jump to Section 8 (Flow Completion)
 
-### Step B2: Inject animation listeners
+### Step B2: Inject animation listeners (OPTIONAL — skip if previous evaluates hung)
+
+**If any `browser_evaluate` call in the current screen took longer than 5 seconds or had to be abandoned, SKIP all animation injection for this screen.** Animation data is enrichment, not critical path. Log `"animation": null` for this screen and proceed to Step C.
 
 Before clicking, inject the animation event listener (from references/flow.md Section 9c) via `browser_evaluate` to capture transition/animation events triggered by the click:
 
@@ -295,15 +297,38 @@ Call `browser_click` with `ref="{element_ref}"`.
 
 ### Step D: DOM stability check
 
-Wait 300ms (post_click_settle_ms from config/flow-scoring.json), then run the DOM stability check via `browser_evaluate`:
+Wait 300ms (post_click_settle_ms from config/flow-scoring.json), then check if the page has settled.
+
+**IMPORTANT — Hard timeout rule:** Every `browser_evaluate` call in the flow audit MUST use a self-resolving timeout. If `browser_evaluate` does not return within 10 seconds, ABANDON the call and proceed as if the page is stable. This prevents orphaned Promises from blocking the entire audit when pages navigate mid-evaluation or have continuous mutations (analytics, WebSocket, AI generation).
+
+**Preferred approach — simple wait + snapshot comparison:**
+
+Instead of a MutationObserver (which can hang on busy pages), use a simple timed wait:
+
+1. Wait 2 seconds after clicking (via `browser_evaluate`):
+```javascript
+() => new Promise(resolve => setTimeout(() => resolve({ stable: true }), 2000))
+```
+
+2. Then take a `browser_snapshot` — if the snapshot returns content, the page is usable regardless of whether mutations are still happening.
+
+**Fallback approach — MutationObserver with hard cap:**
+
+If the simple wait is insufficient (page clearly still loading), use this self-capping version:
 
 ```javascript
 (function() {
   return new Promise((resolve) => {
+    const HARD_TIMEOUT = 5000;
     let timer = null;
+    const hardTimer = setTimeout(() => {
+      if (observer) observer.disconnect();
+      resolve({ stable: true, waited: false, hardTimeout: true });
+    }, HARD_TIMEOUT);
     const observer = new MutationObserver(() => {
       clearTimeout(timer);
       timer = setTimeout(() => {
+        clearTimeout(hardTimer);
         observer.disconnect();
         resolve({ stable: true, waited: true });
       }, 800);
@@ -312,6 +337,7 @@ Wait 300ms (post_click_settle_ms from config/flow-scoring.json), then run the DO
       childList: true, subtree: true, attributes: true, characterData: true
     });
     timer = setTimeout(() => {
+      clearTimeout(hardTimer);
       observer.disconnect();
       resolve({ stable: true, waited: false });
     }, 2000);
@@ -319,26 +345,28 @@ Wait 300ms (post_click_settle_ms from config/flow-scoring.json), then run the DO
 })()
 ```
 
-This waits for 800ms of mutation silence (from config `dom_stability.mutation_quiet_ms`), with a 2s fallback (from config `dom_stability.fallback_timeout_ms`).
+The `HARD_TIMEOUT` of 5 seconds ensures the Promise ALWAYS resolves even if the page has continuous mutations.
+
+**If `browser_evaluate` itself hangs** (the MCP call doesn't return within 10 seconds — e.g., page navigated and destroyed the JS context): ABANDON the evaluate call. Take a `browser_snapshot` instead to verify the page is loaded, then proceed to Step E. Log `"stability_check": "abandoned"` in the screen entry. Never wait more than 10 seconds for any single evaluate call.
 
 **If stability times out** (takes longer than fallback): Proceed anyway. The screen may still be usable. Note `"stability_timeout": true` in the screen entry of flow-state.json.
 
 ### Step E: Font readiness check
 
-After DOM stability, run the font readiness check via `browser_evaluate`:
+After DOM stability, check font loading. Apply the same **10-second hard timeout rule** — if `browser_evaluate` doesn't return within 10 seconds, abandon and proceed.
 
 ```javascript
 (function() {
   return Promise.race([
     document.fonts.ready.then(() => ({ fontsReady: true })),
-    new Promise(resolve => setTimeout(() => resolve({ fontsReady: false, timeout: true }), 5000))
+    new Promise(resolve => setTimeout(() => resolve({ fontsReady: false, timeout: true }), 3000))
   ]);
 })()
 ```
 
-This waits for all fonts to load with a 5s timeout (from config `font_readiness_timeout_ms`).
+This waits for fonts with a 3s timeout (reduced from 5s to stay within the hard timeout budget).
 
-**If font readiness times out:** Proceed with capture anyway. Note `"fonts_timeout": true` in the screen entry.
+**If font readiness times out or evaluate hangs:** Proceed with capture anyway. Note `"fonts_timeout": true` in the screen entry. Fonts loading late is cosmetic — it should never block the audit.
 
 ### Step E2: Capture post-transition animation state
 
@@ -700,6 +728,7 @@ If `browser_snapshot` returns an empty or minimal accessibility tree:
 
 ## Key Constraints
 
+- **HARD TIMEOUT: No `browser_evaluate` call may block longer than 10 seconds.** If an evaluate call does not return within 10 seconds, ABANDON it and proceed. Pages with continuous mutations (analytics, WebSocket, AI generation) or SPA route changes can destroy the JS context and orphan Promises forever. Prefer `browser_snapshot` (which always returns) over `browser_evaluate` with Promises for stability checks. When in doubt, wait 2 seconds and take a snapshot instead of running a MutationObserver.
 - **Every browser interaction uses Playwright MCP tools.** Never write shell scripts for navigation.
 - **Always take a fresh `browser_snapshot` immediately before `browser_click`.** Stale element refs cause failures (Pitfall 5).
 - **Never use `networkidle`.** SPAs with analytics/WebSockets never reach idle (Pitfall 1).
