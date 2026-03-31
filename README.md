@@ -1,4 +1,8 @@
-# SpSk -- Tasteful Design
+```
+ SpSk  · tasteful-design
+```
+
+# Tasteful Design
 
 AI-powered design review for Claude Code. 7 specialist agents evaluate your UI across typography, color, layout, icons, motion, intent/originality/UX, and accessibility. A boss synthesizer delivers a weighted SHIP/BLOCK verdict.
 
