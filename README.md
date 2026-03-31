@@ -51,6 +51,7 @@ A full review takes ~8 minutes and produces a structured verdict with scores per
 | `/design-validate` | Functional validation (Playwright) | URL or auto-detect |
 | `/design` | Orchestrator -- routes to sub-commands | `review`, `improve`, `validate`, `check`, `ship` |
 | `/design-audit` | Flow-level SPA design audit | `--flow "desc"`, `--steps url1,url2`, `--auth`, `--max N` |
+
 ## Flow Audit
 
 Multi-screen SPA design audit. Navigates through your app screen-by-screen, runs 7-specialist review on each screen, checks cross-screen consistency, and generates a self-contained HTML diagnostic report.
@@ -98,7 +99,7 @@ The review pipeline runs in 5 phases:
 4. **Boss Synthesis** -- Cross-specialist consensus, weighted scoring, SHIP/CONDITIONAL/BLOCK verdict
 5. **Fix List** -- Prioritized fixes with `[CRITICAL]`/`[HIGH]`/`[MEDIUM]` tags and file:line references
 
-Intent and Originality carry 3x weight. Typography and Color carry 2x. The formula: `(Intent*3 + Originality*3 + UX*2 + Typography*2 + Color*2 + Layout + Icons + Motion + Code) / 16`
+Intent and Originality carry 3x weight each. UX Flow, Typography, and Color carry 2x. The Intent specialist outputs 4 sub-scores (Intent, Originality, UX Flow, Copy Quality) that are weighted independently. Formula: `(Intent*3 + Originality*3 + UX*2 + Typography*2 + Color*2 + Layout + Icons + Motion + Code) / 16`
 
 The flow audit pipeline (`/design-audit`) extends this to multi-screen flows -- navigating SPAs, running per-screen reviews with smart weighting, detecting cross-screen consistency drift, and generating HTML diagnostic reports.
 
@@ -157,7 +158,7 @@ Evals run on a clean clone. No external dependencies beyond Claude Code.
 
 - **Claude Code** -- plugin host
 - **Playwright** -- for screenshots (`npx playwright install chromium`)
-- **Playwright MCP** -- for flow audit navigation (`npx @anthropic/mcp-server-playwright`)
+- **Playwright MCP** -- for flow audit navigation (`claude mcp add playwright -- npx @playwright/mcp@latest`)
 - **Gemini CLI** (optional) -- for Tier 1 cross-model review. Falls back gracefully if unavailable.
 
 ## Benchmarks
@@ -181,7 +182,7 @@ Example structural validation output:
 [PASS] config/scoring.json is valid JSON
 [PASS] No hardcoded user paths
 ...
-32/32 checks passed
+106/106 checks passed
 ```
 
 Quality assertion definitions: [`evals/assertions.json`](evals/assertions.json)

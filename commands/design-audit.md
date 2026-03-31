@@ -88,7 +88,7 @@ Write the initial flow state file at `{AUDIT_DIR}/flow-state.json`:
 
 Display the signature line using shared/output.md format:
 ```
- SpSk  design-audit  v1.1.0  ───  flow navigation engine
+ SpSk  design-audit  v1.2.0  ───  flow navigation engine
 ```
 
 Then show the configuration:
@@ -236,7 +236,7 @@ If dead end detected:
 Before clicking, inject the animation event listener (from references/flow.md Section 9c) via `browser_evaluate` to capture transition/animation events triggered by the click:
 
 ```javascript
-(function() {
+() => {
   window.__spsk_anim_events = [];
   const handler = (e) => window.__spsk_anim_events.push({
     type: e.type,
@@ -249,13 +249,13 @@ Before clicking, inject the animation event listener (from references/flow.md Se
     evt => document.addEventListener(evt, handler, true)
   );
   return { listening: true };
-})()
+}
 ```
 
 Also capture the pre-click animation state (from references/flow.md Section 9a) via `browser_evaluate`:
 
 ```javascript
-(function() {
+() => {
   const animations = document.getAnimations().map(a => ({
     element: a.effect?.target?.tagName + (a.effect?.target?.className ? '.' + a.effect.target.className.split(' ')[0] : ''),
     name: a.animationName || 'transition',
@@ -275,7 +275,7 @@ Also capture the pre-click animation state (from references/flow.md Section 9a) 
     return acc;
   }, []);
   return { animations, transitions, timestamp: Date.now() };
-})()
+}
 ```
 
 Store both results as `PRE_CLICK_ANIM_STATE` for this screen.
@@ -317,7 +317,7 @@ Instead of a MutationObserver (which can hang on busy pages), use a simple timed
 If the simple wait is insufficient (page clearly still loading), use this self-capping version:
 
 ```javascript
-(function() {
+() => {
   return new Promise((resolve) => {
     const HARD_TIMEOUT = 5000;
     let timer = null;
@@ -342,7 +342,7 @@ If the simple wait is insufficient (page clearly still loading), use this self-c
       resolve({ stable: true, waited: false });
     }, 2000);
   });
-})()
+}
 ```
 
 The `HARD_TIMEOUT` of 5 seconds ensures the Promise ALWAYS resolves even if the page has continuous mutations.
@@ -356,12 +356,12 @@ The `HARD_TIMEOUT` of 5 seconds ensures the Promise ALWAYS resolves even if the 
 After DOM stability, check font loading. Apply the same **10-second hard timeout rule** — if `browser_evaluate` doesn't return within 10 seconds, abandon and proceed.
 
 ```javascript
-(function() {
+() => {
   return Promise.race([
     document.fonts.ready.then(() => ({ fontsReady: true })),
     new Promise(resolve => setTimeout(() => resolve({ fontsReady: false, timeout: true }), 3000))
   ]);
-})()
+}
 ```
 
 This waits for fonts with a 3s timeout (reduced from 5s to stay within the hard timeout budget).
@@ -373,7 +373,7 @@ This waits for fonts with a 3s timeout (reduced from 5s to stay within the hard 
 After DOM stability and font readiness, capture the post-stable animation state (references/flow.md Section 9b) via `browser_evaluate`:
 
 ```javascript
-(function() {
+() => {
   const animations = document.getAnimations().map(a => ({
     element: a.effect?.target?.tagName + (a.effect?.target?.className ? '.' + a.effect.target.className.split(' ')[0] : ''),
     name: a.animationName || 'transition',
@@ -393,19 +393,19 @@ After DOM stability and font readiness, capture the post-stable animation state 
     return acc;
   }, []);
   return { animations, transitions, timestamp: Date.now() };
-})()
+}
 ```
 
 Also collect the animation events that fired during the transition via `browser_evaluate`:
 
 ```javascript
-(function() { return window.__spsk_anim_events || []; })()
+() => { return window.__spsk_anim_events || []; }
 ```
 
 Run the prefers-reduced-motion compliance check (references/flow.md Section 10) via `browser_evaluate`:
 
 ```javascript
-(function() {
+() => {
   const sheets = Array.from(document.styleSheets);
   let hasReducedMotion = false;
   let animationCount = 0;
@@ -430,7 +430,7 @@ Run the prefers-reduced-motion compliance check (references/flow.md Section 10) 
     compliant: hasReducedMotion || (animationCount === 0 && docAnimations === 0),
     verdict: hasReducedMotion ? 'PASS' : (animationCount > 0 || docAnimations > 0) ? 'FAIL -- animations without reduced-motion support' : 'PASS -- no animations detected'
   };
-})()
+}
 ```
 
 Store all results as `POST_STABLE_ANIM_STATE`, `ANIM_EVENTS`, and `PRM_CHECK` for this screen.
@@ -552,7 +552,7 @@ In deterministic mode there is no CTA click, so only capture the current animati
 Capture the current animation state (references/flow.md Section 9a) via `browser_evaluate`:
 
 ```javascript
-(function() {
+() => {
   const animations = document.getAnimations().map(a => ({
     element: a.effect?.target?.tagName + (a.effect?.target?.className ? '.' + a.effect.target.className.split(' ')[0] : ''),
     name: a.animationName || 'transition',
@@ -572,13 +572,13 @@ Capture the current animation state (references/flow.md Section 9a) via `browser
     return acc;
   }, []);
   return { animations, transitions, timestamp: Date.now() };
-})()
+}
 ```
 
 Run the prefers-reduced-motion compliance check (references/flow.md Section 10) via `browser_evaluate`:
 
 ```javascript
-(function() {
+() => {
   const sheets = Array.from(document.styleSheets);
   let hasReducedMotion = false;
   let animationCount = 0;
@@ -603,7 +603,7 @@ Run the prefers-reduced-motion compliance check (references/flow.md Section 10) 
     compliant: hasReducedMotion || (animationCount === 0 && docAnimations === 0),
     verdict: hasReducedMotion ? 'PASS' : (animationCount > 0 || docAnimations > 0) ? 'FAIL -- animations without reduced-motion support' : 'PASS -- no animations detected'
   };
-})()
+}
 ```
 
 Store as `SCREEN_ANIM_STATE` and `PRM_CHECK`.

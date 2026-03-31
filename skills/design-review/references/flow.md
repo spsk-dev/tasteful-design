@@ -22,7 +22,7 @@ After clicking a CTA or navigating, the safest approach is a simple wait then ve
 **Alternative: MutationObserver with hard cap (for pages that need more precision):**
 
 ```javascript
-(function() {
+() => {
   return new Promise((resolve) => {
     const HARD_TIMEOUT = 5000;
     let timer = null;
@@ -47,7 +47,7 @@ After clicking a CTA or navigating, the safest approach is a simple wait then ve
       resolve({ stable: true, waited: false });
     }, 2000);
   });
-})()
+}
 ```
 
 The `HARD_TIMEOUT` ensures the Promise always resolves even on pages with continuous mutations.
@@ -57,12 +57,12 @@ The `HARD_TIMEOUT` ensures the Promise always resolves even on pages with contin
 After DOM stability, check fonts before capturing a screenshot:
 
 ```javascript
-(function() {
+() => {
   return Promise.race([
     document.fonts.ready.then(() => ({ fontsReady: true })),
     new Promise(resolve => setTimeout(() => resolve({ fontsReady: false, timeout: true }), 5000))
   ]);
-})()
+}
 ```
 
 **Never use `networkidle`** -- it will hang on production SPAs with Google Analytics, Intercom, Hotjar, or any WebSocket connection.
@@ -240,7 +240,7 @@ Detect CSS transitions and JS-triggered animations during screen navigation. Sta
 Inject via `browser_evaluate` BEFORE clicking a CTA to establish the baseline animation state:
 
 ```javascript
-(function() {
+() => {
   const animations = document.getAnimations().map(a => ({
     element: a.effect?.target?.tagName + (a.effect?.target?.className ? '.' + a.effect.target.className.split(' ')[0] : ''),
     name: a.animationName || 'transition',
@@ -260,7 +260,7 @@ Inject via `browser_evaluate` BEFORE clicking a CTA to establish the baseline an
     return acc;
   }, []);
   return { animations, transitions, timestamp: Date.now() };
-})()
+}
 ```
 
 ### 9b. Post-stable Animation State Capture
@@ -268,7 +268,7 @@ Inject via `browser_evaluate` BEFORE clicking a CTA to establish the baseline an
 Inject via `browser_evaluate` AFTER DOM stability resolves (Section 1). Uses the same structure as 9a:
 
 ```javascript
-(function() {
+() => {
   const animations = document.getAnimations().map(a => ({
     element: a.effect?.target?.tagName + (a.effect?.target?.className ? '.' + a.effect.target.className.split(' ')[0] : ''),
     name: a.animationName || 'transition',
@@ -288,7 +288,7 @@ Inject via `browser_evaluate` AFTER DOM stability resolves (Section 1). Uses the
     return acc;
   }, []);
   return { animations, transitions, timestamp: Date.now() };
-})()
+}
 ```
 
 **Diff comparison:** Compare the pre-click (9a) and post-stable (9b) results to identify:
@@ -302,7 +302,7 @@ Inject via `browser_evaluate` AFTER DOM stability resolves (Section 1). Uses the
 Inject via `browser_evaluate` BEFORE clicking a CTA. These listeners capture every animation and transition event that fires during navigation:
 
 ```javascript
-(function() {
+() => {
   window.__spsk_anim_events = [];
   const handler = (e) => window.__spsk_anim_events.push({
     type: e.type,
@@ -315,7 +315,7 @@ Inject via `browser_evaluate` BEFORE clicking a CTA. These listeners capture eve
     evt => document.addEventListener(evt, handler, true)
   );
   return { listening: true };
-})()
+}
 ```
 
 Collect events after DOM stability resolves via `browser_evaluate`:
@@ -358,7 +358,7 @@ Any page with CSS animations or transitions MUST include a `@media (prefers-redu
 Inject via `browser_evaluate` to audit reduced-motion support:
 
 ```javascript
-(function() {
+() => {
   const sheets = Array.from(document.styleSheets);
   let hasReducedMotion = false;
   let animationCount = 0;
@@ -383,7 +383,7 @@ Inject via `browser_evaluate` to audit reduced-motion support:
     compliant: hasReducedMotion || (animationCount === 0 && docAnimations === 0),
     verdict: hasReducedMotion ? 'PASS' : (animationCount > 0 || docAnimations > 0) ? 'FAIL -- animations without reduced-motion support' : 'PASS -- no animations detected'
   };
-})()
+}
 ```
 
 **Interpretation:**

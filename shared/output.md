@@ -15,7 +15,7 @@ The first line of every command output. Read version dynamically from `${CLAUDE_
 ```
 
 - **{command}**: the command name (`design-review`, `design-improve`, `design-validate`, `design-init`)
-- **{version}**: read from `${CLAUDE_PLUGIN_ROOT}/VERSION` (currently `1.0.0`)
+- **{version}**: read from `${CLAUDE_PLUGIN_ROOT}/VERSION`
 - **{specialist_count}**: `7` for full mode, `4` for quick mode (`--quick`)
 - **{tier}**: from environment detection:
   - Tier 1: Gemini + Playwright available (full capability)

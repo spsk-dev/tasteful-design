@@ -4,6 +4,17 @@ All notable changes to the SpSk design-review plugin.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
+## [1.2.1] - 2026-03-31
+
+### Fixed
+
+- **IIFE→arrow function conversion** — All `browser_evaluate` JavaScript snippets in `design-audit.md`, `design-review.md`, and `flow.md` converted from IIFE `(function(){})()` to arrow functions `() => {}`. IIFEs cause `TypeError: result is not a function` in Playwright MCP's evaluate, which was a contributing factor to flow audit hangs.
+- **DOM stability on animated pages** — Root-caused the `browser_evaluate` hang on start.fusefinance.com screen 7: two perpetually animated SVGs (115 `<g>` elements, ~326 DOM mutations/sec) prevented the MutationObserver quiet timer from ever firing. The simple 2s `setTimeout` primary approach now works correctly; the MutationObserver fallback uses a 5s `HARD_TIMEOUT` that resolves reliably.
+- **Stale version references** — Fixed `v1.1.0` → `v1.2.0` in `design-audit.md` signature and `generate-report.sh`
+- **Missing harness.md** — Created `skills/design-review/references/harness.md` (was referenced by `design-review.md` but didn't exist)
+- **README accuracy** — Fixed scoring formula description, updated Playwright MCP install command to `@playwright/mcp@latest`, updated structural eval count (32→106), added missing blank line before Flow Audit section
+- **Stale version comment** — Removed hardcoded "currently 1.0.0" from `shared/output.md`
+
 ## [1.2.0] - 2026-03-30
 
 ### Added

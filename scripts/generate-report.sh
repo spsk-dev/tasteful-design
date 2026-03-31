@@ -1150,7 +1150,7 @@ STYLE_BLOCK
 
 # Header
 echo '  <header class="report-header">'
-echo '    <div class="signature">SpSk  design-audit  v1.1.0  &#x2500;&#x2500;&#x2500;  flow diagnostic report</div>'
+echo '    <div class="signature">SpSk  design-audit  v1.2.0  &#x2500;&#x2500;&#x2500;  flow diagnostic report</div>'
 echo "    <h1 class=\"report-title\">Flow Audit: ${TITLE}</h1>"
 echo '  </header>'
 
@@ -1218,7 +1218,7 @@ FILE_SIZE=$(wc -c < "$OUTPUT_HTML" | tr -d ' ')
 FILE_SIZE_KB=$((FILE_SIZE / 1024))
 
 echo ""
-echo "SpSk  generate-report  v1.1.0"
+echo "SpSk  generate-report  v1.2.0"
 echo "Report generated: ${OUTPUT_HTML}"
 echo "Size: ${FILE_SIZE_KB}KB (${SCREEN_COUNT} screens)"
 echo ""

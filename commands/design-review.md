@@ -281,17 +281,7 @@ After all interactions, reload the page to restore clean DOM:
 1. Call `browser_navigate` with `$DEV_URL` (re-navigates to the same URL, effectively a reload)
 2. Run DOM stability check via `browser_evaluate` (same MutationObserver pattern from design-audit.md):
 ```javascript
-(function() {
-  return new Promise((resolve) => {
-    let timer = null;
-    const observer = new MutationObserver(() => {
-      clearTimeout(timer);
-      timer = setTimeout(() => { observer.disconnect(); resolve({ stable: true }); }, 800);
-    });
-    observer.observe(document.body, { childList: true, subtree: true, attributes: true, characterData: true });
-    timer = setTimeout(() => { observer.disconnect(); resolve({ stable: true, waited: false }); }, 2000);
-  });
-})()
+() => new Promise(resolve => setTimeout(() => resolve({ stable: true }), 2000))
 ```
 3. Call `browser_close` to release the MCP session
 
