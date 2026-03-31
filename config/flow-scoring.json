@@ -26,7 +26,7 @@
     "full_review_positions": ["first", "last"],
     "quick_review_positions": ["middle"],
     "quick_specialists": ["font", "color", "layout", "intent"],
-    "full_specialist_count": 8,
+    "full_specialist_count": 7,
     "quick_specialist_count": 4
   },
   "flow_score": {
