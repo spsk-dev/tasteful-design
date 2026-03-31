@@ -6,19 +6,48 @@ Built because AI models are terrible self-critics. They "reliably skew positive"
 
 ## Install
 
+### 1. Install the plugin
+
 ```bash
 # Add SpSk marketplace (one time)
 claude plugins marketplace add spsk-dev/marketplace
 
-# Install
+# Install tasteful-design
 claude plugins install tasteful-design@spsk
 ```
 
-**Manual:**
+### 2. Set up Playwright (required for screenshots)
+
+```bash
+# Install Playwright browsers
+npx playwright install chromium
+
+# Register Playwright MCP (required for /design-audit flow navigation)
+claude mcp add playwright -- npx @playwright/mcp@latest
+```
+
+### 3. Optional: Install Gemini CLI (for Tier 1 cross-model review)
+
+```bash
+# Gemini provides a second model's perspective on Color and Layout
+# Skip this if you're fine with Claude-only review (Tier 2)
+npm install -g @anthropic/gemini-cli
+```
+
+### Verify installation
+
+```bash
+# Should show tasteful-design commands
+claude /help
+# Look for: /design-review, /design-audit, /design-improve, /design-validate
+```
+
+### Manual install (alternative)
 
 ```bash
 git clone https://github.com/spsk-dev/tasteful-design.git
 cd tasteful-design && bash install.sh
+# Then still run steps 2-3 above for Playwright and Gemini
 ```
 
 ## Quick Start
