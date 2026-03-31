@@ -6,17 +6,27 @@ This file defines the visual identity for ALL SpSk command output. Load this via
 
 ---
 
-## Signature Line
+## Brand Header
 
-The first line of every command output. Read version dynamically from `${CLAUDE_PLUGIN_ROOT}/VERSION`.
+The first output of every SpSk command. Display the ASCII art logo followed by the tool info line.
 
 ```
- SpSk  {command}  v{version}  ───  {specialist_count} specialists  ·  tier {tier}
+ ███████╗██████╗ ███████╗██╗  ██╗
+ ██╔════╝██╔══██╗██╔════╝██║ ██╔╝
+ ███████╗██████╔╝███████╗█████╔╝
+ ╚════██║██╔═══╝ ╚════██║██╔═██╗
+ ███████║██║     ███████║██║  ██╗
+ ╚══════╝╚═╝     ╚══════╝╚═╝  ╚═╝
+ {command}  v{version}  ───  {detail}
 ```
 
-- **{command}**: the command name (`design-review`, `design-improve`, `design-validate`, `design-init`)
+- **{command}**: the command name (`design-review`, `design-improve`, `design-validate`, `design-audit`, `design-init`)
 - **{version}**: read from `${CLAUDE_PLUGIN_ROOT}/VERSION`
-- **{specialist_count}**: `7` for full mode, `4` for quick mode (`--quick`)
+- **{detail}**: context-specific info:
+  - design-review: `{specialist_count} specialists  ·  tier {tier}`
+  - design-audit: `flow navigation engine`
+  - design-improve: `build + review loop`
+  - design-validate: `functional validation`
 - **{tier}**: from environment detection:
   - Tier 1: Gemini + Playwright available (full capability)
   - Tier 2: Playwright only, no Gemini (Claude handles all specialists)
@@ -24,7 +34,13 @@ The first line of every command output. Read version dynamically from `${CLAUDE_
 
 **Example:**
 ```
- SpSk  design-review  v1.2.0  ───  7 specialists  ·  tier 1
+ ███████╗██████╗ ███████╗██╗  ██╗
+ ██╔════╝██╔══██╗██╔════╝██║ ██╔╝
+ ███████╗██████╔╝███████╗█████╔╝
+ ╚════██║██╔═══╝ ╚════██║██╔═██╗
+ ███████║██║     ███████║██║  ██╗
+ ╚══════╝╚═╝     ╚══════╝╚═╝  ╚═╝
+ design-review  v1.3.0  ───  7 specialists  ·  tier 1
 ```
 
 ---
